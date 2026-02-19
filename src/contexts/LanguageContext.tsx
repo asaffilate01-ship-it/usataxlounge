@@ -150,6 +150,64 @@ const translations: Record<string, Record<Language, string>> = {
     en: "Whether you're a W-2 employee, self-employed, or a US citizen abroad — we file it all.",
     es: "Ya sea que sea empleado W-2, trabajador independiente o ciudadano estadounidense en el extranjero — presentamos todo.",
   },
+
+  // Testimonials
+  "testimonials.label": { en: "Client Reviews", es: "Opiniones de Clientes" },
+  "testimonials.title": { en: "What Our Clients Say", es: "Lo Que Dicen Nuestros Clientes" },
+  "testimonials.subtitle": { en: "Trusted by thousands of individuals and businesses across the US and abroad.", es: "La confianza de miles de individuos y empresas en EE.UU. y el extranjero." },
+
+  "testimonial.1.name": { en: "Maria Rodriguez", es: "María Rodríguez" },
+  "testimonial.1.role": { en: "Small Business Owner", es: "Dueña de Pequeña Empresa" },
+  "testimonial.1.text": { en: "TaxLounge made filing my business taxes so easy. Their team handled my Schedule C and 1120-S with precision. I saved over $4,000 this year!", es: "TaxLounge hizo que declarar mis impuestos empresariales fuera muy fácil. Su equipo manejó mi Anexo C y 1120-S con precisión. ¡Ahorré más de $4,000 este año!" },
+
+  "testimonial.2.name": { en: "James Chen", es: "James Chen" },
+  "testimonial.2.role": { en: "US Expat in London", es: "Expatriado en Londres" },
+  "testimonial.2.text": { en: "As a US citizen living abroad, FBAR and FATCA filing was a nightmare until I found TaxLounge. They handle everything seamlessly.", es: "Como ciudadano estadounidense viviendo en el extranjero, la declaración FBAR y FATCA era una pesadilla hasta que encontré TaxLounge. Lo manejan todo sin problemas." },
+
+  "testimonial.3.name": { en: "Sarah Mitchell", es: "Sarah Mitchell" },
+  "testimonial.3.role": { en: "Freelance Designer", es: "Diseñadora Freelance" },
+  "testimonial.3.text": { en: "My first time filing as self-employed and they guided me through every deduction. The portal made uploading documents incredibly simple.", es: "Mi primera vez declarando como independiente y me guiaron en cada deducción. El portal hizo que subir documentos fuera increíblemente simple." },
+
+  "testimonial.4.name": { en: "Robert Williams", es: "Robert Williams" },
+  "testimonial.4.role": { en: "Retired Teacher", es: "Maestro Jubilado" },
+  "testimonial.4.text": { en: "I've been using TaxLounge for 5 years now. Their enrolled agents are always available and my returns are always filed on time.", es: "Llevo 5 años usando TaxLounge. Sus agentes inscritos siempre están disponibles y mis declaraciones siempre se presentan a tiempo." },
+
+  "testimonial.5.name": { en: "Lisa Park", es: "Lisa Park" },
+  "testimonial.5.role": { en: "Real Estate Investor", es: "Inversionista Inmobiliaria" },
+  "testimonial.5.text": { en: "Complex rental income, depreciation schedules — they handle it all. Professional and reliable every tax season.", es: "Ingresos por alquiler complejos, cronogramas de depreciación — lo manejan todo. Profesionales y confiables cada temporada fiscal." },
+
+  "testimonial.6.name": { en: "David Okafor", es: "David Okafor" },
+  "testimonial.6.role": { en: "Tech Startup Founder", es: "Fundador de Startup Tecnológica" },
+  "testimonial.6.text": { en: "TaxLounge helped us set up our S-Corp structure and saved us thousands in self-employment tax. Highly recommend!", es: "TaxLounge nos ayudó a configurar nuestra estructura S-Corp y nos ahorró miles en impuestos de autoempleo. ¡Muy recomendado!" },
+
+  // FAQ
+  "faq.label": { en: "Frequently Asked Questions", es: "Preguntas Frecuentes" },
+  "faq.title": { en: "Got Questions? We Have Answers", es: "¿Tiene Preguntas? Tenemos Respuestas" },
+  "faq.subtitle": { en: "Find answers to the most common tax questions from our clients.", es: "Encuentre respuestas a las preguntas fiscales más comunes de nuestros clientes." },
+
+  "faq.q1": { en: "What is an IRS Enrolled Agent?", es: "¿Qué es un Agente Inscrito del IRS?" },
+  "faq.a1": { en: "An Enrolled Agent (EA) is a federally-authorized tax practitioner who has technical expertise in taxation and is empowered by the U.S. Department of the Treasury to represent taxpayers before the IRS for audits, collections, and appeals.", es: "Un Agente Inscrito (EA) es un profesional fiscal autorizado federalmente con experiencia técnica en tributación, facultado por el Departamento del Tesoro de EE.UU. para representar contribuyentes ante el IRS en auditorías, cobros y apelaciones." },
+
+  "faq.q2": { en: "What tax forms do you handle?", es: "¿Qué formularios fiscales manejan?" },
+  "faq.a2": { en: "We handle all individual forms (1040, 1040-SR, 1040-NR), business returns (1120, 1120-S, 1065), schedules (A through SE), and international filings including FBAR (FinCEN 114), FATCA (Form 8938), and Form 2555 for foreign earned income exclusion.", es: "Manejamos todos los formularios individuales (1040, 1040-SR, 1040-NR), declaraciones empresariales (1120, 1120-S, 1065), anexos (A hasta SE), y declaraciones internacionales incluyendo FBAR (FinCEN 114), FATCA (Formulario 8938) y Formulario 2555 para exclusión de ingresos en el extranjero." },
+
+  "faq.q3": { en: "Do you help US citizens living abroad?", es: "¿Ayudan a ciudadanos estadounidenses viviendo en el extranjero?" },
+  "faq.a3": { en: "Yes! We specialize in expat tax filing. We handle FBAR, FATCA, Foreign Tax Credits (Form 1116), and the Foreign Earned Income Exclusion (Form 2555) for US citizens and residents living or working overseas.", es: "¡Sí! Nos especializamos en declaraciones de expatriados. Manejamos FBAR, FATCA, Créditos Fiscales Extranjeros (Formulario 1116) y la Exclusión de Ingresos en el Extranjero (Formulario 2555) para ciudadanos y residentes estadounidenses viviendo o trabajando en el exterior." },
+
+  "faq.q4": { en: "How much does your service cost?", es: "¿Cuánto cuesta su servicio?" },
+  "faq.a4": { en: "Our pricing depends on the complexity of your return. Simple W-2 returns start at $199, while business returns and complex filings are quoted based on your specific situation. Contact us for a free estimate.", es: "Nuestros precios dependen de la complejidad de su declaración. Las declaraciones simples W-2 comienzan en $199, mientras que las declaraciones empresariales y presentaciones complejas se cotizan según su situación específica. Contáctenos para un presupuesto gratuito." },
+
+  "faq.q5": { en: "Is my financial data secure?", es: "¿Están seguros mis datos financieros?" },
+  "faq.a5": { en: "Absolutely. We use bank-level 256-bit encryption and are IRS-authorized e-file providers. Your documents are stored securely and accessible only to you and your assigned tax professional.", es: "Absolutamente. Utilizamos cifrado de nivel bancario de 256 bits y somos proveedores autorizados de e-file del IRS. Sus documentos se almacenan de forma segura y son accesibles solo para usted y su profesional fiscal asignado." },
+
+  "faq.q6": { en: "Can you help with back taxes or unfiled returns?", es: "¿Pueden ayudar con impuestos atrasados o declaraciones no presentadas?" },
+  "faq.a6": { en: "Yes, we help clients file returns for prior years, submit Form 1040-X amendments, and negotiate with the IRS on penalty abatement and installment agreements for outstanding tax liabilities.", es: "Sí, ayudamos a clientes a presentar declaraciones de años anteriores, enviar enmiendas del Formulario 1040-X y negociar con el IRS sobre reducción de penalidades y acuerdos de pago para obligaciones fiscales pendientes." },
+
+  "faq.q7": { en: "What is the deadline for filing my taxes?", es: "¿Cuál es la fecha límite para declarar mis impuestos?" },
+  "faq.a7": { en: "For most individual taxpayers, the deadline is April 15. US citizens abroad get an automatic extension to June 15. We can also file Form 4868 for a 6-month extension to October 15 if needed.", es: "Para la mayoría de contribuyentes individuales, la fecha límite es el 15 de abril. Los ciudadanos estadounidenses en el extranjero obtienen una extensión automática hasta el 15 de junio. También podemos presentar el Formulario 4868 para una extensión de 6 meses hasta el 15 de octubre si es necesario." },
+
+  "faq.q8": { en: "How do I get started?", es: "¿Cómo empiezo?" },
+  "faq.a8": { en: "Simply create a free account on our portal, upload your tax documents, and your assigned Enrolled Agent will review everything and prepare your return. You can e-sign and approve it right from your dashboard.", es: "Simplemente cree una cuenta gratuita en nuestro portal, suba sus documentos fiscales, y su Agente Inscrito asignado revisará todo y preparará su declaración. Puede firmar electrónicamente y aprobarla directamente desde su panel." },
 };
 
 const LanguageContext = createContext<LanguageContextType>({
