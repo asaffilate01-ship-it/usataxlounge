@@ -16,13 +16,13 @@ const FAQSection = () => {
   }));
 
   return (
-    <section id="faq" className="py-24 bg-secondary/50">
+    <section id="faq" className="py-14 md:py-20 bg-secondary/50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-14"
         >
           <span className="text-sm font-semibold tracking-wider uppercase text-accent">
             {t("faq.label")}
