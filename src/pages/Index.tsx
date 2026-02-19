@@ -5,6 +5,7 @@ import TaxFormsSection from "@/components/landing/TaxFormsSection";
 import WhyUsSection from "@/components/landing/WhyUsSection";
 import ProcessSection from "@/components/landing/ProcessSection";
 import BlogSection from "@/components/landing/BlogSection";
+import ContactSection from "@/components/landing/ContactSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
 
@@ -18,6 +19,7 @@ const Index = () => {
       <WhyUsSection />
       <ProcessSection />
       <BlogSection />
+      <ContactSection />
       <CTASection />
       <Footer />
     </div>

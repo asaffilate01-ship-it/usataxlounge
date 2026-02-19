@@ -14,14 +14,14 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          <Logo size="md" />
+        <div className="flex items-center justify-between h-24">
+          <Logo size="lg" />
 
           <div className="hidden md:flex items-center gap-8">
             <a href="#services" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.services")}</a>
             <a href="#why-us" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.whyUs")}</a>
             <a href="#process" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.process")}</a>
-            <a href="#blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.blog")}</a>
+            <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.blog")}</Link>
             <a href="#contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.contact")}</a>
           </div>
 
@@ -51,7 +51,7 @@ const Navbar = () => {
               <a href="#services" className="text-sm font-medium text-muted-foreground py-2">{t("nav.services")}</a>
               <a href="#why-us" className="text-sm font-medium text-muted-foreground py-2">{t("nav.whyUs")}</a>
               <a href="#process" className="text-sm font-medium text-muted-foreground py-2">{t("nav.process")}</a>
-              <a href="#blog" className="text-sm font-medium text-muted-foreground py-2">{t("nav.blog")}</a>
+              <Link to="/blog" className="text-sm font-medium text-muted-foreground py-2">{t("nav.blog")}</Link>
               <a href="#contact" className="text-sm font-medium text-muted-foreground py-2">{t("nav.contact")}</a>
               <div className="flex gap-3 pt-2">
                 <Button variant="outline" asChild className="flex-1 border-primary/30">

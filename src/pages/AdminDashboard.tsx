@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -19,12 +19,15 @@ import {
   TrendingUp,
   BarChart3,
   Shield,
+  Inbox,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -89,8 +92,22 @@ const AdminDashboard = () => {
     { id: "clients", label: "Clients", icon: Users },
     { id: "filings", label: "Filings & IRS", icon: FileText },
     { id: "messages", label: "Messages", icon: MessageSquare, badge: 2 },
+    { id: "inquiries", label: "Inquiries", icon: Inbox },
     { id: "settings", label: "Settings", icon: Settings },
   ];
+
+  // Fetch contact messages
+  const [contactMessages, setContactMessages] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const { data } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (data) setContactMessages(data);
+    };
+    fetchMessages();
+  }, [activeTab]);
 
   const filteredClients = clients.filter(
     (c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -364,6 +381,51 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Inquiries - Contact Form Messages */}
+          {activeTab === "inquiries" && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="font-display text-2xl font-bold text-foreground">Contact Form Inquiries</h2>
+              {contactMessages.length === 0 ? (
+                <div className="rounded-2xl border border-border bg-card shadow-elegant p-12 text-center">
+                  <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No inquiries yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {contactMessages.map((msg) => (
+                    <div key={msg.id} className={`p-5 rounded-2xl border bg-card shadow-elegant ${!msg.read ? "border-accent/30" : "border-border"}`}>
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-medium text-foreground">{msg.name}</p>
+                            {!msg.read && <Badge className="bg-accent/10 text-accent text-xs">New</Badge>}
+                          </div>
+                          <p className="text-xs text-muted-foreground">{msg.email} {msg.phone && `· ${msg.phone}`}</p>
+                        </div>
+                        <span className="text-xs text-muted-foreground">{new Date(msg.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <p className="text-sm font-medium text-foreground mb-1">{msg.subject}</p>
+                      <p className="text-sm text-muted-foreground">{msg.message}</p>
+                      {!msg.read && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="mt-3 text-accent"
+                          onClick={async () => {
+                            await supabase.from("contact_messages").update({ read: true }).eq("id", msg.id);
+                            setContactMessages(prev => prev.map(m => m.id === msg.id ? { ...m, read: true } : m));
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-1" /> Mark Read
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

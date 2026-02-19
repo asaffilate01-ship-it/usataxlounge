@@ -1,20 +1,94 @@
+import { Link } from "react-router-dom";
 import Logo from "@/components/Logo";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Facebook, Instagram, Linkedin, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
   const { t } = useLanguage();
 
+  const socialLinks = [
+    { icon: Facebook, href: "#", label: "Facebook" },
+    { icon: Instagram, href: "#", label: "Instagram" },
+    { icon: Twitter, href: "#", label: "Twitter" },
+    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    { icon: Youtube, href: "#", label: "YouTube" },
+  ];
+
   return (
-    <footer className="bg-card border-t border-border py-12">
+    <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <Logo size="sm" />
-          <p className="text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} TaxLounge. {t("footer.copy")}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 py-16">
+          {/* Brand */}
+          <div className="space-y-5">
+            <Logo size="lg" />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {t("footer.copy")}
+            </p>
+            <div className="flex gap-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  aria-label={social.label}
+                  className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                >
+                  <social.icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider mb-4">{t("footer.servicesTitle")}</h4>
+            <ul className="space-y-2.5">
+              {["Individual Tax Returns", "Expat & FBAR Filing", "Business Tax Filing", "IRS Representation", "Tax Planning"].map((item) => (
+                <li key={item}>
+                  <a href="#services" className="text-sm text-muted-foreground hover:text-accent transition-colors">{item}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider mb-4">{t("footer.companyTitle")}</h4>
+            <ul className="space-y-2.5">
+              <li><a href="#why-us" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.whyUs")}</a></li>
+              <li><a href="#process" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.process")}</a></li>
+              <li><Link to="/blog" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.blog")}</Link></li>
+              <li><a href="#contact" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.contact")}</a></li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider mb-4">{t("footer.contactTitle")}</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2.5">
+                <Phone className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                <a href="tel:+13055550190" className="text-sm text-muted-foreground hover:text-accent transition-colors">(305) 555-0190</a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                <a href="mailto:info@taxlounge.com" className="text-sm text-muted-foreground hover:text-accent transition-colors">info@taxlounge.com</a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                <span className="text-sm text-muted-foreground">{t("contact.address")}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-border py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} TaxLounge. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("footer.terms")}</a>
+            <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</a>
+            <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.terms")}</a>
+            <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.sitemap")}</a>
           </div>
         </div>
       </div>

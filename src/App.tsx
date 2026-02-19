@@ -8,6 +8,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import BlogPage from "./pages/BlogPage";
+import BlogArticlePage from "./pages/BlogArticlePage";
 import ClientDashboard from "./pages/ClientDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
@@ -25,6 +27,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogArticlePage />} />
               <Route path="/client" element={
                 <ProtectedRoute requiredRole="client">
                   <ClientDashboard />
