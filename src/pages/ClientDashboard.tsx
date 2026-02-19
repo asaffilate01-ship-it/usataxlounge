@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Shield,
   Home,
@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const filings = [
   { id: 1, year: "2024", type: "Form 1040", status: "Filed", date: "Apr 10, 2025", refund: "$3,240" },
@@ -55,6 +56,17 @@ const ClientDashboard = () => {
   const [newMessage, setNewMessage] = useState("");
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
 
   const navItems = [
     { id: "overview", label: "Overview", icon: Home },
@@ -93,13 +105,13 @@ const ClientDashboard = () => {
           ))}
         </nav>
         <div className="p-3 border-t border-border">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -113,8 +125,9 @@ const ClientDashboard = () => {
             <h1 className="font-display text-xl font-semibold text-foreground">Client Dashboard</h1>
           </div>
           <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground mr-2 hidden sm:inline">{profile?.full_name}</span>
             <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-semibold text-sm">
-              JD
+              {initials}
             </div>
           </div>
         </header>

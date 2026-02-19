@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Shield, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -13,18 +15,43 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user, userRole } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user && userRole) {
+      navigate(userRole === "admin" ? "/admin" : "/client", { replace: true });
+    }
+  }, [user, userRole, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo: navigate to client dashboard
-    toast({
-      title: isSignUp ? "Account Created" : "Welcome Back",
-      description: "Redirecting to your dashboard...",
-    });
-    setTimeout(() => {
-      window.location.href = "/client";
-    }, 1000);
+    setIsLoading(true);
+
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: name },
+            emailRedirectTo: window.location.origin,
+          },
+        });
+        if (error) throw error;
+        toast({ title: "Account Created", description: "Welcome to TaxLounge!" });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast({ title: "Welcome Back", description: "Redirecting to your dashboard..." });
+      }
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -102,6 +129,7 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
+                  minLength={6}
                   required
                 />
                 <button
@@ -114,8 +142,12 @@ const Auth = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-gold-dark shadow-gold">
-              {isSignUp ? "Create Account" : "Sign In"}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-accent text-accent-foreground hover:bg-gold-dark shadow-gold"
+            >
+              {isLoading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </Button>
           </form>
 
@@ -130,11 +162,6 @@ const Auth = () => {
               {isSignUp ? "Sign In" : "Sign Up"}
             </button>
           </div>
-
-          <p className="text-xs text-muted-foreground text-center mt-6">
-            Demo: Use the admin dashboard at{" "}
-            <Link to="/admin" className="text-accent hover:underline">/admin</Link>
-          </p>
         </div>
       </div>
     </div>
