@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Shield,
   Home,
   Users,
   FileText,
@@ -23,6 +22,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const clients = [
   { id: 1, name: "John Doe", email: "john@example.com", status: "In Progress", forms: "1040", year: "2024" },
@@ -93,12 +94,7 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 border-r border-border bg-card flex flex-col`}>
         <div className="p-4 border-b border-border">
-          <Link to="/" className="flex items-center gap-2">
-            <Shield className="h-7 w-7 text-accent" />
-            <span className="font-display text-lg font-bold text-foreground">
-              Tax<span className="text-accent">Lounge</span>
-            </span>
-          </Link>
+          <Logo size="sm" />
           <p className="text-xs text-muted-foreground mt-1">Admin Portal</p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
@@ -145,6 +141,7 @@ const AdminDashboard = () => {
             <h1 className="font-display text-xl font-semibold text-foreground">Admin Dashboard</h1>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button className="relative text-muted-foreground hover:text-foreground">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
@@ -219,7 +216,7 @@ const AdminDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-2xl font-bold text-foreground">Clients</h2>
-                <Button className="bg-accent text-accent-foreground hover:bg-gold-dark">
+                <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                   <Plus className="h-4 w-4 mr-2" /> Add Client
                 </Button>
               </div>
@@ -273,7 +270,7 @@ const AdminDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-2xl font-bold text-foreground">Filings & IRS Submissions</h2>
-                <Button className="bg-accent text-accent-foreground hover:bg-gold-dark">
+                <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                   <Upload className="h-4 w-4 mr-2" /> Submit to IRS
                 </Button>
               </div>
@@ -333,7 +330,7 @@ const AdminDashboard = () => {
                           />
                           <Button
                             size="sm"
-                            className="bg-accent text-accent-foreground hover:bg-gold-dark"
+                            className="bg-accent text-accent-foreground hover:bg-brand-green-dark"
                             onClick={() => { setReplyText(""); toast({ title: "Reply sent to " + m.client }); }}
                           >
                             <SendIcon className="h-4 w-4" />
@@ -362,7 +359,11 @@ const AdminDashboard = () => {
                     <label className="text-sm font-medium text-foreground block mb-1.5">EFIN</label>
                     <Input defaultValue="••••••" type="password" />
                   </div>
-                  <Button className="bg-accent text-accent-foreground hover:bg-gold-dark">Save Configuration</Button>
+                  <div>
+                    <label className="text-sm font-medium text-foreground block mb-1.5">API Key</label>
+                    <Input defaultValue="••••••••••••" type="password" />
+                  </div>
+                  <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">Save Configuration</Button>
                 </div>
               </div>
             </div>

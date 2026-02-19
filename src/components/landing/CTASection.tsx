@@ -15,7 +15,7 @@ const CTASection = () => {
         >
           <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
             Ready to File with{" "}
-            <span className="text-gradient-gold">Confidence?</span>
+            <span className="text-gradient-accent">Confidence?</span>
           </h2>
           <p className="text-primary-foreground/70 mb-8 text-lg">
             Join thousands of clients who trust TaxLounge's IRS Enrolled Agents
@@ -25,7 +25,7 @@ const CTASection = () => {
             <Button
               size="lg"
               asChild
-              className="bg-accent text-accent-foreground hover:bg-gold-dark shadow-gold text-base px-8"
+              className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent text-base px-8"
             >
               <Link to="/auth?tab=signup">
                 Create Free Account

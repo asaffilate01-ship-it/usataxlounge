@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -27,7 +27,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 mb-6"
           >
-            <Shield className="h-4 w-4 text-accent" />
+            <CheckCircle2 className="h-4 w-4 text-accent" />
             <span className="text-sm font-medium text-accent">
               IRS Authorised Enrolled Agents
             </span>
@@ -39,8 +39,8 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-tight mb-6"
           >
-            Expert Tax Filing,{" "}
-            <span className="text-gradient-gold">Simplified.</span>
+            Making Tax{" "}
+            <span className="text-gradient-accent">Less Taxing.</span>
           </motion.h1>
 
           <motion.p
@@ -76,7 +76,7 @@ const HeroSection = () => {
             <Button
               size="lg"
               asChild
-              className="bg-accent text-accent-foreground hover:bg-gold-dark shadow-gold text-base px-8"
+              className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent text-base px-8"
             >
               <Link to="/auth?tab=signup">
                 Start Filing Today
