@@ -26,7 +26,7 @@ const ServicesSection = () => {
   ];
 
   return (
-    <section id="services" className="py-24 bg-background">
+    <section id="services" className="py-24 bg-secondary/30">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -45,18 +45,18 @@ const ServicesSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {services.map((service, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="group p-6 rounded-2xl border border-border bg-card shadow-elegant hover:shadow-accent transition-all duration-300 hover:border-accent/30"
+              transition={{ delay: i * 0.06 }}
+              className="group p-6 rounded-2xl border border-border bg-card shadow-elegant hover:shadow-accent hover:-translate-y-1 transition-all duration-300 hover:border-accent/30"
             >
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                <service.icon className="h-6 w-6 text-accent" />
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-300">
+                <service.icon className="h-6 w-6 text-accent group-hover:text-accent-foreground transition-colors" />
               </div>
               <h3 className="font-display text-lg font-semibold text-card-foreground mb-2">
                 {t(service.titleKey)}

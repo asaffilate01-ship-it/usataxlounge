@@ -139,6 +139,9 @@ const translations: Record<string, Record<Language, string>> = {
   "contact.address": { en: "123 Financial District, Miami, FL 33131", es: "123 Distrito Financiero, Miami, FL 33131" },
   "contact.hours": { en: "Mon-Fri 9AM-6PM EST", es: "Lun-Vie 9AM-6PM EST" },
 
+  // WhatsApp
+  "whatsapp.label": { en: "Chat with Us", es: "Escríbenos" },
+
   // Footer
   "footer.copy": { en: "IRS Authorised Enrolled Agents. Making Tax Less Taxing.", es: "Agentes Inscritos Autorizados por el IRS. Haciendo Impuestos Menos Agotadores." },
   "footer.privacy": { en: "Privacy Policy", es: "Política de Privacidad" },

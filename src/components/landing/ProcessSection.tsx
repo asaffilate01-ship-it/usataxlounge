@@ -29,7 +29,10 @@ const ProcessSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+          {/* Connecting line */}
+          <div className="hidden lg:block absolute top-16 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-accent/20 via-accent/40 to-accent/20" />
+          
           {steps.map((step, i) => (
             <motion.div
               key={i}
@@ -37,18 +40,18 @@ const ProcessSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
-              className="relative"
+              className="relative text-center"
             >
-              <div className="text-6xl font-display font-bold text-accent/10 mb-2">
-                {step.step}
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
-                <step.icon className="h-6 w-6 text-accent" />
+              <div className="relative mx-auto w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mb-5 border-2 border-accent/20">
+                <step.icon className="h-7 w-7 text-accent" />
+                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow-lg">
+                  {step.step}
+                </span>
               </div>
               <h3 className="font-display text-lg font-semibold text-foreground mb-2">
                 {t(step.titleKey)}
               </h3>
-              <p className="text-muted-foreground text-sm">{t(step.descKey)}</p>
+              <p className="text-muted-foreground text-sm max-w-xs mx-auto">{t(step.descKey)}</p>
             </motion.div>
           ))}
         </div>

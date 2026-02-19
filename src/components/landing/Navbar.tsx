@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,26 +9,70 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { t } = useLanguage();
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-card/95 backdrop-blur-xl border-b border-border shadow-elegant"
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Logo size="lg" />
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#services" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.services")}</a>
-            <a href="#why-us" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.whyUs")}</a>
-            <a href="#process" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.process")}</a>
-            <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.blog")}</Link>
-            <a href="#contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t("nav.contact")}</a>
+            {[
+              { href: "#services", label: t("nav.services") },
+              { href: "#why-us", label: t("nav.whyUs") },
+              { href: "#process", label: t("nav.process") },
+              { href: "#contact", label: t("nav.contact") },
+            ].map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors ${
+                  scrolled
+                    ? "text-muted-foreground hover:text-foreground"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                {link.label}
+              </a>
+            ))}
+            <Link
+              to="/blog"
+              className={`text-sm font-medium transition-colors ${
+                scrolled
+                  ? "text-muted-foreground hover:text-foreground"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              {t("nav.blog")}
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-3">
             <LanguageToggle />
             <ThemeToggle />
-            <Button variant="outline" asChild className="border-primary/30 hover:border-primary">
+            <Button
+              variant="outline"
+              asChild
+              className={`transition-all ${
+                scrolled
+                  ? "border-primary/30 hover:border-primary"
+                  : "border-white/30 text-white hover:bg-white/10"
+              }`}
+            >
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
             <Button asChild className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent">
@@ -39,14 +83,17 @@ const Navbar = () => {
           <div className="flex items-center gap-2 md:hidden">
             <LanguageToggle />
             <ThemeToggle />
-            <button className="text-foreground" onClick={() => setIsOpen(!isOpen)}>
+            <button
+              className={`${scrolled ? "text-foreground" : "text-white"}`}
+              onClick={() => setIsOpen(!isOpen)}
+            >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border">
+          <div className={`md:hidden py-4 border-t ${scrolled ? "border-border" : "border-white/10"}`}>
             <div className="flex flex-col gap-3">
               <a href="#services" className="text-sm font-medium text-muted-foreground py-2">{t("nav.services")}</a>
               <a href="#why-us" className="text-sm font-medium text-muted-foreground py-2">{t("nav.whyUs")}</a>
