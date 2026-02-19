@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/components/Logo";
-import ThemeToggle from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -21,6 +21,7 @@ const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, userRole } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (user && userRole) {
@@ -43,7 +44,7 @@ const Auth = () => {
           },
         });
         if (error) throw error;
-        toast({ title: "Account Created", description: "Welcome to TaxLounge!" });
+        toast({ title: "Account Created", description: "Please check your email to verify your account." });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -64,11 +65,11 @@ const Auth = () => {
           <div className="mb-10">
             <Logo size="lg" />
           </div>
-          <h2 className="font-display text-4xl font-bold text-primary-foreground mb-4">
-            Making Tax{" "}
-            <span className="text-gradient-accent">Less Taxing.</span>
+          <h2 className="font-display text-4xl font-bold text-white mb-4">
+            {t("hero.title1")}{" "}
+            <span className="text-gradient-accent">{t("hero.title2")}</span>
           </h2>
-          <p className="text-primary-foreground/60 text-lg">
+          <p className="text-white/60 text-lg">
             Secure portal for uploading documents, reviewing returns, and
             communicating with your IRS Enrolled Agent.
           </p>
@@ -77,9 +78,9 @@ const Auth = () => {
 
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
-        <div className="absolute top-4 right-4">
-          <ThemeToggle />
-        </div>
+        <Button variant="ghost" size="sm" asChild className="absolute top-4 left-4 text-muted-foreground">
+          <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> Back</Link>
+        </Button>
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
             <Logo size="md" />

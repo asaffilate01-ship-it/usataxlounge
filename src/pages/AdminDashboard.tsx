@@ -29,7 +29,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const clients = [
   { id: 1, name: "John Doe", email: "john@example.com", status: "In Progress", forms: "1040", year: "2024" },
@@ -114,8 +113,8 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
-      {/* Sidebar - brand blue gradient */}
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar */}
       <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col`}
         style={{ background: "var(--gradient-hero)" }}>
         <div className="p-5 border-b border-white/10">
@@ -169,17 +168,16 @@ const AdminDashboard = () => {
 
       {/* Main */}
       <main className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6">
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
             </button>
-            <h1 className="font-display text-xl font-semibold text-foreground">
+            <h1 className="font-display text-lg font-semibold text-foreground">
               {navItems.find(n => n.id === activeTab)?.label || "Dashboard"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
-            <ThemeToggle />
             <button className="relative text-muted-foreground hover:text-foreground">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
@@ -198,21 +196,21 @@ const AdminDashboard = () => {
                   { label: "Pending Review", value: "12", sub: "Awaiting approval", icon: Clock, color: "bg-warning/10 text-warning" },
                   { label: "IRS Submissions", value: "86", sub: "94% acceptance", icon: TrendingUp, color: "bg-accent/10 text-accent" },
                 ].map((stat) => (
-                  <div key={stat.label} className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                  <div key={stat.label} className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
                       <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
                         <stat.icon className="h-5 w-5" />
                       </div>
                     </div>
-                    <p className="text-3xl font-display font-bold text-foreground">{stat.value}</p>
+                    <p className="text-2xl font-display font-bold text-foreground">{stat.value}</p>
                     <p className="text-xs text-muted-foreground mt-1">{stat.sub}</p>
                   </div>
                 ))}
               </div>
 
               <div className="grid lg:grid-cols-2 gap-6">
-                <div className="rounded-2xl border border-border bg-card shadow-elegant p-6">
+                <div className="rounded-2xl border border-border bg-card shadow-elegant p-5">
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Submissions</h3>
                   <div className="space-y-3">
                     {submissions.slice(0, 3).map((s) => (
@@ -227,7 +225,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-border bg-card shadow-elegant p-6">
+                <div className="rounded-2xl border border-border bg-card shadow-elegant p-5">
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4">New Messages</h3>
                   <div className="space-y-3">
                     {adminMessages.map((m) => (
@@ -255,7 +253,7 @@ const AdminDashboard = () => {
           {activeTab === "clients" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
-                <h2 className="font-display text-2xl font-bold text-foreground">Clients</h2>
+                <h2 className="font-display text-xl font-bold text-foreground">Clients</h2>
                 <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                   <Plus className="h-4 w-4 mr-2" /> Add Client
                 </Button>
@@ -309,7 +307,7 @@ const AdminDashboard = () => {
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
-                <h2 className="font-display text-2xl font-bold text-foreground">Filings & IRS Submissions</h2>
+                <h2 className="font-display text-xl font-bold text-foreground">Filings & IRS Submissions</h2>
                 <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                   <Upload className="h-4 w-4 mr-2" /> Submit to IRS
                 </Button>
@@ -346,7 +344,7 @@ const AdminDashboard = () => {
           {/* Messages */}
           {activeTab === "messages" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-2xl font-bold text-foreground">Client Messages</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">Client Messages</h2>
               <div className="space-y-4">
                 {adminMessages.map((m) => (
                   <div key={m.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
@@ -387,7 +385,7 @@ const AdminDashboard = () => {
           {/* Inquiries - Contact Form Messages */}
           {activeTab === "inquiries" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-2xl font-bold text-foreground">Contact Form Inquiries</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">Contact Form Inquiries</h2>
               {contactMessages.length === 0 ? (
                 <div className="rounded-2xl border border-border bg-card shadow-elegant p-12 text-center">
                   <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -432,7 +430,7 @@ const AdminDashboard = () => {
           {/* Settings */}
           {activeTab === "settings" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-2xl font-bold text-foreground">Settings</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">Settings</h2>
               <div className="rounded-2xl border border-border bg-card shadow-elegant p-6 max-w-lg">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-4">IRS API Configuration</h3>
                 <div className="space-y-4">

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
-import ThemeToggle from "@/components/ThemeToggle";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -62,15 +61,14 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <LanguageToggle />
-            <ThemeToggle scrolled={scrolled} />
+            <LanguageToggle scrolled={scrolled} />
             <Button
               variant="outline"
               asChild
               className={`transition-all ${
                 scrolled
                   ? "border-primary/30 hover:border-primary"
-                  : "border-white/50 text-white bg-white/10 hover:bg-white/20"
+                  : "border-white/40 text-white bg-white/10 hover:bg-white/20"
               }`}
             >
               <Link to="/auth">{t("nav.signIn")}</Link>
@@ -81,8 +79,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
-            <LanguageToggle />
-            <ThemeToggle scrolled={scrolled} />
+            <LanguageToggle scrolled={scrolled} />
             <button
               className={`${scrolled ? "text-foreground" : "text-white"}`}
               onClick={() => setIsOpen(!isOpen)}
