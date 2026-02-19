@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  Shield,
   Home,
   FileText,
   DollarSign,
@@ -9,32 +8,43 @@ import {
   Download,
   PenLine,
   LogOut,
-  Upload,
   Plus,
   Send,
   CheckCircle2,
   Clock,
   AlertCircle,
   ChevronDown,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
+import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const filings = [
   { id: 1, year: "2024", type: "Form 1040", status: "Filed", date: "Apr 10, 2025", refund: "$3,240" },
   { id: 2, year: "2023", type: "Form 1040", status: "Filed", date: "Mar 28, 2024", refund: "$2,890" },
   { id: 3, year: "2024", type: "Schedule C", status: "In Review", date: "Pending", refund: "—" },
-];
-
-const incomeExpenses = [
-  { id: 1, category: "W-2 Wages", type: "Income", amount: "$85,000", source: "Acme Corp" },
-  { id: 2, category: "1099-INT", type: "Income", amount: "$1,200", source: "Chase Bank" },
-  { id: 3, category: "Home Office", type: "Expense", amount: "$4,800", source: "Deduction" },
-  { id: 4, category: "Health Insurance", type: "Expense", amount: "$6,000", source: "Deduction" },
 ];
 
 const messages = [
@@ -58,6 +68,23 @@ const ClientDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
+
+  // Add entry form state
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [newEntry, setNewEntry] = useState({ type: "income" as "income" | "expense", category: "", description: "", amount: "" });
+
+  const handleAddEntry = async () => {
+    if (!newEntry.category || !newEntry.amount) return;
+    await addItem({
+      type: newEntry.type,
+      category: newEntry.category,
+      description: newEntry.description,
+      amount: parseFloat(newEntry.amount),
+    });
+    setNewEntry({ type: "income", category: "", description: "", amount: "" });
+    setAddDialogOpen(false);
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -76,17 +103,15 @@ const ClientDashboard = () => {
     { id: "messages", label: "Messages", icon: MessageSquare },
   ];
 
+  const totalIncome = incomeExpenses.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
+  const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
+
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 border-r border-border bg-card flex flex-col`}>
         <div className="p-4 border-b border-border">
-          <Link to="/" className="flex items-center gap-2">
-            <Shield className="h-7 w-7 text-accent" />
-            <span className="font-display text-lg font-bold text-foreground">
-              Tax<span className="text-accent">Lounge</span>
-            </span>
-          </Link>
+          <Logo size="sm" />
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => (
@@ -125,6 +150,7 @@ const ClientDashboard = () => {
             <h1 className="font-display text-xl font-semibold text-foreground">Client Dashboard</h1>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <span className="text-sm text-muted-foreground mr-2 hidden sm:inline">{profile?.full_name}</span>
             <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-semibold text-sm">
               {initials}
@@ -138,19 +164,19 @@ const ClientDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                  <p className="text-sm text-muted-foreground mb-1">Tax Year 2024</p>
-                  <p className="text-2xl font-display font-bold text-foreground">In Progress</p>
-                  <Badge className="mt-2 bg-warning/10 text-warning border-warning/20">Under Review</Badge>
+                  <p className="text-sm text-muted-foreground mb-1">Total Income</p>
+                  <p className="text-2xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{incomeExpenses.filter(i => i.type === "income").length} entries</p>
                 </div>
                 <div className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                  <p className="text-sm text-muted-foreground mb-1">Estimated Refund</p>
-                  <p className="text-2xl font-display font-bold text-gradient-gold">$3,240</p>
-                  <p className="text-xs text-muted-foreground mt-2">Based on current filings</p>
+                  <p className="text-sm text-muted-foreground mb-1">Total Expenses</p>
+                  <p className="text-2xl font-display font-bold text-destructive">${totalExpenses.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{incomeExpenses.filter(i => i.type === "expense").length} entries</p>
                 </div>
                 <div className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                  <p className="text-sm text-muted-foreground mb-1">Documents</p>
-                  <p className="text-2xl font-display font-bold text-foreground">6 Uploaded</p>
-                  <p className="text-xs text-success mt-2">All documents received</p>
+                  <p className="text-sm text-muted-foreground mb-1">Net Taxable</p>
+                  <p className="text-2xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-2">Current tax year</p>
                 </div>
               </div>
 
@@ -179,41 +205,118 @@ const ClientDashboard = () => {
             </div>
           )}
 
-          {/* Income & Expenses */}
+          {/* Income & Expenses - WIRED TO DB */}
           {activeTab === "income" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-2xl font-bold text-foreground">Income & Expenses</h2>
-                <Button className="bg-accent text-accent-foreground hover:bg-gold-dark">
-                  <Plus className="h-4 w-4 mr-2" /> Add Entry
-                </Button>
+                <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                      <Plus className="h-4 w-4 mr-2" /> Add Entry
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Income/Expense Entry</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-2">
+                      <div>
+                        <Label>Type</Label>
+                        <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense" })}>
+                          <SelectTrigger className="mt-1.5">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="income">Income</SelectItem>
+                            <SelectItem value="expense">Expense</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Category</Label>
+                        <Input className="mt-1.5" placeholder="e.g. W-2 Wages, Home Office" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Description (optional)</Label>
+                        <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.description} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Amount ($)</Label>
+                        <Input className="mt-1.5" type="number" min="0" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
+                      </div>
+                      <Button onClick={handleAddEntry} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                        Add Entry
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
-              <div className="rounded-xl border border-border bg-card shadow-elegant overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Source</th>
-                      <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {incomeExpenses.map((item) => (
-                      <tr key={item.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="px-5 py-3 text-sm font-medium text-foreground">{item.category}</td>
-                        <td className="px-5 py-3">
-                          <Badge variant="secondary" className={item.type === "Income" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}>
-                            {item.type}
-                          </Badge>
-                        </td>
-                        <td className="px-5 py-3 text-sm text-muted-foreground">{item.source}</td>
-                        <td className="px-5 py-3 text-sm font-semibold text-foreground text-right">{item.amount}</td>
+
+              {ieLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                </div>
+              ) : incomeExpenses.length === 0 ? (
+                <div className="text-center py-20 text-muted-foreground">
+                  <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p className="font-display text-lg">No entries yet</p>
+                  <p className="text-sm mt-1">Click "Add Entry" to start tracking your income and expenses.</p>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-border bg-card shadow-elegant overflow-hidden">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/50">
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Description</th>
+                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Amount</th>
+                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {incomeExpenses.map((item) => (
+                        <tr key={item.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                          <td className="px-5 py-3 text-sm font-medium text-foreground">{item.category}</td>
+                          <td className="px-5 py-3">
+                            <Badge variant="secondary" className={item.type === "income" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}>
+                              {item.type === "income" ? "Income" : "Expense"}
+                            </Badge>
+                          </td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground">{item.description || "—"}</td>
+                          <td className="px-5 py-3 text-sm font-semibold text-foreground text-right">
+                            ${Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          </td>
+                          <td className="px-5 py-3 text-right">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => deleteItem(item.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Totals summary */}
+              {incomeExpenses.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-lg border border-border bg-success/5">
+                    <p className="text-xs text-muted-foreground">Total Income</p>
+                    <p className="text-lg font-semibold text-success">${totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-border bg-destructive/5">
+                    <p className="text-xs text-muted-foreground">Total Expenses</p>
+                    <p className="text-lg font-semibold text-destructive">${totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-border bg-accent/5">
+                    <p className="text-xs text-muted-foreground">Net</p>
+                    <p className="text-lg font-semibold text-foreground">${(totalIncome - totalExpenses).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -264,12 +367,12 @@ const ClientDashboard = () => {
                     <p className="text-muted-foreground text-sm mt-1">Your return is ready for review. Please review the details and sign to authorize filing.</p>
                     <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border">
                       <p className="text-sm text-foreground"><strong>Filing Status:</strong> Single</p>
-                      <p className="text-sm text-foreground mt-1"><strong>Adjusted Gross Income:</strong> $85,000</p>
-                      <p className="text-sm text-foreground mt-1"><strong>Total Tax:</strong> $12,400</p>
-                      <p className="text-sm text-foreground mt-1"><strong>Estimated Refund:</strong> <span className="text-success font-semibold">$3,240</span></p>
+                      <p className="text-sm text-foreground mt-1"><strong>Adjusted Gross Income:</strong> ${totalIncome.toLocaleString()}</p>
+                      <p className="text-sm text-foreground mt-1"><strong>Total Deductions:</strong> ${totalExpenses.toLocaleString()}</p>
+                      <p className="text-sm text-foreground mt-1"><strong>Net Taxable:</strong> <span className="text-accent font-semibold">${(totalIncome - totalExpenses).toLocaleString()}</span></p>
                     </div>
                     <div className="flex gap-3 mt-6">
-                      <Button className="bg-accent text-accent-foreground hover:bg-gold-dark shadow-gold" onClick={() => toast({ title: "Form Signed!", description: "Your 1040 has been approved and submitted for e-filing." })}>
+                      <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent" onClick={() => toast({ title: "Form Signed!", description: "Your 1040 has been approved and submitted for e-filing." })}>
                         <PenLine className="h-4 w-4 mr-2" /> E-Sign & Approve
                       </Button>
                       <Button variant="outline">
@@ -304,7 +407,7 @@ const ClientDashboard = () => {
                     placeholder="Type a message..."
                     className="flex-1"
                   />
-                  <Button className="bg-accent text-accent-foreground hover:bg-gold-dark" onClick={() => { setNewMessage(""); toast({ title: "Message sent" }); }}>
+                  <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark" onClick={() => { setNewMessage(""); toast({ title: "Message sent" }); }}>
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>

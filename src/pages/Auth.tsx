@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Shield, Eye, EyeOff } from "lucide-react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -59,14 +61,12 @@ const Auth = () => {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 gradient-hero items-center justify-center p-12">
         <div className="max-w-md">
-          <Link to="/" className="flex items-center gap-2 mb-10">
-            <Shield className="h-10 w-10 text-accent" />
-            <span className="font-display text-2xl font-bold text-primary-foreground">
-              Tax<span className="text-accent">Lounge</span>
-            </span>
-          </Link>
+          <div className="mb-10">
+            <Logo size="lg" />
+          </div>
           <h2 className="font-display text-4xl font-bold text-primary-foreground mb-4">
-            Your Tax Filing, <span className="text-gradient-gold">Handled.</span>
+            Making Tax{" "}
+            <span className="text-gradient-accent">Less Taxing.</span>
           </h2>
           <p className="text-primary-foreground/60 text-lg">
             Secure portal for uploading documents, reviewing returns, and
@@ -76,14 +76,14 @@ const Auth = () => {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-background">
+      <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
         <div className="w-full max-w-md">
-          <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
-            <Shield className="h-8 w-8 text-accent" />
-            <span className="font-display text-xl font-bold text-foreground">
-              Tax<span className="text-accent">Lounge</span>
-            </span>
-          </Link>
+          <div className="mb-8 lg:hidden">
+            <Logo size="md" />
+          </div>
 
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">
             {isSignUp ? "Create Account" : "Welcome Back"}
@@ -145,7 +145,7 @@ const Auth = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-accent text-accent-foreground hover:bg-gold-dark shadow-gold"
+              className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
             >
               {isLoading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </Button>
@@ -157,7 +157,7 @@ const Auth = () => {
             </span>
             <button
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm font-medium text-accent hover:text-gold-dark transition-colors"
+              className="text-sm font-medium text-accent hover:text-brand-green-dark transition-colors"
             >
               {isSignUp ? "Sign In" : "Sign Up"}
             </button>
