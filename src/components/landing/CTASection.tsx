@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CTASection = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="contact" className="py-24 gradient-hero">
       <div className="container mx-auto px-4">
@@ -14,12 +17,11 @@ const CTASection = () => {
           className="text-center max-w-2xl mx-auto"
         >
           <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
-            Ready to File with{" "}
-            <span className="text-gradient-accent">Confidence?</span>
+            {t("cta.title1")}{" "}
+            <span className="text-gradient-accent">{t("cta.title2")}</span>
           </h2>
           <p className="text-primary-foreground/70 mb-8 text-lg">
-            Join thousands of clients who trust TaxLounge's IRS Enrolled Agents
-            with their taxes. Get started in minutes.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-wrap gap-4 justify-center mb-12">
             <Button
@@ -28,7 +30,7 @@ const CTASection = () => {
               className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent text-base px-8"
             >
               <Link to="/auth?tab=signup">
-                Create Free Account
+                {t("cta.button")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>

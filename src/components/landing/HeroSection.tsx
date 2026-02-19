@@ -2,15 +2,18 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
-const highlights = [
-  "IRS Enrolled Agents",
-  "Individual & Business Returns",
-  "IRS Representation",
-];
-
 const HeroSection = () => {
+  const { t } = useLanguage();
+
+  const highlights = [
+    t("hero.highlight1"),
+    t("hero.highlight2"),
+    t("hero.highlight3"),
+  ];
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       <div
@@ -29,7 +32,7 @@ const HeroSection = () => {
           >
             <CheckCircle2 className="h-4 w-4 text-accent" />
             <span className="text-sm font-medium text-accent">
-              IRS Authorised Enrolled Agents
+              {t("hero.badge")}
             </span>
           </motion.div>
 
@@ -39,8 +42,8 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-tight mb-6"
           >
-            Making Tax{" "}
-            <span className="text-gradient-accent">Less Taxing.</span>
+            {t("hero.title1")}{" "}
+            <span className="text-gradient-accent">{t("hero.title2")}</span>
           </motion.h1>
 
           <motion.p
@@ -49,8 +52,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-primary-foreground/70 mb-8 max-w-2xl font-sans"
           >
-            We represent you before the IRS, file all federal and state forms,
-            and maximize your refund — for individuals and businesses alike.
+            {t("hero.subtitle")}
           </motion.p>
 
           <motion.div
@@ -79,7 +81,7 @@ const HeroSection = () => {
               className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent text-base px-8"
             >
               <Link to="/auth?tab=signup">
-                Start Filing Today
+                {t("hero.cta")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -89,7 +91,7 @@ const HeroSection = () => {
               asChild
               className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 text-base px-8"
             >
-              <a href="#services">Our Services</a>
+              <a href="#services">{t("hero.cta2")}</a>
             </Button>
           </motion.div>
         </div>
