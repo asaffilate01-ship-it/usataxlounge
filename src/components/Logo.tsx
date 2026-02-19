@@ -3,15 +3,16 @@ import taxloungeLogo from "@/assets/taxlounge-logo.png";
 
 interface LogoProps {
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   showTagline?: boolean;
 }
 
 const Logo = ({ className = "", size = "md", showTagline = false }: LogoProps) => {
-const sizeClasses = {
-    sm: "h-10",
-    md: "h-12",
-    lg: "h-16",
+  const sizeClasses = {
+    sm: "h-12",
+    md: "h-16",
+    lg: "h-20",
+    xl: "h-24",
   };
 
   return (
