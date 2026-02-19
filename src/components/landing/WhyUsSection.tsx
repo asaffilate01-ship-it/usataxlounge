@@ -14,9 +14,9 @@ const WhyUsSection = () => {
   ];
 
   const stats = [
-    { value: "5,000+", labelKey: "whyUs.s1" },
+    { value: "1,200+", labelKey: "whyUs.s1" },
     { value: "98%", labelKey: "whyUs.s2" },
-    { value: "$12M+", labelKey: "whyUs.s3" },
+    { value: "$4.2M+", labelKey: "whyUs.s3" },
     { value: "20+", labelKey: "whyUs.s4" },
   ];
 
@@ -65,7 +65,7 @@ const WhyUsSection = () => {
               loading="lazy"
             />
             <div className="absolute -bottom-6 -left-6 bg-card border border-border rounded-2xl shadow-elegant p-5">
-              <p className="text-3xl font-display font-bold text-gradient-accent">5,000+</p>
+              <p className="text-3xl font-display font-bold text-gradient-accent">1,200+</p>
               <p className="text-sm text-muted-foreground">{t("whyUs.s1")}</p>
             </div>
           </motion.div>
