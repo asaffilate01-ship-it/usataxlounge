@@ -20,18 +20,19 @@ const HeroSection = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       />
-      <div className="absolute inset-0 gradient-hero opacity-90" />
+      {/* Always dark overlay regardless of theme */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,78%,10%)] via-[hsl(220,72%,18%)] to-[hsl(220,55%,28%)] opacity-90" />
 
-      <div className="container mx-auto px-4 relative z-10 pt-20">
+      <div className="container mx-auto px-4 relative z-10 pt-28">
         <div className="max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 mb-6"
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 mb-6"
           >
-            <CheckCircle2 className="h-4 w-4 text-accent" />
-            <span className="text-sm font-medium text-accent">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <span className="text-sm font-medium text-emerald-400">
               {t("hero.badge")}
             </span>
           </motion.div>
@@ -40,7 +41,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-tight mb-6"
+            className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-tight mb-6"
           >
             {t("hero.title1")}{" "}
             <span className="text-gradient-accent">{t("hero.title2")}</span>
@@ -50,7 +51,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-primary-foreground/70 mb-8 max-w-2xl font-sans"
+            className="text-lg md:text-xl text-white/70 mb-8 max-w-2xl font-sans"
           >
             {t("hero.subtitle")}
           </motion.p>
@@ -62,8 +63,8 @@ const HeroSection = () => {
             className="flex flex-wrap gap-4 mb-10"
           >
             {highlights.map((item) => (
-              <div key={item} className="flex items-center gap-2 text-primary-foreground/80">
-                <CheckCircle2 className="h-4 w-4 text-accent" />
+              <div key={item} className="flex items-center gap-2 text-white/80">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                 <span className="text-sm font-medium">{item}</span>
               </div>
             ))}
@@ -89,7 +90,7 @@ const HeroSection = () => {
               size="lg"
               variant="outline"
               asChild
-              className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 text-base px-8"
+              className="border-white/30 text-white hover:bg-white/10 text-base px-8"
             >
               <a href="#services">{t("hero.cta2")}</a>
             </Button>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import expatImg from "@/assets/expat-services.jpg";
+import taxFormsImg from "@/assets/tax-forms.jpg";
 
 const formGroups = [
   {
@@ -67,6 +68,29 @@ const TaxFormsSection = () => {
           </p>
         </motion.div>
 
+        {/* Tax forms image banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative rounded-2xl overflow-hidden mb-12 h-48"
+        >
+          <img src={taxFormsImg} alt="Tax Forms and Documents" className="w-full h-full object-cover" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(220,78%,12%/0.85)] to-[hsl(220,55%,28%/0.6)]" />
+          <div className="absolute inset-0 flex items-center px-8 md:px-12">
+            <div>
+              <h3 className="font-display text-xl md:text-2xl font-bold text-white mb-2">
+                {lang === "en" ? "24+ Tax Forms Handled" : "24+ Formularios Fiscales Manejados"}
+              </h3>
+              <p className="text-white/70 text-sm max-w-md">
+                {lang === "en"
+                  ? "Individual, business, international — every form filed with precision by our Enrolled Agents."
+                  : "Individual, empresarial, internacional — cada formulario presentado con precisión por nuestros Agentes Inscritos."}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
           {formGroups.map((group, gi) => (
             <motion.div
@@ -100,8 +124,8 @@ const TaxFormsSection = () => {
           viewport={{ once: true }}
           className="relative rounded-2xl overflow-hidden"
         >
-          <img src={expatImg} alt="US Expat Tax Services" className="w-full h-64 object-cover" />
-          <div className="absolute inset-0 gradient-hero opacity-80" />
+          <img src={expatImg} alt="US Expat Tax Services" className="w-full h-64 object-cover" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,78%,10%/0.85)] to-[hsl(220,55%,28%/0.7)]" />
           <div className="absolute inset-0 flex items-center justify-center text-center p-8">
             <div>
               <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-3">

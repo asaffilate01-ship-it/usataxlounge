@@ -8,19 +8,21 @@ const CTASection = () => {
   const { t } = useLanguage();
 
   return (
-    <section id="contact" className="py-24 gradient-hero">
-      <div className="container mx-auto px-4">
+    <section className="py-24 relative overflow-hidden">
+      {/* Always dark background regardless of theme */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,78%,10%)] via-[hsl(220,72%,18%)] to-[hsl(220,55%,28%)]" />
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto"
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground mb-6">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
             {t("cta.title1")}{" "}
             <span className="text-gradient-accent">{t("cta.title2")}</span>
           </h2>
-          <p className="text-primary-foreground/70 mb-8 text-lg">
+          <p className="text-white/70 mb-8 text-lg">
             {t("cta.subtitle")}
           </p>
           <div className="flex flex-wrap gap-4 justify-center mb-12">
@@ -36,12 +38,12 @@ const CTASection = () => {
             </Button>
           </div>
 
-          <div className="flex flex-wrap gap-8 justify-center text-primary-foreground/60">
-            <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-accent transition-colors">
+          <div className="flex flex-wrap gap-8 justify-center text-white/60">
+            <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
               <Phone className="h-4 w-4" />
               <span className="text-sm">(123) 456-7890</span>
             </a>
-            <a href="mailto:info@taxlounge.com" className="flex items-center gap-2 hover:text-accent transition-colors">
+            <a href="mailto:info@taxlounge.com" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
               <Mail className="h-4 w-4" />
               <span className="text-sm">info@taxlounge.com</span>
             </a>
