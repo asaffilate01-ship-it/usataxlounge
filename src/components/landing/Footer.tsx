@@ -86,8 +86,8 @@ const Footer = () => {
             © {new Date().getFullYear()} TaxLounge. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</a>
-            <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.terms")}</a>
+            <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
+            <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.terms")}</Link>
             <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.sitemap")}</a>
           </div>
         </div>

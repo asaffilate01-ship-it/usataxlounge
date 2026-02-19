@@ -15,7 +15,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[88vh] flex items-center overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
         style={{ backgroundImage: `url(${heroBg})` }}
@@ -24,7 +24,7 @@ const HeroSection = () => {
       {/* Decorative glow */}
       <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
 
-      <div className="container mx-auto px-4 relative z-10 pt-24">
+      <div className="container mx-auto px-4 relative z-10 pt-20">
         <div className="max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
