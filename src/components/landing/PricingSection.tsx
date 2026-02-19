@@ -52,7 +52,7 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-14 md:py-20 bg-background">
+    <section id="pricing" className="py-10 md:py-14 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
