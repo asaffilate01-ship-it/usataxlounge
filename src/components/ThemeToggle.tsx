@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const ThemeToggle = () => {
+interface ThemeToggleProps {
+  scrolled?: boolean;
+}
+
+const ThemeToggle = ({ scrolled = true }: ThemeToggleProps) => {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
       return document.documentElement.classList.contains("dark");
@@ -35,7 +39,11 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={() => setIsDark(!isDark)}
-      className="h-9 w-9"
+      className={`h-9 w-9 ${
+        !scrolled
+          ? "text-white hover:bg-white/20 hover:text-white"
+          : ""
+      }`}
       aria-label="Toggle theme"
     >
       {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

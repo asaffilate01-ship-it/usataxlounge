@@ -63,14 +63,14 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center gap-3">
             <LanguageToggle />
-            <ThemeToggle />
+            <ThemeToggle scrolled={scrolled} />
             <Button
               variant="outline"
               asChild
               className={`transition-all ${
                 scrolled
                   ? "border-primary/30 hover:border-primary"
-                  : "border-white/30 text-white hover:bg-white/10"
+                  : "border-white/50 text-white bg-white/10 hover:bg-white/20"
               }`}
             >
               <Link to="/auth">{t("nav.signIn")}</Link>
@@ -82,7 +82,7 @@ const Navbar = () => {
 
           <div className="flex items-center gap-2 md:hidden">
             <LanguageToggle />
-            <ThemeToggle />
+            <ThemeToggle scrolled={scrolled} />
             <button
               className={`${scrolled ? "text-foreground" : "text-white"}`}
               onClick={() => setIsOpen(!isOpen)}
