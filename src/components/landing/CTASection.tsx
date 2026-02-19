@@ -8,7 +8,7 @@ const CTASection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-14 md:py-20 relative overflow-hidden">
       {/* Always dark background regardless of theme */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,78%,10%)] via-[hsl(220,72%,18%)] to-[hsl(220,55%,28%)]" />
       <div className="container mx-auto px-4 relative z-10">
@@ -39,11 +39,11 @@ const CTASection = () => {
           </div>
 
           <div className="flex flex-wrap gap-8 justify-center text-white/60">
-            <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+            <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-accent transition-colors">
               <Phone className="h-4 w-4" />
               <span className="text-sm">(123) 456-7890</span>
             </a>
-            <a href="mailto:info@taxlounge.com" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+            <a href="mailto:info@taxlounge.com" className="flex items-center gap-2 hover:text-accent transition-colors">
               <Mail className="h-4 w-4" />
               <span className="text-sm">info@taxlounge.com</span>
             </a>
