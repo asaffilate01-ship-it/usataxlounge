@@ -4,6 +4,8 @@ import ServicesSection from "@/components/landing/ServicesSection";
 import TaxFormsSection from "@/components/landing/TaxFormsSection";
 import WhyUsSection from "@/components/landing/WhyUsSection";
 import ProcessSection from "@/components/landing/ProcessSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import FAQSection from "@/components/landing/FAQSection";
 import BlogSection from "@/components/landing/BlogSection";
 import ContactSection from "@/components/landing/ContactSection";
 import CTASection from "@/components/landing/CTASection";
@@ -18,6 +20,8 @@ const Index = () => {
       <TaxFormsSection />
       <WhyUsSection />
       <ProcessSection />
+      <TestimonialsSection />
+      <FAQSection />
       <BlogSection />
       <ContactSection />
       <CTASection />
