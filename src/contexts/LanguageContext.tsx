@@ -77,8 +77,13 @@ const translations: Record<string, Record<Language, string>> = {
   "whyUs.r4.desc": { en: "We're available beyond tax season — whenever you need guidance, we're here.", es: "Estamos disponibles más allá de la temporada de impuestos — cuando necesite orientación, aquí estamos." },
   "whyUs.s1": { en: "Returns Filed", es: "Declaraciones Presentadas" },
   "whyUs.s2": { en: "Client Retention", es: "Retención de Clientes" },
-  "whyUs.s3": { en: "Refunds Secured", es: "Reembolsos Asegurados" },
+  "whyUs.s3": { en: "In Tax Savings", es: "En Ahorros Fiscales" },
   "whyUs.s4": { en: "Years Experience", es: "Años de Experiencia" },
+  "whyUs.global.title": { en: "Representation Across All 50 States & Worldwide", es: "Representación en los 50 Estados y en Todo el Mundo" },
+  "whyUs.global.desc": {
+    en: "We have representation in all 50 states, Europe, Asia, the Middle East, Africa and the Americas. So whether you're in Chicago, New York, LA, Dallas, London, Beijing, Dubai, Cape Town or Mexico City — we are here to help.",
+    es: "Tenemos representación en los 50 estados, Europa, Asia, Medio Oriente, África y las Américas. Ya sea que esté en Chicago, Nueva York, Los Ángeles, Dallas, Londres, Pekín, Dubái, Ciudad del Cabo o Ciudad de México — estamos aquí para ayudarle.",
+  },
 
   // Process
   "process.label": { en: "How It Works", es: "Cómo Funciona" },

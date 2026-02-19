@@ -20,7 +20,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 py-16">
           {/* Brand */}
           <div className="space-y-5">
-            <Logo size="lg" />
+            <Logo size="md" />
             <p className="text-sm text-muted-foreground leading-relaxed">
               {t("footer.copy")}
             </p>

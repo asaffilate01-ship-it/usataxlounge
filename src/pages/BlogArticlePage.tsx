@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import FloatingButtons from "@/components/FloatingButtons";
 import { blogPosts } from "@/data/blogData";
 
 const BlogArticlePage = () => {
@@ -29,7 +30,7 @@ const BlogArticlePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <article className="pt-28 pb-24">
+      <article className="pt-24 pb-24">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Button variant="ghost" asChild className="text-muted-foreground mb-6">
@@ -67,6 +68,7 @@ const BlogArticlePage = () => {
         </div>
       </article>
       <Footer />
+      <FloatingButtons />
     </div>
   );
 };

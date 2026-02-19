@@ -23,7 +23,7 @@ const HeroSection = () => {
       {/* Always dark overlay regardless of theme */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,78%,10%)] via-[hsl(220,72%,18%)] to-[hsl(220,55%,28%)] opacity-90" />
 
-      <div className="container mx-auto px-4 relative z-10 pt-28">
+      <div className="container mx-auto px-4 relative z-10 pt-24">
         <div className="max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
