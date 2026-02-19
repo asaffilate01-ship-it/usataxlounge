@@ -16,6 +16,9 @@ import {
   ChevronDown,
   Trash2,
   Loader2,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,7 +73,6 @@ const ClientDashboard = () => {
   const navigate = useNavigate();
   const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
 
-  // Add entry form state
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newEntry, setNewEntry] = useState({ type: "income" as "income" | "expense", category: "", description: "", amount: "" });
 
@@ -107,21 +109,22 @@ const ClientDashboard = () => {
   const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 border-r border-border bg-card flex flex-col`}>
-        <div className="p-4 border-b border-border">
-          <Logo size="sm" />
+    <div className="flex min-h-screen bg-muted/30">
+      {/* Sidebar - brand blue gradient */}
+      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col`}
+        style={{ background: "var(--gradient-hero)" }}>
+        <div className="p-5 border-b border-white/10">
+          <Logo size="md" />
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 activeTab === item.id
-                  ? "bg-accent/10 text-accent"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-white/60 hover:bg-white/8 hover:text-white/90"
               }`}
             >
               <item.icon className="h-4 w-4" />
@@ -129,10 +132,19 @@ const ClientDashboard = () => {
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-border">
+        <div className="p-3 border-t border-white/10">
+          <div className="flex items-center gap-3 px-3 py-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-semibold text-xs">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">{profile?.full_name || "Client"}</p>
+              <p className="text-xs text-white/50">Client Portal</p>
+            </div>
+          </div>
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/8 hover:text-white/90 transition-all"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
@@ -142,19 +154,17 @@ const ClientDashboard = () => {
 
       {/* Main */}
       <main className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
+        <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
             </button>
-            <h1 className="font-display text-xl font-semibold text-foreground">Client Dashboard</h1>
+            <h1 className="font-display text-xl font-semibold text-foreground">
+              {navItems.find(n => n.id === activeTab)?.label || "Dashboard"}
+            </h1>
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <span className="text-sm text-muted-foreground mr-2 hidden sm:inline">{profile?.full_name}</span>
-            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-semibold text-sm">
-              {initials}
-            </div>
           </div>
         </header>
 
@@ -162,25 +172,40 @@ const ClientDashboard = () => {
           {/* Overview */}
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                  <p className="text-sm text-muted-foreground mb-1">Total Income</p>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-2">{incomeExpenses.filter(i => i.type === "income").length} entries</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-muted-foreground">Total Income</p>
+                    <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
+                      <TrendingUp className="h-5 w-5 text-success" />
+                    </div>
+                  </div>
+                  <p className="text-3xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "income").length} entries</p>
                 </div>
-                <div className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                  <p className="text-sm text-muted-foreground mb-1">Total Expenses</p>
-                  <p className="text-2xl font-display font-bold text-destructive">${totalExpenses.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-2">{incomeExpenses.filter(i => i.type === "expense").length} entries</p>
+                <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-muted-foreground">Total Expenses</p>
+                    <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+                      <TrendingDown className="h-5 w-5 text-destructive" />
+                    </div>
+                  </div>
+                  <p className="text-3xl font-display font-bold text-foreground">${totalExpenses.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "expense").length} entries</p>
                 </div>
-                <div className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                  <p className="text-sm text-muted-foreground mb-1">Net Taxable</p>
-                  <p className="text-2xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-2">Current tax year</p>
+                <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-muted-foreground">Net Taxable</p>
+                    <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                      <BarChart3 className="h-5 w-5 text-accent" />
+                    </div>
+                  </div>
+                  <p className="text-3xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Current tax year</p>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-card shadow-elegant p-5">
+              <div className="rounded-2xl border border-border bg-card shadow-elegant p-6">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Filings</h3>
                 <div className="space-y-3">
                   {filings.map((f) => (
@@ -205,7 +230,7 @@ const ClientDashboard = () => {
             </div>
           )}
 
-          {/* Income & Expenses - WIRED TO DB */}
+          {/* Income & Expenses */}
           {activeTab === "income" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
@@ -264,7 +289,7 @@ const ClientDashboard = () => {
                   <p className="text-sm mt-1">Click "Add Entry" to start tracking your income and expenses.</p>
                 </div>
               ) : (
-                <div className="rounded-xl border border-border bg-card shadow-elegant overflow-hidden">
+                <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-border bg-muted/50">
@@ -300,18 +325,17 @@ const ClientDashboard = () => {
                 </div>
               )}
 
-              {/* Totals summary */}
               {incomeExpenses.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-lg border border-border bg-success/5">
+                  <div className="p-4 rounded-xl border border-success/20 bg-success/5">
                     <p className="text-xs text-muted-foreground">Total Income</p>
                     <p className="text-lg font-semibold text-success">${totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                   </div>
-                  <div className="p-4 rounded-lg border border-border bg-destructive/5">
+                  <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5">
                     <p className="text-xs text-muted-foreground">Total Expenses</p>
                     <p className="text-lg font-semibold text-destructive">${totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                   </div>
-                  <div className="p-4 rounded-lg border border-border bg-accent/5">
+                  <div className="p-4 rounded-xl border border-accent/20 bg-accent/5">
                     <p className="text-xs text-muted-foreground">Net</p>
                     <p className="text-lg font-semibold text-foreground">${(totalIncome - totalExpenses).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                   </div>
@@ -326,9 +350,9 @@ const ClientDashboard = () => {
               <h2 className="font-display text-2xl font-bold text-foreground">My Filings</h2>
               <div className="space-y-4">
                 {filings.map((f) => (
-                  <div key={f.id} className="p-5 rounded-xl border border-border bg-card shadow-elegant flex items-center justify-between">
+                  <div key={f.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                         <FileText className="h-5 w-5 text-accent" />
                       </div>
                       <div>
@@ -357,15 +381,15 @@ const ClientDashboard = () => {
           {activeTab === "sign" && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="font-display text-2xl font-bold text-foreground">E-Sign & Approve</h2>
-              <div className="p-6 rounded-xl border border-border bg-card shadow-elegant">
+              <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center">
                     <PenLine className="h-6 w-6 text-warning" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-display text-lg font-semibold text-foreground">Form 1040 — Tax Year 2024</h3>
                     <p className="text-muted-foreground text-sm mt-1">Your return is ready for review. Please review the details and sign to authorize filing.</p>
-                    <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border">
+                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border">
                       <p className="text-sm text-foreground"><strong>Filing Status:</strong> Single</p>
                       <p className="text-sm text-foreground mt-1"><strong>Adjusted Gross Income:</strong> ${totalIncome.toLocaleString()}</p>
                       <p className="text-sm text-foreground mt-1"><strong>Total Deductions:</strong> ${totalExpenses.toLocaleString()}</p>
@@ -389,11 +413,11 @@ const ClientDashboard = () => {
           {activeTab === "messages" && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="font-display text-2xl font-bold text-foreground">Messages</h2>
-              <div className="rounded-xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 220px)" }}>
+              <div className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 220px)" }}>
                 <div className="flex-1 p-5 overflow-auto space-y-4">
                   {messages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.from === "client" ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-md px-4 py-3 rounded-xl ${msg.from === "client" ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
+                      <div className={`max-w-md px-4 py-3 rounded-2xl ${msg.from === "client" ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
                         <p className="text-xs font-semibold text-muted-foreground mb-1">{msg.name} • {msg.time}</p>
                         <p className="text-sm">{msg.text}</p>
                       </div>

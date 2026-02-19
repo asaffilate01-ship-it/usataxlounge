@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Home,
   Users,
@@ -16,6 +16,9 @@ import {
   Bell,
   Settings,
   Upload,
+  TrendingUp,
+  BarChart3,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,6 +80,10 @@ const AdminDashboard = () => {
     navigate("/");
   };
 
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "EA";
+
   const navItems = [
     { id: "overview", label: "Dashboard", icon: Home },
     { id: "clients", label: "Clients", icon: Users },
@@ -90,22 +97,25 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 border-r border-border bg-card flex flex-col`}>
-        <div className="p-4 border-b border-border">
-          <Logo size="sm" />
-          <p className="text-xs text-muted-foreground mt-1">Admin Portal</p>
+    <div className="flex min-h-screen bg-muted/30">
+      {/* Sidebar - brand blue gradient */}
+      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col`}
+        style={{ background: "var(--gradient-hero)" }}>
+        <div className="p-5 border-b border-white/10">
+          <Logo size="md" />
+          <p className="text-xs text-white/50 mt-1 flex items-center gap-1">
+            <Shield className="h-3 w-3" /> Admin Portal
+          </p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 activeTab === item.id
-                  ? "bg-accent/10 text-accent"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-white/60 hover:bg-white/8 hover:text-white/90"
               }`}
             >
               <span className="flex items-center gap-3">
@@ -120,10 +130,19 @@ const AdminDashboard = () => {
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-border">
+        <div className="p-3 border-t border-white/10">
+          <div className="flex items-center gap-3 px-3 py-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-semibold text-xs">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">{profile?.full_name || "Admin"}</p>
+              <p className="text-xs text-white/50">Enrolled Agent</p>
+            </div>
+          </div>
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/8 hover:text-white/90 transition-all"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
@@ -133,12 +152,14 @@ const AdminDashboard = () => {
 
       {/* Main */}
       <main className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
+        <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
             </button>
-            <h1 className="font-display text-xl font-semibold text-foreground">Admin Dashboard</h1>
+            <h1 className="font-display text-xl font-semibold text-foreground">
+              {navItems.find(n => n.id === activeTab)?.label || "Dashboard"}
+            </h1>
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -146,9 +167,6 @@ const AdminDashboard = () => {
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-semibold text-sm">
-              EA
-            </div>
           </div>
         </header>
 
@@ -156,15 +174,20 @@ const AdminDashboard = () => {
           {/* Overview */}
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                 {[
-                  { label: "Total Clients", value: "142", sub: "+5 this month" },
-                  { label: "Returns Filed", value: "98", sub: "Tax Year 2024" },
-                  { label: "Pending Review", value: "12", sub: "Awaiting approval" },
-                  { label: "IRS Submissions", value: "86", sub: "94% acceptance rate" },
+                  { label: "Total Clients", value: "142", sub: "+5 this month", icon: Users, color: "bg-primary/10 text-primary" },
+                  { label: "Returns Filed", value: "98", sub: "Tax Year 2024", icon: FileText, color: "bg-success/10 text-success" },
+                  { label: "Pending Review", value: "12", sub: "Awaiting approval", icon: Clock, color: "bg-warning/10 text-warning" },
+                  { label: "IRS Submissions", value: "86", sub: "94% acceptance", icon: TrendingUp, color: "bg-accent/10 text-accent" },
                 ].map((stat) => (
-                  <div key={stat.label} className="p-5 rounded-xl border border-border bg-card shadow-elegant">
-                    <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
+                  <div key={stat.label} className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                      <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
+                        <stat.icon className="h-5 w-5" />
+                      </div>
+                    </div>
                     <p className="text-3xl font-display font-bold text-foreground">{stat.value}</p>
                     <p className="text-xs text-muted-foreground mt-1">{stat.sub}</p>
                   </div>
@@ -172,7 +195,7 @@ const AdminDashboard = () => {
               </div>
 
               <div className="grid lg:grid-cols-2 gap-6">
-                <div className="rounded-xl border border-border bg-card shadow-elegant p-5">
+                <div className="rounded-2xl border border-border bg-card shadow-elegant p-6">
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Submissions</h3>
                   <div className="space-y-3">
                     {submissions.slice(0, 3).map((s) => (
@@ -187,12 +210,12 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-border bg-card shadow-elegant p-5">
+                <div className="rounded-2xl border border-border bg-card shadow-elegant p-6">
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4">New Messages</h3>
                   <div className="space-y-3">
                     {adminMessages.map((m) => (
                       <div key={m.id} className="flex items-start gap-3 py-2 border-b border-border last:border-0">
-                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-foreground">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
                           {m.client.split(" ").map(n => n[0]).join("")}
                         </div>
                         <div className="flex-1">
@@ -229,7 +252,7 @@ const AdminDashboard = () => {
                   className="pl-10"
                 />
               </div>
-              <div className="rounded-xl border border-border bg-card shadow-elegant overflow-hidden">
+              <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border bg-muted/50">
@@ -274,7 +297,7 @@ const AdminDashboard = () => {
                   <Upload className="h-4 w-4 mr-2" /> Submit to IRS
                 </Button>
               </div>
-              <div className="rounded-xl border border-border bg-card shadow-elegant overflow-hidden">
+              <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border bg-muted/50">
@@ -309,9 +332,9 @@ const AdminDashboard = () => {
               <h2 className="font-display text-2xl font-bold text-foreground">Client Messages</h2>
               <div className="space-y-4">
                 {adminMessages.map((m) => (
-                  <div key={m.id} className="p-5 rounded-xl border border-border bg-card shadow-elegant">
+                  <div key={m.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold text-foreground">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
                         {m.client.split(" ").map(n => n[0]).join("")}
                       </div>
                       <div className="flex-1">
@@ -348,7 +371,7 @@ const AdminDashboard = () => {
           {activeTab === "settings" && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="font-display text-2xl font-bold text-foreground">Settings</h2>
-              <div className="rounded-xl border border-border bg-card shadow-elegant p-6 max-w-lg">
+              <div className="rounded-2xl border border-border bg-card shadow-elegant p-6 max-w-lg">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-4">IRS API Configuration</h3>
                 <div className="space-y-4">
                   <div>
