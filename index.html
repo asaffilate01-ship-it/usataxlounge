@@ -1,25 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaxLounge — Making Tax Less Taxing | IRS Enrolled Agents</title>
-    <meta name="description" content="Professional tax filing portal by IRS Enrolled Agents. File individual and business returns, e-sign forms, and communicate with your agent." />
+
+    <!-- SEO Meta Tags -->
+    <title>TaxLounge — IRS Enrolled Agents | Tax Filing, Expat Taxes & IRS Representation</title>
+    <meta name="description" content="TaxLounge provides comprehensive tax services by IRS Enrolled Agents. Individual, business & US expat tax filing, FBAR, FATCA, IRS representation, and year-round tax planning." />
+    <meta name="keywords" content="tax filing, IRS enrolled agent, tax preparation, US expat taxes, FBAR, FATCA, 1040, 1040-NR, tax planning, IRS representation, bookkeeping, payroll" />
     <meta name="author" content="TaxLounge" />
-    <meta name="theme-color" content="#1a5f9e" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://taxlounge.com" />
 
-    <meta property="og:title" content="TaxLounge — Making Tax Less Taxing" />
-    <meta property="og:description" content="Professional tax filing by IRS Enrolled Agents. Individual & business returns, e-sign, and direct agent messaging." />
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="TaxLounge — Making Tax Less Taxing" />
+    <meta property="og:description" content="IRS Enrolled Agents providing comprehensive tax services for individuals, businesses, and US expats worldwide." />
     <meta property="og:image" content="/logo.png" />
+    <meta property="og:url" content="https://taxlounge.com" />
+    <meta property="og:site_name" content="TaxLounge" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="TaxLounge — Making Tax Less Taxing" />
+    <meta name="twitter:description" content="IRS Enrolled Agents providing comprehensive tax services for individuals, businesses, and US expats worldwide." />
     <meta name="twitter:image" content="/logo.png" />
-  </head>
 
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta name="theme-color" content="#1a5f9e" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="TaxLounge" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "TaxLounge",
+      "description": "IRS Enrolled Agents providing comprehensive tax preparation, filing, and representation services for individuals, businesses, and US expats.",
+      "url": "https://taxlounge.com",
+      "logo": "https://taxlounge.com/logo.png",
+      "telephone": "+1-234-567-890",
+      "email": "info@taxlounge.com",
+      "serviceType": ["Tax Preparation", "Tax Filing", "IRS Representation", "FBAR Filing", "FATCA Compliance", "Bookkeeping", "Payroll"],
+      "areaServed": { "@type": "Country", "name": "United States" }
+    }
+    </script>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is an IRS Enrolled Agent?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An Enrolled Agent (EA) is a federally-authorized tax practitioner empowered by the US Department of the Treasury to represent taxpayers before the IRS."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do US citizens living abroad need to file taxes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, US citizens and green card holders must file US tax returns regardless of where they live. TaxLounge specializes in expat tax filing including FBAR, FATCA, and Foreign Earned Income Exclusion."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What tax forms does TaxLounge handle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "TaxLounge handles all individual forms (1040, 1040-SR, 1040-NR, 1040-X), business forms (1120, 1120-S, 1065), international forms (FBAR, FATCA, Form 2555, 1116), estate and gift forms (706, 709, 1041), and all related schedules."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
