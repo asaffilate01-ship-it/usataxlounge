@@ -28,7 +28,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
 import Logo from "@/components/Logo";
-import ThemeToggle from "@/components/ThemeToggle";
 import {
   Dialog,
   DialogContent,
@@ -109,8 +108,8 @@ const ClientDashboard = () => {
   const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
-      {/* Sidebar - brand blue gradient */}
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar */}
       <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col`}
         style={{ background: "var(--gradient-hero)" }}>
         <div className="p-5 border-b border-white/10">
@@ -154,17 +153,14 @@ const ClientDashboard = () => {
 
       {/* Main */}
       <main className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6">
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
             </button>
-            <h1 className="font-display text-xl font-semibold text-foreground">
+            <h1 className="font-display text-lg font-semibold text-foreground">
               {navItems.find(n => n.id === activeTab)?.label || "Dashboard"}
             </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
           </div>
         </header>
 
@@ -173,39 +169,39 @@ const ClientDashboard = () => {
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-medium text-muted-foreground">Total Income</p>
                     <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
                       <TrendingUp className="h-5 w-5 text-success" />
                     </div>
                   </div>
-                  <p className="text-3xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
+                  <p className="text-2xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "income").length} entries</p>
                 </div>
-                <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-medium text-muted-foreground">Total Expenses</p>
                     <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
                       <TrendingDown className="h-5 w-5 text-destructive" />
                     </div>
                   </div>
-                  <p className="text-3xl font-display font-bold text-foreground">${totalExpenses.toLocaleString()}</p>
+                  <p className="text-2xl font-display font-bold text-foreground">${totalExpenses.toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "expense").length} entries</p>
                 </div>
-                <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
+                <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-medium text-muted-foreground">Net Taxable</p>
                     <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                       <BarChart3 className="h-5 w-5 text-accent" />
                     </div>
                   </div>
-                  <p className="text-3xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
+                  <p className="text-2xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground mt-1">Current tax year</p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-card shadow-elegant p-6">
+              <div className="rounded-2xl border border-border bg-card shadow-elegant p-5">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Filings</h3>
                 <div className="space-y-3">
                   {filings.map((f) => (
@@ -234,7 +230,7 @@ const ClientDashboard = () => {
           {activeTab === "income" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
-                <h2 className="font-display text-2xl font-bold text-foreground">Income & Expenses</h2>
+                <h2 className="font-display text-xl font-bold text-foreground">Income & Expenses</h2>
                 <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
@@ -347,7 +343,7 @@ const ClientDashboard = () => {
           {/* Filings */}
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-2xl font-bold text-foreground">My Filings</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">My Filings</h2>
               <div className="space-y-4">
                 {filings.map((f) => (
                   <div key={f.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant flex items-center justify-between">
@@ -380,7 +376,7 @@ const ClientDashboard = () => {
           {/* E-Sign */}
           {activeTab === "sign" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-2xl font-bold text-foreground">E-Sign & Approve</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">E-Sign & Approve</h2>
               <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center">
@@ -412,8 +408,8 @@ const ClientDashboard = () => {
           {/* Messages */}
           {activeTab === "messages" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-2xl font-bold text-foreground">Messages</h2>
-              <div className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 220px)" }}>
+              <h2 className="font-display text-xl font-bold text-foreground">Messages</h2>
+              <div className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 200px)" }}>
                 <div className="flex-1 p-5 overflow-auto space-y-4">
                   {messages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.from === "client" ? "justify-end" : "justify-start"}`}>
