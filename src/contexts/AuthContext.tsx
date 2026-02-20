@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { User, Session, AuthenticatorAssuranceLevels } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+
+type MFAStatus = "loading" | "enrolled" | "not_enrolled" | "verified";
 
 interface AuthContextType {
   user: User | null;
@@ -8,6 +10,8 @@ interface AuthContextType {
   loading: boolean;
   userRole: "admin" | "client" | null;
   profile: { full_name: string; avatar_url: string | null } | null;
+  mfaStatus: MFAStatus;
+  refreshMFAStatus: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -17,6 +21,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   userRole: null,
   profile: null,
+  mfaStatus: "loading",
+  refreshMFAStatus: async () => {},
   signOut: async () => {},
 });
 
@@ -28,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<"admin" | "client" | null>(null);
   const [profile, setProfile] = useState<{ full_name: string; avatar_url: string | null } | null>(null);
+  const [mfaStatus, setMfaStatus] = useState<MFAStatus>("loading");
 
   const fetchUserData = async (userId: string) => {
     const [rolesRes, profileRes] = await Promise.all([
@@ -45,6 +52,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const refreshMFAStatus = async () => {
+    const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (error) {
+      setMfaStatus("not_enrolled");
+      return;
+    }
+
+    if (data.currentLevel === "aal2") {
+      setMfaStatus("verified");
+    } else if (data.nextLevel === "aal2") {
+      // User has a factor enrolled but hasn't verified this session
+      setMfaStatus("enrolled");
+    } else {
+      setMfaStatus("not_enrolled");
+    }
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
@@ -53,9 +77,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (session?.user) {
           setTimeout(() => fetchUserData(session.user.id), 0);
+          setTimeout(() => refreshMFAStatus(), 0);
         } else {
           setUserRole(null);
           setProfile(null);
+          setMfaStatus("loading");
         }
         setLoading(false);
       }
@@ -66,6 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchUserData(session.user.id);
+        refreshMFAStatus();
       }
       setLoading(false);
     });
@@ -79,10 +106,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setSession(null);
     setUserRole(null);
     setProfile(null);
+    setMfaStatus("loading");
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, userRole, profile, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, userRole, profile, mfaStatus, refreshMFAStatus, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -283,6 +283,23 @@ const translations: Record<string, Record<Language, string>> = {
   "notFound.goBack": { en: "Go Back", es: "Volver" },
   "notFound.home": { en: "Home", es: "Inicio" },
 
+  // MFA
+  "mfa.enrollTitle": { en: "Set Up Two-Factor Authentication", es: "Configurar Autenticación de Dos Factores" },
+  "mfa.enrollDesc": { en: "Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.) to secure your account.", es: "Escanee el código QR con su aplicación de autenticación (Google Authenticator, Authy, etc.) para proteger su cuenta." },
+  "mfa.scanQR": { en: "Scan this QR code with your authenticator app", es: "Escanee este código QR con su app de autenticación" },
+  "mfa.manualEntry": { en: "Can't scan? Enter this code manually:", es: "¿No puede escanear? Ingrese este código manualmente:" },
+  "mfa.enterCode": { en: "Verification Code", es: "Código de Verificación" },
+  "mfa.enable": { en: "Enable MFA", es: "Activar MFA" },
+  "mfa.verify": { en: "Verify", es: "Verificar" },
+  "mfa.verifying": { en: "Verifying...", es: "Verificando..." },
+  "mfa.cancel": { en: "Cancel", es: "Cancelar" },
+  "mfa.enabledTitle": { en: "MFA Enabled", es: "MFA Activado" },
+  "mfa.enabledDesc": { en: "Two-factor authentication is now active on your account.", es: "La autenticación de dos factores está ahora activa en su cuenta." },
+  "mfa.challengeTitle": { en: "Two-Factor Verification", es: "Verificación de Dos Factores" },
+  "mfa.challengeDesc": { en: "Enter the 6-digit code from your authenticator app.", es: "Ingrese el código de 6 dígitos de su aplicación de autenticación." },
+  "mfa.invalidCode": { en: "Invalid code. Please try again.", es: "Código inválido. Por favor intente de nuevo." },
+  "mfa.signOutInstead": { en: "Sign out instead", es: "Cerrar sesión" },
+
   // FAQ
   "faq.label": { en: "Frequently Asked Questions", es: "Preguntas Frecuentes" },
   "faq.title": { en: "Got Questions? We Have Answers", es: "¿Tiene Preguntas? Tenemos Respuestas" },

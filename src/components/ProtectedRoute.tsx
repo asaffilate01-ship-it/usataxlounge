@@ -1,5 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import MFAEnroll from "@/components/auth/MFAEnroll";
+import MFAChallenge from "@/components/auth/MFAChallenge";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -7,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { user, loading, userRole } = useAuth();
+  const { user, loading, userRole, mfaStatus, refreshMFAStatus, signOut } = useAuth();
 
   if (loading) {
     return (
@@ -19,6 +21,35 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // MFA: user needs to enroll
+  if (mfaStatus === "not_enrolled") {
+    return (
+      <MFAEnroll
+        onEnrolled={() => refreshMFAStatus()}
+        onCancelled={() => signOut()}
+      />
+    );
+  }
+
+  // MFA: user has factor but needs to verify this session
+  if (mfaStatus === "enrolled") {
+    return (
+      <MFAChallenge
+        onVerified={() => refreshMFAStatus()}
+        onSignOut={() => signOut()}
+      />
+    );
+  }
+
+  // Still loading MFA status
+  if (mfaStatus === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
   }
 
   // Admin can access client routes too
