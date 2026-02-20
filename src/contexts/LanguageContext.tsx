@@ -299,6 +299,18 @@ const translations: Record<string, Record<Language, string>> = {
   "mfa.challengeDesc": { en: "Enter the 6-digit code from your authenticator app.", es: "Ingrese el código de 6 dígitos de su aplicación de autenticación." },
   "mfa.invalidCode": { en: "Invalid code. Please try again.", es: "Código inválido. Por favor intente de nuevo." },
   "mfa.signOutInstead": { en: "Sign out instead", es: "Cerrar sesión" },
+  "mfa.resetSuccessTitle": { en: "MFA Reset", es: "MFA Reiniciado" },
+  "mfa.resetSuccessDesc": { en: "Your authenticator has been removed. Please set up a new one.", es: "Su autenticador ha sido eliminado. Por favor configure uno nuevo." },
+
+  // Settings
+  "settings.title": { en: "Settings", es: "Configuración" },
+  "settings.mfaTitle": { en: "Two-Factor Authentication", es: "Autenticación de Dos Factores" },
+  "settings.mfaActive": { en: "Your account is protected with an authenticator app.", es: "Su cuenta está protegida con una aplicación de autenticación." },
+  "settings.mfaInactive": { en: "Two-factor authentication is not enabled. Set it up to secure your account.", es: "La autenticación de dos factores no está activada. Configúrela para proteger su cuenta." },
+  "settings.resetMFA": { en: "Reset MFA", es: "Reiniciar MFA" },
+  "settings.enableMFA": { en: "Enable MFA", es: "Activar MFA" },
+  "settings.resetConfirmTitle": { en: "Reset Two-Factor Authentication?", es: "¿Reiniciar Autenticación de Dos Factores?" },
+  "settings.resetConfirmDesc": { en: "This will remove your current authenticator. You will need to set up a new one immediately.", es: "Esto eliminará su autenticador actual. Deberá configurar uno nuevo inmediatamente." },
 
   // FAQ
   "faq.label": { en: "Frequently Asked Questions", es: "Preguntas Frecuentes" },
