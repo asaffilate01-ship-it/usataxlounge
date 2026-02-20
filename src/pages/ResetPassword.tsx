@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -16,6 +17,7 @@ const ResetPassword = () => {
   const [isRecovery, setIsRecovery] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -35,11 +37,11 @@ const ResetPassword = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast({ title: "Error", description: "Passwords do not match.", variant: "destructive" });
+      toast({ title: "Error", description: t("reset.mismatch"), variant: "destructive" });
       return;
     }
     if (password.length < 6) {
-      toast({ title: "Error", description: "Password must be at least 6 characters.", variant: "destructive" });
+      toast({ title: "Error", description: t("reset.tooShort"), variant: "destructive" });
       return;
     }
 
@@ -47,7 +49,7 @@ const ResetPassword = () => {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      toast({ title: "Password Updated", description: "Your password has been reset. Redirecting..." });
+      toast({ title: t("reset.success"), description: t("reset.successDesc") });
       setTimeout(() => navigate("/auth"), 2000);
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -61,12 +63,10 @@ const ResetPassword = () => {
       <div className="min-h-screen flex items-center justify-center bg-background p-8">
         <div className="w-full max-w-md text-center">
           <Logo size="md" />
-          <h1 className="font-display text-2xl font-bold text-foreground mt-8 mb-4">Invalid Reset Link</h1>
-          <p className="text-muted-foreground mb-6">
-            This link is invalid or has expired. Please request a new password reset.
-          </p>
+          <h1 className="font-display text-2xl font-bold text-foreground mt-8 mb-4">{t("reset.invalidTitle")}</h1>
+          <p className="text-muted-foreground mb-6">{t("reset.invalidDesc")}</p>
           <Button asChild>
-            <Link to="/auth">Back to Sign In</Link>
+            <Link to="/auth">{t("reset.backToSignIn")}</Link>
           </Button>
         </div>
       </div>
@@ -76,18 +76,18 @@ const ResetPassword = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-8 relative">
       <Button variant="ghost" size="sm" asChild className="absolute top-4 left-4 text-muted-foreground">
-        <Link to="/auth"><ArrowLeft className="h-4 w-4 mr-2" /> Back</Link>
+        <Link to="/auth"><ArrowLeft className="h-4 w-4 mr-2" /> {t("auth.back")}</Link>
       </Button>
       <div className="w-full max-w-md">
         <div className="mb-8">
           <Logo size="md" />
         </div>
-        <h1 className="font-display text-3xl font-bold text-foreground mb-2">Set New Password</h1>
-        <p className="text-muted-foreground mb-8">Enter your new password below.</p>
+        <h1 className="font-display text-3xl font-bold text-foreground mb-2">{t("reset.title")}</h1>
+        <p className="text-muted-foreground mb-8">{t("reset.subtitle")}</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="password">New Password</Label>
+            <Label htmlFor="password">{t("reset.newPassword")}</Label>
             <div className="relative mt-1.5">
               <Input
                 id="password"
@@ -108,7 +108,7 @@ const ResetPassword = () => {
             </div>
           </div>
           <div>
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t("reset.confirmPassword")}</Label>
             <Input
               id="confirmPassword"
               type={showPassword ? "text" : "password"}
@@ -125,7 +125,7 @@ const ResetPassword = () => {
             disabled={isLoading}
             className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
           >
-            {isLoading ? "Updating..." : "Reset Password"}
+            {isLoading ? t("reset.updating") : t("reset.submit")}
           </Button>
         </form>
       </div>

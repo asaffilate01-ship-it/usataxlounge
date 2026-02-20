@@ -44,17 +44,17 @@ const Auth = () => {
           },
         });
         if (error) throw error;
-        toast({ title: "Account Created", description: "Please check your email to verify your account before signing in." });
+        toast({ title: t("auth.accountCreated"), description: t("auth.verifyEmail") });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           if (error.message === "Email not confirmed") {
-            toast({ title: "Email Not Verified", description: "Please check your inbox and verify your email before signing in.", variant: "destructive" });
+            toast({ title: t("auth.emailNotVerified"), description: t("auth.emailNotVerifiedDesc"), variant: "destructive" });
           } else {
             throw error;
           }
         } else {
-          toast({ title: "Welcome Back", description: "Redirecting to your dashboard..." });
+          toast({ title: t("auth.welcomeBackToast"), description: t("auth.redirecting") });
         }
       }
     } catch (error: any) {
@@ -77,8 +77,7 @@ const Auth = () => {
             <span className="text-gradient-accent">{t("hero.title2")}</span>
           </h2>
           <p className="text-white/60 text-lg">
-            Secure portal for uploading documents, reviewing returns, and
-            communicating with your IRS Enrolled Agent.
+            {t("auth.portalDesc")}
           </p>
         </div>
       </div>
@@ -86,7 +85,7 @@ const Auth = () => {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
         <Button variant="ghost" size="sm" asChild className="absolute top-4 left-4 text-muted-foreground">
-          <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> Back</Link>
+          <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> {t("auth.back")}</Link>
         </Button>
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
@@ -94,18 +93,16 @@ const Auth = () => {
           </div>
 
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-            {isSignUp ? "Create Account" : "Welcome Back"}
+            {isSignUp ? t("auth.createAccount") : t("auth.welcomeBack")}
           </h1>
           <p className="text-muted-foreground mb-8">
-            {isSignUp
-              ? "Start filing your taxes with our expert agents."
-              : "Sign in to access your tax portal."}
+            {isSignUp ? t("auth.signUpSubtitle") : t("auth.signInSubtitle")}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
               <div>
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t("auth.fullName")}</Label>
                 <Input
                   id="name"
                   value={name}
@@ -117,7 +114,7 @@ const Auth = () => {
               </div>
             )}
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -129,7 +126,7 @@ const Auth = () => {
               />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <div className="relative mt-1.5">
                 <Input
                   id="password"
@@ -155,7 +152,7 @@ const Auth = () => {
                 type="button"
                 onClick={async () => {
                   if (!email) {
-                    toast({ title: "Enter Email", description: "Please enter your email address first.", variant: "destructive" });
+                    toast({ title: t("auth.enterEmail"), description: t("auth.enterEmailDesc"), variant: "destructive" });
                     return;
                   }
                   try {
@@ -163,14 +160,14 @@ const Auth = () => {
                       redirectTo: `${window.location.origin}/reset-password`,
                     });
                     if (error) throw error;
-                    toast({ title: "Check Your Email", description: "A password reset link has been sent to your email." });
+                    toast({ title: t("auth.checkEmail"), description: t("auth.resetLinkSent") });
                   } catch (error: any) {
                     toast({ title: "Error", description: error.message, variant: "destructive" });
                   }
                 }}
                 className="text-sm text-accent hover:text-brand-green-dark transition-colors text-right w-full"
               >
-                Forgot Password?
+                {t("auth.forgotPassword")}
               </button>
             )}
 
@@ -179,19 +176,19 @@ const Auth = () => {
               disabled={isLoading}
               className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
             >
-              {isLoading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
+              {isLoading ? t("auth.pleaseWait") : isSignUp ? t("auth.createAccount") : t("auth.signIn")}
             </Button>
           </form>
 
           <div className="mt-4 flex items-center gap-2 justify-center">
             <span className="text-sm text-muted-foreground">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}
+              {isSignUp ? t("auth.alreadyHaveAccount") : t("auth.noAccount")}
             </span>
             <button
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-sm font-medium text-accent hover:text-brand-green-dark transition-colors"
             >
-              {isSignUp ? "Sign In" : "Sign Up"}
+              {isSignUp ? t("auth.signIn") : t("auth.signUp")}
             </button>
           </div>
         </div>
