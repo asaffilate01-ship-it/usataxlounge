@@ -10,6 +10,7 @@ import {
   PenLine,
   LogOut,
   Plus,
+  Settings,
   Send,
   CheckCircle2,
   Clock,
@@ -36,6 +37,7 @@ import { useMessages } from "@/hooks/useMessages";
 import { supabase } from "@/integrations/supabase/client";
 import DocumentsSection from "@/components/admin/DocumentsSection";
 import ClientESignSection from "@/components/client/ClientESignSection";
+import MFASettings from "@/components/client/MFASettings";
 import {
   Dialog,
   DialogContent,
@@ -162,6 +164,7 @@ const ClientDashboard = () => {
     { id: "filings", label: "My Filings", icon: FileText },
     { id: "sign", label: "E-Sign & Approve", icon: PenLine },
     { id: "messages", label: "Messages", icon: MessageSquare },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   const totalIncome = incomeExpenses.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
@@ -543,6 +546,9 @@ const ClientDashboard = () => {
               </div>
             </div>
           )}
+
+          {/* Settings */}
+          {activeTab === "settings" && <MFASettings />}
         </div>
       </main>
     </div>
