@@ -8,7 +8,6 @@ import {
   Send as SendIcon,
   LogOut,
   Search,
-  Plus,
   ChevronDown,
   CheckCircle2,
   Clock,
@@ -17,10 +16,12 @@ import {
   Settings,
   Upload,
   TrendingUp,
-  BarChart3,
   Shield,
   Inbox,
   Eye,
+  PenLine,
+  FolderOpen,
+  FileSignature,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,14 +30,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
-
-const clients = [
-  { id: 1, name: "John Doe", email: "john@example.com", status: "In Progress", forms: "1040", year: "2024" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", status: "Filed", forms: "1040, Sch C", year: "2024" },
-  { id: 3, name: "Acme Corp", email: "acme@corp.com", status: "Pending Documents", forms: "1120-S", year: "2024" },
-  { id: 4, name: "Bob Johnson", email: "bob@example.com", status: "Filed", forms: "1040", year: "2024" },
-  { id: 5, name: "Alice Williams", email: "alice@example.com", status: "Under Review", forms: "1040, 1099", year: "2024" },
-];
+import AddClientDialog from "@/components/admin/AddClientDialog";
+import ClientDetailsSheet from "@/components/admin/ClientDetailsSheet";
+import ContractTemplateEditor from "@/components/admin/ContractTemplateEditor";
+import ESignatureSection from "@/components/admin/ESignatureSection";
+import DocumentsSection from "@/components/admin/DocumentsSection";
 
 const submissions = [
   { id: 1, client: "Jane Smith", form: "1040", status: "Accepted", irsId: "IRS-2024-88712", date: "Apr 10, 2025" },
@@ -55,10 +53,13 @@ const statusColor = (status: string) => {
   switch (status) {
     case "Filed":
     case "Accepted":
+    case "active":
+    case "completed":
       return "bg-success/10 text-success border-success/20";
     case "In Progress":
     case "Pending":
     case "Under Review":
+    case "pending":
       return "bg-warning/10 text-warning border-warning/20";
     case "Pending Documents":
     case "Rejected":
@@ -77,6 +78,23 @@ const AdminDashboard = () => {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
 
+  // Real client data from DB
+  const [dbClients, setDbClients] = useState<any[]>([]);
+  const [selectedClient, setSelectedClient] = useState<any>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    const { data } = await supabase
+      .from("clients")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (data) setDbClients(data);
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
@@ -90,6 +108,9 @@ const AdminDashboard = () => {
     { id: "overview", label: "Dashboard", icon: Home },
     { id: "clients", label: "Clients", icon: Users },
     { id: "filings", label: "Filings & IRS", icon: FileText },
+    { id: "contracts", label: "Contracts", icon: FileSignature },
+    { id: "esign", label: "E-Signatures", icon: PenLine },
+    { id: "documents", label: "Documents", icon: FolderOpen },
     { id: "messages", label: "Messages", icon: MessageSquare, badge: 2 },
     { id: "inquiries", label: "Inquiries", icon: Inbox },
     { id: "settings", label: "Settings", icon: Settings },
@@ -108,14 +129,14 @@ const AdminDashboard = () => {
     fetchMessages();
   }, [activeTab]);
 
-  const filteredClients = clients.filter(
-    (c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredClients = dbClients.filter(
+    (c) => (c.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) || (c.email || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col`}
+      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col shrink-0`}
         style={{ background: "var(--gradient-hero)" }}>
         <div className="p-5 border-b border-white/10">
           <Logo size="md" />
@@ -123,7 +144,7 @@ const AdminDashboard = () => {
             <Shield className="h-3 w-3" /> Admin Portal
           </p>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -167,8 +188,8 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 flex flex-col">
-        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
@@ -191,7 +212,7 @@ const AdminDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                 {[
-                  { label: "Total Clients", value: "142", sub: "+5 this month", icon: Users, color: "bg-primary/10 text-primary" },
+                  { label: "Total Clients", value: String(dbClients.length), sub: "Active clients", icon: Users, color: "bg-primary/10 text-primary" },
                   { label: "Returns Filed", value: "98", sub: "Tax Year 2024", icon: FileText, color: "bg-success/10 text-success" },
                   { label: "Pending Review", value: "12", sub: "Awaiting approval", icon: Clock, color: "bg-warning/10 text-warning" },
                   { label: "IRS Submissions", value: "86", sub: "94% acceptance", icon: TrendingUp, color: "bg-accent/10 text-accent" },
@@ -254,9 +275,7 @@ const AdminDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-xl font-bold text-foreground">Clients</h2>
-                <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
-                  <Plus className="h-4 w-4 mr-2" /> Add Client
-                </Button>
+                <AddClientDialog onClientAdded={fetchClients} />
               </div>
               <div className="relative max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -267,39 +286,50 @@ const AdminDashboard = () => {
                   className="pl-10"
                 />
               </div>
-              <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Client</th>
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Forms</th>
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Year</th>
-                      <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Status</th>
-                      <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredClients.map((c) => (
-                      <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="px-5 py-3">
-                          <p className="text-sm font-medium text-foreground">{c.name}</p>
-                          <p className="text-xs text-muted-foreground">{c.email}</p>
-                        </td>
-                        <td className="px-5 py-3 text-sm text-foreground">{c.forms}</td>
-                        <td className="px-5 py-3 text-sm text-muted-foreground">{c.year}</td>
-                        <td className="px-5 py-3">
-                          <Badge className={statusColor(c.status)}>{c.status}</Badge>
-                        </td>
-                        <td className="px-5 py-3 text-right">
-                          <Button variant="ghost" size="sm" onClick={() => toast({ title: "Opening client details..." })}>
-                            View
-                          </Button>
-                        </td>
+
+              {filteredClients.length === 0 ? (
+                <div className="text-center py-16 text-muted-foreground">
+                  <Users className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p className="font-display text-lg">No clients yet</p>
+                  <p className="text-sm mt-1">Add your first client to get started.</p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/50">
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Client</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Phone</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Year</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Status</th>
+                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {filteredClients.map((c) => (
+                        <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => { setSelectedClient(c); setDetailsOpen(true); }}>
+                          <td className="px-5 py-3">
+                            <p className="text-sm font-medium text-foreground">{c.full_name || "—"}</p>
+                            <p className="text-xs text-muted-foreground">{c.email || "—"}</p>
+                          </td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground">{c.phone || "—"}</td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground">{c.tax_year}</td>
+                          <td className="px-5 py-3">
+                            <Badge className={statusColor(c.status || "pending")}>{c.status || "pending"}</Badge>
+                          </td>
+                          <td className="px-5 py-3 text-right">
+                            <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setSelectedClient(c); setDetailsOpen(true); }}>
+                              View
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <ClientDetailsSheet client={selectedClient} open={detailsOpen} onOpenChange={setDetailsOpen} />
             </div>
           )}
 
@@ -339,6 +369,21 @@ const AdminDashboard = () => {
                 </table>
               </div>
             </div>
+          )}
+
+          {/* Contracts */}
+          {activeTab === "contracts" && (
+            <ContractTemplateEditor clients={dbClients} />
+          )}
+
+          {/* E-Signatures */}
+          {activeTab === "esign" && (
+            <ESignatureSection clients={dbClients} />
+          )}
+
+          {/* Documents */}
+          {activeTab === "documents" && (
+            <DocumentsSection />
           )}
 
           {/* Messages */}
