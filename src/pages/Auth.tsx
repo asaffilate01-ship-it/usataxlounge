@@ -44,11 +44,18 @@ const Auth = () => {
           },
         });
         if (error) throw error;
-        toast({ title: "Account Created", description: "Please check your email to verify your account." });
+        toast({ title: "Account Created", description: "Please check your email to verify your account before signing in." });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast({ title: "Welcome Back", description: "Redirecting to your dashboard..." });
+        if (error) {
+          if (error.message === "Email not confirmed") {
+            toast({ title: "Email Not Verified", description: "Please check your inbox and verify your email before signing in.", variant: "destructive" });
+          } else {
+            throw error;
+          }
+        } else {
+          toast({ title: "Welcome Back", description: "Redirecting to your dashboard..." });
+        }
       }
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });

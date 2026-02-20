@@ -58,7 +58,7 @@ const PricingSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10 md:mb-14"
+          className="text-center mb-6 md:mb-10"
         >
           <span className="text-sm font-semibold tracking-wider uppercase text-accent">
             {t("pricing.label")}
