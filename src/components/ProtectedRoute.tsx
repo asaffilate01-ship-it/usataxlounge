@@ -21,8 +21,13 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     return <Navigate to="/auth" replace />;
   }
 
-  if (requiredRole && userRole !== requiredRole) {
-    return <Navigate to={userRole === "admin" ? "/admin" : "/client"} replace />;
+  // Admin can access client routes too
+  if (requiredRole === "admin" && userRole !== "admin") {
+    return <Navigate to="/client" replace />;
+  }
+
+  if (requiredRole === "client" && userRole !== "client" && userRole !== "admin") {
+    return <Navigate to="/admin" replace />;
   }
 
   return <>{children}</>;

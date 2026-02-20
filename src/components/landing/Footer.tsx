@@ -17,7 +17,7 @@ const Footer = () => {
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 py-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 py-10">
           {/* Brand */}
           <div className="space-y-5">
             <Logo size="md" />
