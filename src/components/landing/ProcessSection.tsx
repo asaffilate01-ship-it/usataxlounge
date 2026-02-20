@@ -13,7 +13,7 @@ const ProcessSection = () => {
   ];
 
   return (
-    <section id="process" className="py-10 md:py-14 bg-background">
+    <section id="process" className="py-6 md:py-10 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

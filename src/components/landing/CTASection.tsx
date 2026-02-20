@@ -8,7 +8,7 @@ const CTASection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-10 md:py-14 relative overflow-hidden">
+    <section className="py-6 md:py-10 relative overflow-hidden">
       {/* Always dark background regardless of theme */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,78%,10%)] via-[hsl(220,72%,18%)] to-[hsl(220,55%,28%)]" />
       <div className="container mx-auto px-4 relative z-10">
