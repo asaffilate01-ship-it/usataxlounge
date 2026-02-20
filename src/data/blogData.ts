@@ -336,4 +336,481 @@ export const blogPosts = [
 <p>Nuestros Agentes Inscritos aseguran que cada crédito elegible se reclame en su declaración.</p>`,
     },
   },
+  {
+    slug: "itin-application-guide",
+    image: expatImg,
+    category: { en: "Immigration & Tax", es: "Inmigración e Impuestos" },
+    title: { en: "ITIN Application Guide: How Non-Citizens Can File US Taxes", es: "Guía de Solicitud de ITIN: Cómo los No Ciudadanos Pueden Declarar Impuestos en EE.UU." },
+    excerpt: {
+      en: "No Social Security Number? You still need to file. Learn how to get an Individual Taxpayer Identification Number (ITIN).",
+      es: "¿Sin Número de Seguro Social? Aún necesita declarar. Aprenda cómo obtener un Número de Identificación Personal del Contribuyente (ITIN).",
+    },
+    date: "Sep 25, 2025",
+    readTime: { en: "6 min read", es: "6 min lectura" },
+    author: "Carlos Mendez, EA",
+    content: {
+      en: `<h2>What Is an ITIN?</h2>
+<p>An Individual Taxpayer Identification Number (ITIN) is a tax processing number issued by the IRS for individuals who are required to have a US taxpayer identification number but are not eligible for a Social Security Number (SSN).</p>
+<h3>Who Needs an ITIN?</h3>
+<p>You need an ITIN if you are a <strong>nonresident alien</strong> required to file a US tax return, a <strong>dependent or spouse</strong> of a US citizen or resident alien, or a <strong>nonresident alien</strong> claiming a tax treaty benefit.</p>
+<h3>How to Apply</h3>
+<p>Complete <strong>Form W-7</strong> and submit it with your federal tax return and proof of identity. You can apply by mail, through an IRS-authorized Certifying Acceptance Agent (CAA), or at an IRS Taxpayer Assistance Center.</p>
+<h3>Processing Time</h3>
+<p>ITIN applications typically take <strong>7-11 weeks</strong> to process. As an authorized CAA, TaxLounge can certify your documents so you don't need to mail originals.</p>
+<h2>TaxLounge Is a Certifying Acceptance Agent</h2>
+<p>We can process your ITIN application in-office, verify your identity documents, and file your return simultaneously — making the process fast and hassle-free.</p>`,
+      es: `<h2>¿Qué Es un ITIN?</h2>
+<p>Un Número de Identificación Personal del Contribuyente (ITIN) es un número de procesamiento fiscal emitido por el IRS para personas que necesitan un número de identificación fiscal pero no son elegibles para un Número de Seguro Social (SSN).</p>
+<h3>¿Quién Necesita un ITIN?</h3>
+<p>Necesita un ITIN si es un <strong>extranjero no residente</strong> que debe presentar una declaración de impuestos, un <strong>dependiente o cónyuge</strong> de un ciudadano o residente, o un <strong>extranjero no residente</strong> que reclama un beneficio de tratado fiscal.</p>
+<h3>Cómo Solicitar</h3>
+<p>Complete el <strong>Formulario W-7</strong> y envíelo con su declaración federal y prueba de identidad. Puede aplicar por correo, a través de un Agente de Aceptación Certificador (CAA), o en un Centro de Asistencia al Contribuyente del IRS.</p>
+<h3>Tiempo de Procesamiento</h3>
+<p>Las solicitudes de ITIN generalmente toman <strong>7-11 semanas</strong>. Como CAA autorizado, TaxLounge puede certificar sus documentos para que no necesite enviar originales.</p>
+<h2>TaxLounge Es un Agente de Aceptación Certificador</h2>
+<p>Podemos procesar su solicitud de ITIN en la oficina, verificar sus documentos de identidad y presentar su declaración simultáneamente.</p>`,
+    },
+  },
+  {
+    slug: "home-office-deduction-guide",
+    image: taxFormsImg,
+    category: { en: "Small Business", es: "Pequeñas Empresas" },
+    title: { en: "Home Office Deduction: Simplified vs Regular Method Explained", es: "Deducción de Oficina en Casa: Método Simplificado vs Regular Explicado" },
+    excerpt: {
+      en: "Working from home? You could deduct thousands. Here's how to choose the right method for maximum savings.",
+      es: "¿Trabaja desde casa? Podría deducir miles. Así es cómo elegir el método correcto para máximos ahorros.",
+    },
+    date: "Sep 12, 2025",
+    readTime: { en: "5 min read", es: "5 min lectura" },
+    author: "Sarah Thompson, EA",
+    content: {
+      en: `<h2>Two Methods for Claiming a Home Office</h2>
+<p>If you use a portion of your home <strong>regularly and exclusively</strong> for business, you may qualify for the home office deduction. The IRS offers two calculation methods.</p>
+<h3>Simplified Method</h3>
+<p>Deduct <strong>$5 per square foot</strong> of your home office, up to a maximum of 300 square feet ($1,500 max deduction). No need to track actual expenses — just measure your office space.</p>
+<h3>Regular Method</h3>
+<p>Calculate the percentage of your home used for business and apply that percentage to actual expenses: mortgage interest/rent, utilities, insurance, repairs, and depreciation. This often yields a <strong>larger deduction</strong> but requires detailed record-keeping.</p>
+<h3>Which Is Better?</h3>
+<p>If your actual expenses are high (over $5/sq ft), the regular method saves more. If simplicity is your priority or expenses are modest, go simplified.</p>
+<h3>Who Qualifies?</h3>
+<p>Self-employed individuals, freelancers, and independent contractors. Note: W-2 employees generally <strong>cannot</strong> claim this deduction under current tax law.</p>
+<h2>Let Us Calculate Both</h2>
+<p>Our Enrolled Agents will calculate both methods and recommend the one that maximizes your deduction.</p>`,
+      es: `<h2>Dos Métodos para Reclamar una Oficina en Casa</h2>
+<p>Si usa una porción de su hogar <strong>regular y exclusivamente</strong> para negocios, puede calificar para la deducción de oficina en casa. El IRS ofrece dos métodos de cálculo.</p>
+<h3>Método Simplificado</h3>
+<p>Deduzca <strong>$5 por pie cuadrado</strong> de su oficina, hasta un máximo de 300 pies cuadrados (deducción máxima de $1,500). No necesita rastrear gastos reales.</p>
+<h3>Método Regular</h3>
+<p>Calcule el porcentaje de su hogar usado para negocios y aplique ese porcentaje a gastos reales: intereses de hipoteca/alquiler, servicios, seguro, reparaciones y depreciación. Esto generalmente produce una <strong>deducción mayor</strong> pero requiere documentación detallada.</p>
+<h3>¿Cuál Es Mejor?</h3>
+<p>Si sus gastos reales son altos (más de $5/pie cuadrado), el método regular ahorra más. Si la simplicidad es su prioridad, elija el simplificado.</p>
+<h2>Déjenos Calcular Ambos</h2>
+<p>Nuestros Agentes Inscritos calcularán ambos métodos y recomendarán el que maximice su deducción.</p>`,
+    },
+  },
+  {
+    slug: "irs-penalty-abatement",
+    image: blogHeaderImg,
+    category: { en: "IRS Representation", es: "Representación IRS" },
+    title: { en: "IRS Penalty Abatement: How to Get Penalties Removed or Reduced", es: "Reducción de Penalidades del IRS: Cómo Eliminar o Reducir Multas" },
+    excerpt: {
+      en: "Owe penalties to the IRS? First-time abatement and reasonable cause relief could save you thousands.",
+      es: "¿Debe penalidades al IRS? La reducción por primera vez y la causa razonable podrían ahorrarle miles.",
+    },
+    date: "Aug 30, 2025",
+    readTime: { en: "6 min read", es: "6 min lectura" },
+    author: "Maria Rodriguez, EA",
+    content: {
+      en: `<h2>Understanding IRS Penalties</h2>
+<p>The IRS assesses penalties for late filing, late payment, and accuracy-related issues. These penalties can add up quickly, but relief options exist.</p>
+<h3>First-Time Penalty Abatement (FTA)</h3>
+<p>If you've had a <strong>clean compliance history</strong> for the past three years (filed on time, paid on time, no penalties), you may qualify for first-time abatement. This can remove failure-to-file and failure-to-pay penalties entirely.</p>
+<h3>Reasonable Cause Relief</h3>
+<p>If you can demonstrate that circumstances beyond your control prevented compliance (natural disaster, serious illness, death in family, fire/casualty, IRS error), the IRS may waive penalties.</p>
+<h3>Statutory Exceptions</h3>
+<p>Certain situations qualify for automatic penalty relief, including federally declared disaster areas and combat zone extensions.</p>
+<h3>How Much Can You Save?</h3>
+<p>Failure-to-file penalties can reach <strong>25% of unpaid tax</strong>. Failure-to-pay penalties add another <strong>25% over time</strong>. Getting these removed can save thousands.</p>
+<h2>We Fight for You</h2>
+<p>Our Enrolled Agents have extensive experience negotiating penalty abatement with the IRS. We'll prepare your case and advocate on your behalf.</p>`,
+      es: `<h2>Entendiendo las Penalidades del IRS</h2>
+<p>El IRS impone penalidades por presentación tardía, pago tardío y problemas de precisión. Estas penalidades pueden acumularse rápidamente, pero existen opciones de alivio.</p>
+<h3>Reducción de Penalidad por Primera Vez (FTA)</h3>
+<p>Si ha tenido un <strong>historial de cumplimiento limpio</strong> durante los últimos tres años (presentación y pago a tiempo, sin penalidades), puede calificar para la reducción por primera vez.</p>
+<h3>Alivio por Causa Razonable</h3>
+<p>Si puede demostrar que circunstancias fuera de su control impidieron el cumplimiento (desastre natural, enfermedad grave, muerte en la familia), el IRS puede exonerar las penalidades.</p>
+<h3>¿Cuánto Puede Ahorrar?</h3>
+<p>Las penalidades por no presentar pueden alcanzar el <strong>25% del impuesto no pagado</strong>. Las penalidades por no pagar agregan otro <strong>25% con el tiempo</strong>.</p>
+<h2>Luchamos por Usted</h2>
+<p>Nuestros Agentes Inscritos tienen amplia experiencia negociando la reducción de penalidades con el IRS.</p>`,
+    },
+  },
+  {
+    slug: "tax-implications-of-divorce",
+    image: aboutTeamImg,
+    category: { en: "Tax Planning", es: "Planificación Fiscal" },
+    title: { en: "Tax Implications of Divorce: Filing Status, Alimony & Property", es: "Implicaciones Fiscales del Divorcio: Estado Civil, Pensión Alimenticia y Propiedad" },
+    excerpt: {
+      en: "Divorce changes everything about your taxes. Learn how filing status, alimony, and asset division affect your return.",
+      es: "El divorcio cambia todo sobre sus impuestos. Aprenda cómo el estado civil, la pensión alimenticia y la división de bienes afectan su declaración.",
+    },
+    date: "Aug 15, 2025",
+    readTime: { en: "7 min read", es: "7 min lectura" },
+    author: "Sarah Thompson, EA",
+    content: {
+      en: `<h2>How Divorce Affects Your Taxes</h2>
+<p>Divorce creates significant tax implications that many people overlook. Understanding these changes can prevent costly mistakes and help you plan effectively.</p>
+<h3>Filing Status Changes</h3>
+<p>Your filing status on <strong>December 31</strong> determines your status for the entire year. If your divorce is finalized by year-end, you must file as Single or Head of Household (if you have qualifying dependents).</p>
+<h3>Alimony Rules (Post-2018)</h3>
+<p>For divorces finalized after December 31, 2018, alimony is <strong>not deductible</strong> by the payer and <strong>not taxable</strong> to the recipient. This was a major change under the Tax Cuts and Jobs Act.</p>
+<h3>Child Support</h3>
+<p>Child support payments are <strong>never deductible</strong> by the payer and <strong>never taxable</strong> to the recipient. They have no tax impact.</p>
+<h3>Property Division</h3>
+<p>Transfers of property between spouses incident to divorce are generally <strong>tax-free</strong>. However, the receiving spouse inherits the original cost basis, which affects future capital gains.</p>
+<h3>Claiming Dependents</h3>
+<p>Generally, the <strong>custodial parent</strong> claims the children. However, Form 8332 can release the claim to the non-custodial parent.</p>
+<h2>Navigate Divorce Taxes with Confidence</h2>
+<p>Our Enrolled Agents help divorced taxpayers optimize their filing strategy and avoid common pitfalls.</p>`,
+      es: `<h2>Cómo el Divorcio Afecta Sus Impuestos</h2>
+<p>El divorcio crea implicaciones fiscales significativas que muchas personas pasan por alto. Comprender estos cambios puede prevenir errores costosos.</p>
+<h3>Cambios en el Estado Civil</h3>
+<p>Su estado civil al <strong>31 de diciembre</strong> determina su estado para todo el año. Si su divorcio se finaliza antes de fin de año, debe declarar como Soltero o Jefe de Hogar.</p>
+<h3>Reglas de Pensión Alimenticia (Post-2018)</h3>
+<p>Para divorcios finalizados después del 31 de diciembre de 2018, la pensión alimenticia <strong>no es deducible</strong> por quien la paga y <strong>no es gravable</strong> para quien la recibe.</p>
+<h3>Manutención de Hijos</h3>
+<p>Los pagos de manutención <strong>nunca son deducibles</strong> ni <strong>gravables</strong>. No tienen impacto fiscal.</p>
+<h3>División de Propiedad</h3>
+<p>Las transferencias de propiedad entre cónyuges durante el divorcio son generalmente <strong>libres de impuestos</strong>. Sin embargo, el cónyuge receptor hereda el costo base original.</p>
+<h2>Navegue los Impuestos del Divorcio con Confianza</h2>
+<p>Nuestros Agentes Inscritos ayudan a contribuyentes divorciados a optimizar su estrategia de declaración.</p>`,
+    },
+  },
+  {
+    slug: "1099-vs-w2-worker-classification",
+    image: taxFormsImg,
+    category: { en: "Small Business", es: "Pequeñas Empresas" },
+    title: { en: "1099 vs W-2: Worker Classification Rules Every Business Must Know", es: "1099 vs W-2: Reglas de Clasificación de Trabajadores que Todo Negocio Debe Conocer" },
+    excerpt: {
+      en: "Misclassifying workers can cost your business thousands in penalties. Learn the IRS rules for contractors vs employees.",
+      es: "Clasificar incorrectamente a los trabajadores puede costarle miles en multas. Conozca las reglas del IRS para contratistas vs empleados.",
+    },
+    date: "Aug 1, 2025",
+    readTime: { en: "6 min read", es: "6 min lectura" },
+    author: "Carlos Mendez, EA",
+    content: {
+      en: `<h2>The Importance of Correct Classification</h2>
+<p>The distinction between a <strong>W-2 employee</strong> and a <strong>1099 independent contractor</strong> has major tax and legal implications. Misclassification can result in back taxes, penalties, and interest.</p>
+<h3>IRS Classification Factors</h3>
+<p>The IRS uses three categories to determine worker status:</p>
+<p><strong>Behavioral Control:</strong> Do you control how and when the worker performs their job? If yes, they're likely an employee.</p>
+<p><strong>Financial Control:</strong> Do you control the business aspects — expenses, tools, opportunity for profit/loss? Contractors typically invest in their own tools.</p>
+<p><strong>Relationship Type:</strong> Is there a written contract? Benefits? Permanency? These suggest an employee relationship.</p>
+<h3>Penalties for Misclassification</h3>
+<p>Employers who misclassify may owe <strong>back employment taxes</strong> (Social Security, Medicare, unemployment), plus penalties of <strong>1.5% of wages</strong> for failure to withhold income tax and <strong>40% of FICA taxes</strong> that should have been withheld.</p>
+<h3>Safe Harbor (Section 530)</h3>
+<p>Businesses may qualify for relief if they had a <strong>reasonable basis</strong> for classification and consistently treated similar workers the same way.</p>
+<h2>Get a Classification Review</h2>
+<p>Our Enrolled Agents can review your worker relationships and ensure proper classification to avoid costly penalties.</p>`,
+      es: `<h2>La Importancia de la Clasificación Correcta</h2>
+<p>La distinción entre un <strong>empleado W-2</strong> y un <strong>contratista independiente 1099</strong> tiene importantes implicaciones fiscales y legales. La clasificación incorrecta puede resultar en impuestos atrasados y penalidades.</p>
+<h3>Factores de Clasificación del IRS</h3>
+<p>El IRS usa tres categorías para determinar el estado del trabajador:</p>
+<p><strong>Control de Comportamiento:</strong> ¿Controla cómo y cuándo el trabajador realiza su trabajo? Si es así, probablemente es un empleado.</p>
+<p><strong>Control Financiero:</strong> ¿Controla los aspectos del negocio — gastos, herramientas, oportunidad de ganancia/pérdida?</p>
+<p><strong>Tipo de Relación:</strong> ¿Hay contrato escrito? ¿Beneficios? ¿Permanencia?</p>
+<h3>Penalidades por Clasificación Incorrecta</h3>
+<p>Los empleadores pueden deber <strong>impuestos de empleo atrasados</strong> más penalidades del <strong>1.5% de los salarios</strong> y <strong>40% de impuestos FICA</strong>.</p>
+<h2>Obtenga una Revisión de Clasificación</h2>
+<p>Nuestros Agentes Inscritos pueden revisar sus relaciones laborales y asegurar la clasificación correcta.</p>`,
+    },
+  },
+  {
+    slug: "state-tax-filing-requirements-remote-workers",
+    image: expatImg,
+    category: { en: "Tax Tips", es: "Consejos Fiscales" },
+    title: { en: "State Tax Filing for Remote Workers: Do You Owe Multiple States?", es: "Declaración Estatal para Trabajadores Remotos: ¿Debe Impuestos en Múltiples Estados?" },
+    excerpt: {
+      en: "Remote work has made state taxes complicated. Living in one state and working for a company in another? You may owe both.",
+      es: "El trabajo remoto ha complicado los impuestos estatales. ¿Vive en un estado y trabaja para una empresa en otro? Podría deber en ambos.",
+    },
+    date: "Jul 18, 2025",
+    readTime: { en: "5 min read", es: "5 min lectura" },
+    author: "Maria Rodriguez, EA",
+    content: {
+      en: `<h2>Remote Work and State Taxes</h2>
+<p>The rise of remote work has created a complex web of state tax obligations. If you live in one state and work for an employer in another, you may need to file in <strong>multiple states</strong>.</p>
+<h3>General Rules</h3>
+<p><strong>Resident state:</strong> You typically owe taxes on all income to the state where you live, regardless of where the income is earned.</p>
+<p><strong>Work state:</strong> Some states require you to pay taxes on income earned within their borders, even if you don't live there.</p>
+<h3>States with No Income Tax</h3>
+<p>If you live or work in Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington, or Wyoming, those states don't tax wages. This simplifies multi-state situations.</p>
+<h3>The "Convenience of the Employer" Rule</h3>
+<p>A few states (notably New York and Connecticut) apply this rule: if you work remotely for your own convenience (not the employer's requirement), you may still owe taxes in the employer's state.</p>
+<h3>Tax Credits for Double Taxation</h3>
+<p>Most states offer a credit for taxes paid to other states, preventing true double taxation. However, the calculation can be complex.</p>
+<h2>We Handle Multi-State Returns</h2>
+<p>Our Enrolled Agents are experienced with multi-state filings and will ensure you claim all available credits.</p>`,
+      es: `<h2>Trabajo Remoto e Impuestos Estatales</h2>
+<p>El auge del trabajo remoto ha creado una red compleja de obligaciones fiscales estatales. Si vive en un estado y trabaja para un empleador en otro, puede necesitar declarar en <strong>múltiples estados</strong>.</p>
+<h3>Reglas Generales</h3>
+<p><strong>Estado de residencia:</strong> Generalmente debe impuestos sobre todos los ingresos al estado donde vive.</p>
+<p><strong>Estado de trabajo:</strong> Algunos estados requieren que pague impuestos sobre ingresos generados dentro de sus fronteras.</p>
+<h3>Estados Sin Impuesto sobre la Renta</h3>
+<p>Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington y Wyoming no gravan los salarios.</p>
+<h3>Créditos por Doble Tributación</h3>
+<p>La mayoría de los estados ofrecen un crédito por impuestos pagados a otros estados, previniendo la doble tributación. Sin embargo, el cálculo puede ser complejo.</p>
+<h2>Manejamos Declaraciones Multi-Estatales</h2>
+<p>Nuestros Agentes Inscritos tienen experiencia con declaraciones multi-estatales y asegurarán que reclame todos los créditos disponibles.</p>`,
+    },
+  },
+  {
+    slug: "tax-benefits-of-real-estate-investing",
+    image: aboutTeamImg,
+    category: { en: "Tax Planning", es: "Planificación Fiscal" },
+    title: { en: "Tax Benefits of Real Estate Investing: Depreciation, 1031 Exchanges & More", es: "Beneficios Fiscales de Invertir en Bienes Raíces: Depreciación, Intercambios 1031 y Más" },
+    excerpt: {
+      en: "Real estate offers some of the best tax advantages in the code. Learn how depreciation, 1031 exchanges, and QBI deductions work.",
+      es: "Los bienes raíces ofrecen algunas de las mejores ventajas fiscales del código. Aprenda sobre depreciación, intercambios 1031 y deducciones QBI.",
+    },
+    date: "Jul 5, 2025",
+    readTime: { en: "8 min read", es: "8 min lectura" },
+    author: "Carlos Mendez, EA",
+    content: {
+      en: `<h2>Why Real Estate Is Tax-Advantaged</h2>
+<p>Real estate investors enjoy some of the most generous tax benefits in the entire Internal Revenue Code. Understanding these benefits can dramatically reduce your tax liability.</p>
+<h3>Depreciation</h3>
+<p>Residential rental property is depreciated over <strong>27.5 years</strong>, commercial property over <strong>39 years</strong>. This paper loss reduces taxable rental income without any cash outlay. On a $300,000 property, that's approximately <strong>$10,909 per year</strong> in deductions.</p>
+<h3>1031 Like-Kind Exchanges</h3>
+<p>Sell an investment property and reinvest the proceeds into a similar property to <strong>defer capital gains taxes indefinitely</strong>. Strict rules apply: you must identify replacement property within 45 days and close within 180 days.</p>
+<h3>Qualified Business Income (QBI) Deduction</h3>
+<p>Rental real estate may qualify for the <strong>20% QBI deduction</strong> under Section 199A, effectively reducing the tax rate on rental income.</p>
+<h3>Deductible Expenses</h3>
+<p>Mortgage interest, property taxes, insurance, repairs, management fees, travel to properties, and professional services are all deductible against rental income.</p>
+<h3>Real Estate Professional Status</h3>
+<p>If you spend more than 750 hours and more than half your working time in real estate activities, you may qualify as a <strong>real estate professional</strong>, allowing you to deduct rental losses against ordinary income without limitation.</p>
+<h2>Maximize Your Real Estate Tax Benefits</h2>
+<p>Our Enrolled Agents specialize in real estate tax strategies. Schedule a consultation to review your portfolio.</p>`,
+      es: `<h2>Por Qué los Bienes Raíces Son Fiscalmente Ventajosos</h2>
+<p>Los inversores inmobiliarios disfrutan de algunos de los beneficios fiscales más generosos de todo el Código de Rentas Internas.</p>
+<h3>Depreciación</h3>
+<p>La propiedad residencial de alquiler se deprecia en <strong>27.5 años</strong>, la comercial en <strong>39 años</strong>. En una propiedad de $300,000, eso es aproximadamente <strong>$10,909 por año</strong> en deducciones.</p>
+<h3>Intercambios 1031</h3>
+<p>Venda una propiedad de inversión y reinvierta en una propiedad similar para <strong>diferir impuestos sobre ganancias de capital indefinidamente</strong>. Debe identificar la propiedad de reemplazo dentro de 45 días y cerrar dentro de 180 días.</p>
+<h3>Deducción de Ingreso Empresarial Calificado (QBI)</h3>
+<p>Los bienes raíces de alquiler pueden calificar para la <strong>deducción del 20% QBI</strong> bajo la Sección 199A.</p>
+<h3>Gastos Deducibles</h3>
+<p>Intereses hipotecarios, impuestos de propiedad, seguro, reparaciones, tarifas de administración y servicios profesionales son todos deducibles.</p>
+<h2>Maximice Sus Beneficios Fiscales Inmobiliarios</h2>
+<p>Nuestros Agentes Inscritos se especializan en estrategias fiscales inmobiliarias.</p>`,
+    },
+  },
+  {
+    slug: "gift-tax-rules-explained",
+    image: taxFormsImg,
+    category: { en: "Tax Planning", es: "Planificación Fiscal" },
+    title: { en: "Gift Tax Rules: How Much Can You Give Tax-Free in 2025?", es: "Reglas del Impuesto sobre Donaciones: ¿Cuánto Puede Dar Libre de Impuestos en 2025?" },
+    excerpt: {
+      en: "Giving money to family? Know the annual exclusion limits, lifetime exemption, and when you need to file Form 709.",
+      es: "¿Dando dinero a la familia? Conozca los límites de exclusión anual, exención vitalicia y cuándo debe presentar el Formulario 709.",
+    },
+    date: "Jun 22, 2025",
+    readTime: { en: "5 min read", es: "5 min lectura" },
+    author: "Sarah Thompson, EA",
+    content: {
+      en: `<h2>Understanding Gift Tax Rules</h2>
+<p>Many people are confused about gift taxes. The good news: most gifts are not taxable. Here's what you need to know.</p>
+<h3>Annual Exclusion (2025)</h3>
+<p>You can give up to <strong>$18,000 per person</strong> per year without any gift tax consequences. Married couples can give <strong>$36,000 per person</strong> by "gift splitting." These gifts don't need to be reported to the IRS.</p>
+<h3>Lifetime Exemption</h3>
+<p>Above the annual exclusion, you have a lifetime gift tax exemption of <strong>$13.61 million</strong> (2024). Gifts exceeding the annual exclusion count against this lifetime amount. Important: this exemption is <strong>set to decrease to approximately $7 million in 2026</strong> when current provisions expire.</p>
+<h3>When to File Form 709</h3>
+<p>You must file a gift tax return (Form 709) if you give more than $18,000 to any one person, make gifts of future interests, or choose gift-splitting with your spouse.</p>
+<h3>Tax-Free Exceptions</h3>
+<p>Some gifts are always tax-free regardless of amount: tuition paid directly to an educational institution, medical expenses paid directly to a provider, gifts to your spouse (if US citizen), and gifts to political organizations.</p>
+<h2>Plan Your Gifting Strategy</h2>
+<p>Strategic gifting can be a powerful estate planning tool. Our Enrolled Agents can help you develop a tax-efficient gifting plan.</p>`,
+      es: `<h2>Entendiendo las Reglas del Impuesto sobre Donaciones</h2>
+<p>Muchas personas están confundidas sobre los impuestos de donación. La buena noticia: la mayoría de las donaciones no son gravables.</p>
+<h3>Exclusión Anual (2025)</h3>
+<p>Puede dar hasta <strong>$18,000 por persona</strong> por año sin consecuencias fiscales. Parejas casadas pueden dar <strong>$36,000 por persona</strong> mediante "división de donación."</p>
+<h3>Exención Vitalicia</h3>
+<p>Por encima de la exclusión anual, tiene una exención vitalicia de <strong>$13.61 millones</strong>. Importante: esta exención está <strong>programada para disminuir a aproximadamente $7 millones en 2026</strong>.</p>
+<h3>Cuándo Presentar el Formulario 709</h3>
+<p>Debe presentar una declaración de impuesto sobre donaciones si da más de $18,000 a cualquier persona o elige la división de donación con su cónyuge.</p>
+<h3>Excepciones Libres de Impuestos</h3>
+<p>Algunas donaciones siempre son libres de impuestos: matrícula pagada directamente a una institución educativa, gastos médicos pagados directamente al proveedor, donaciones a su cónyuge y a organizaciones políticas.</p>
+<h2>Planifique Su Estrategia de Donaciones</h2>
+<p>La donación estratégica puede ser una herramienta poderosa de planificación patrimonial.</p>`,
+    },
+  },
+  {
+    slug: "offer-in-compromise-irs-tax-debt",
+    image: blogHeaderImg,
+    category: { en: "IRS Representation", es: "Representación IRS" },
+    title: { en: "Offer in Compromise: Can You Settle Your IRS Tax Debt for Less?", es: "Oferta de Compromiso: ¿Puede Liquidar Su Deuda Fiscal con el IRS por Menos?" },
+    excerpt: {
+      en: "Owe the IRS more than you can pay? An Offer in Compromise may let you settle for pennies on the dollar.",
+      es: "¿Debe al IRS más de lo que puede pagar? Una Oferta de Compromiso puede permitirle liquidar por centavos por dólar.",
+    },
+    date: "Jun 8, 2025",
+    readTime: { en: "7 min read", es: "7 min lectura" },
+    author: "Maria Rodriguez, EA",
+    content: {
+      en: `<h2>What Is an Offer in Compromise?</h2>
+<p>An Offer in Compromise (OIC) is an agreement between a taxpayer and the IRS that settles a tax debt for <strong>less than the full amount owed</strong>. It's the IRS's version of debt settlement.</p>
+<h3>Do You Qualify?</h3>
+<p>The IRS considers three grounds for an OIC:</p>
+<p><strong>Doubt as to Collectibility:</strong> The most common basis — you can't pay the full amount within the collection statute (typically 10 years).</p>
+<p><strong>Doubt as to Liability:</strong> You dispute that you owe the amount the IRS claims.</p>
+<p><strong>Effective Tax Administration:</strong> Paying the full amount would create economic hardship or be unfair/inequitable.</p>
+<h3>How the IRS Calculates Your Offer</h3>
+<p>The IRS uses a formula: <strong>Reasonable Collection Potential (RCP)</strong> = future income potential + net equity in assets. Your offer must generally equal or exceed this amount.</p>
+<h3>The Application Process</h3>
+<p>Submit <strong>Form 656</strong> with a $205 application fee and an initial payment. You must be current on all filing requirements and estimated tax payments. The process typically takes <strong>6-12 months</strong>.</p>
+<h3>Success Rates</h3>
+<p>The IRS accepts approximately <strong>33% of OIC applications</strong>. Having professional representation significantly improves your chances.</p>
+<h2>Let Us Negotiate Your OIC</h2>
+<p>Our Enrolled Agents have successfully negotiated offers in compromise for clients, saving them thousands. Contact us for a free assessment.</p>`,
+      es: `<h2>¿Qué Es una Oferta de Compromiso?</h2>
+<p>Una Oferta de Compromiso (OIC) es un acuerdo entre un contribuyente y el IRS que liquida una deuda fiscal por <strong>menos del monto total adeudado</strong>.</p>
+<h3>¿Califica Usted?</h3>
+<p>El IRS considera tres bases para una OIC:</p>
+<p><strong>Duda en Cuanto a la Cobrabilidad:</strong> La base más común — no puede pagar el monto total dentro del plazo de cobro.</p>
+<p><strong>Duda en Cuanto a la Responsabilidad:</strong> Usted disputa que debe el monto que el IRS reclama.</p>
+<p><strong>Administración Fiscal Efectiva:</strong> Pagar el monto total crearía dificultad económica.</p>
+<h3>Cómo el IRS Calcula Su Oferta</h3>
+<p>El IRS usa una fórmula: <strong>Potencial de Cobro Razonable (RCP)</strong> = potencial de ingresos futuros + patrimonio neto en activos.</p>
+<h3>Tasas de Éxito</h3>
+<p>El IRS acepta aproximadamente el <strong>33% de las solicitudes de OIC</strong>. La representación profesional mejora significativamente sus posibilidades.</p>
+<h2>Déjenos Negociar Su OIC</h2>
+<p>Nuestros Agentes Inscritos han negociado exitosamente ofertas de compromiso, ahorrando miles a nuestros clientes.</p>`,
+    },
+  },
+  {
+    slug: "small-business-tax-deductions-checklist",
+    image: aboutTeamImg,
+    category: { en: "Small Business", es: "Pequeñas Empresas" },
+    title: { en: "Ultimate Small Business Tax Deduction Checklist for 2025", es: "Lista Definitiva de Deducciones Fiscales para Pequeñas Empresas 2025" },
+    excerpt: {
+      en: "Stop overpaying the IRS. Here's every deduction your small business should be claiming this year.",
+      es: "Deje de pagar de más al IRS. Aquí están todas las deducciones que su pequeña empresa debería reclamar este año.",
+    },
+    date: "May 20, 2025",
+    readTime: { en: "9 min read", es: "9 min lectura" },
+    author: "Sarah Thompson, EA",
+    content: {
+      en: `<h2>Don't Miss These Business Deductions</h2>
+<p>Small business owners often miss legitimate deductions simply because they don't know they exist. This comprehensive checklist ensures you claim every dollar you're entitled to.</p>
+<h3>Operating Expenses</h3>
+<p>• Rent and lease payments • Utilities (electric, water, internet, phone) • Office supplies and equipment • Software subscriptions • Professional services (accounting, legal) • Insurance premiums • Advertising and marketing</p>
+<h3>Vehicle & Travel</h3>
+<p>• Business mileage: <strong>67 cents per mile</strong> in 2024 • Actual vehicle expenses (gas, insurance, repairs) • Business travel (airfare, hotels, meals at 50%) • Parking and tolls</p>
+<h3>Employee Costs</h3>
+<p>• Wages, salaries, and bonuses • Employer's share of payroll taxes • Health insurance premiums • Retirement plan contributions • Education and training</p>
+<h3>Depreciation & Section 179</h3>
+<p>• <strong>Section 179 deduction:</strong> up to $1,220,000 for equipment purchases • <strong>Bonus depreciation:</strong> 60% in 2024 (phasing down) • Regular depreciation for buildings and improvements</p>
+<h3>Often Overlooked</h3>
+<p>• Bank fees and interest • Bad debts • Business meals (50%) • Startup costs (up to $5,000) • Moving expenses for business • Memberships and subscriptions • Home office (see our guide)</p>
+<h2>Get a Deduction Audit</h2>
+<p>Our Enrolled Agents will review your books and identify every deduction you may be missing. The savings often far exceed the cost of preparation.</p>`,
+      es: `<h2>No Se Pierda Estas Deducciones Empresariales</h2>
+<p>Los propietarios de pequeñas empresas a menudo pierden deducciones legítimas simplemente porque no saben que existen.</p>
+<h3>Gastos Operativos</h3>
+<p>• Pagos de alquiler y arrendamiento • Servicios (electricidad, agua, internet, teléfono) • Suministros y equipo de oficina • Suscripciones de software • Servicios profesionales • Primas de seguro • Publicidad y marketing</p>
+<h3>Vehículo y Viajes</h3>
+<p>• Millaje de negocios: <strong>67 centavos por milla</strong> en 2024 • Gastos reales del vehículo • Viajes de negocios (pasajes, hoteles, comidas al 50%)</p>
+<h3>Costos de Empleados</h3>
+<p>• Sueldos, salarios y bonos • Impuestos de nómina del empleador • Primas de seguro de salud • Contribuciones a planes de jubilación</p>
+<h3>Depreciación y Sección 179</h3>
+<p>• <strong>Deducción Sección 179:</strong> hasta $1,220,000 para compras de equipo • <strong>Depreciación bonificada:</strong> 60% en 2024</p>
+<h3>Frecuentemente Olvidadas</h3>
+<p>• Comisiones bancarias e intereses • Deudas incobrables • Comidas de negocios (50%) • Costos de inicio (hasta $5,000) • Oficina en casa</p>
+<h2>Obtenga una Auditoría de Deducciones</h2>
+<p>Nuestros Agentes Inscritos revisarán sus libros e identificarán cada deducción que pueda estar perdiendo.</p>`,
+    },
+  },
+  {
+    slug: "identity-theft-tax-fraud-protection",
+    image: expatImg,
+    category: { en: "Tax Tips", es: "Consejos Fiscales" },
+    title: { en: "Tax Identity Theft: How to Protect Yourself and What to Do If It Happens", es: "Robo de Identidad Fiscal: Cómo Protegerse y Qué Hacer Si Le Sucede" },
+    excerpt: {
+      en: "Tax-related identity theft is on the rise. Learn how to protect your SSN and what to do if someone files a return in your name.",
+      es: "El robo de identidad relacionado con impuestos está en aumento. Aprenda cómo proteger su SSN y qué hacer si alguien presenta una declaración a su nombre.",
+    },
+    date: "May 5, 2025",
+    readTime: { en: "5 min read", es: "5 min lectura" },
+    author: "Maria Rodriguez, EA",
+    content: {
+      en: `<h2>Tax Identity Theft Is Growing</h2>
+<p>In 2024, the IRS identified over <strong>$5.5 billion</strong> in tax fraud. Tax identity theft occurs when someone uses your Social Security Number to file a fraudulent tax return and claim a refund.</p>
+<h3>Warning Signs</h3>
+<p>• Your e-filed return is rejected because one was already filed using your SSN • You receive an IRS notice about income you didn't earn • You receive a refund you didn't request • You get an IRS letter saying more than one return was filed using your SSN</p>
+<h3>How to Protect Yourself</h3>
+<p><strong>File early:</strong> The earlier you file, the less time thieves have to use your SSN.</p>
+<p><strong>Get an IP PIN:</strong> Request an Identity Protection PIN from the IRS — a six-digit number that prevents anyone else from filing with your SSN.</p>
+<p><strong>Secure your information:</strong> Never share your SSN unnecessarily. Use strong passwords and two-factor authentication for tax accounts.</p>
+<p><strong>Monitor your accounts:</strong> Check your IRS account online at irs.gov for unexpected activity.</p>
+<h3>What to Do If You're a Victim</h3>
+<p>1. File <strong>Form 14039</strong> (Identity Theft Affidavit) with the IRS 2. File a police report 3. Contact one of the three credit bureaus to place a fraud alert 4. Continue to file your tax return by paper with Form 14039 attached</p>
+<h2>We Help Victims Recover</h2>
+<p>Our Enrolled Agents have helped many clients resolve identity theft cases with the IRS. We'll guide you through every step.</p>`,
+      es: `<h2>El Robo de Identidad Fiscal Está Creciendo</h2>
+<p>En 2024, el IRS identificó más de <strong>$5.5 mil millones</strong> en fraude fiscal. El robo de identidad fiscal ocurre cuando alguien usa su Número de Seguro Social para presentar una declaración fraudulenta.</p>
+<h3>Señales de Advertencia</h3>
+<p>• Su declaración electrónica es rechazada porque ya se presentó una con su SSN • Recibe un aviso del IRS sobre ingresos que no ganó • Recibe un reembolso que no solicitó</p>
+<h3>Cómo Protegerse</h3>
+<p><strong>Presente temprano:</strong> Cuanto antes presente, menos tiempo tienen los ladrones para usar su SSN.</p>
+<p><strong>Obtenga un IP PIN:</strong> Solicite un PIN de Protección de Identidad del IRS — un número de seis dígitos que impide que alguien más presente con su SSN.</p>
+<p><strong>Asegure su información:</strong> Nunca comparta su SSN innecesariamente. Use contraseñas fuertes y autenticación de dos factores.</p>
+<h3>Qué Hacer Si Es Víctima</h3>
+<p>1. Presente el <strong>Formulario 14039</strong> al IRS 2. Presente un reporte policial 3. Contacte una de las tres agencias de crédito para colocar una alerta de fraude</p>
+<h2>Ayudamos a las Víctimas a Recuperarse</h2>
+<p>Nuestros Agentes Inscritos han ayudado a muchos clientes a resolver casos de robo de identidad con el IRS.</p>`,
+    },
+  },
+  {
+    slug: "foreign-earned-income-exclusion-guide",
+    image: taxFormsImg,
+    category: { en: "Expat Taxes", es: "Impuestos de Expatriados" },
+    title: { en: "Foreign Earned Income Exclusion: How Expats Can Exclude $126,500 in 2025", es: "Exclusión de Ingresos en el Extranjero: Cómo los Expatriados Pueden Excluir $126,500 en 2025" },
+    excerpt: {
+      en: "Living and working abroad? The FEIE lets you exclude over $126K from US taxes. Here's how to qualify and claim it.",
+      es: "¿Vive y trabaja en el extranjero? La FEIE le permite excluir más de $126K de impuestos estadounidenses. Aprenda cómo calificar.",
+    },
+    date: "Apr 20, 2025",
+    readTime: { en: "7 min read", es: "7 min lectura" },
+    author: "Carlos Mendez, EA",
+    content: {
+      en: `<h2>The Foreign Earned Income Exclusion (FEIE)</h2>
+<p>The FEIE is one of the most valuable tax benefits available to US citizens and resident aliens living abroad. For tax year 2024, you can exclude up to <strong>$126,500</strong> of foreign earned income from US taxation.</p>
+<h3>Qualifying Tests</h3>
+<p>You must meet one of two tests:</p>
+<p><strong>Bona Fide Residence Test:</strong> You've been a bona fide resident of a foreign country for an uninterrupted period that includes an entire tax year.</p>
+<p><strong>Physical Presence Test:</strong> You've been physically present in a foreign country for at least <strong>330 full days</strong> during any 12-month period.</p>
+<h3>What Income Qualifies?</h3>
+<p>Only <strong>earned income</strong> qualifies — wages, salaries, self-employment income. Investment income, pensions, and Social Security do NOT qualify.</p>
+<h3>Foreign Housing Exclusion</h3>
+<p>In addition to the FEIE, you may also exclude or deduct certain <strong>housing expenses</strong> that exceed a base amount (approximately $18,272 for 2024). This can add thousands more in tax savings.</p>
+<h3>How to Claim</h3>
+<p>File <strong>Form 2555</strong> with your Form 1040. You must file a return even if the exclusion eliminates your tax liability. Note: the FEIE does NOT exempt you from <strong>self-employment tax</strong>.</p>
+<h2>Expat Tax Specialists</h2>
+<p>Our Enrolled Agents specialize in expat taxation. We'll maximize your FEIE and housing exclusion while ensuring full compliance.</p>`,
+      es: `<h2>La Exclusión de Ingresos en el Extranjero (FEIE)</h2>
+<p>La FEIE es uno de los beneficios fiscales más valiosos disponibles para ciudadanos y residentes estadounidenses en el extranjero. Para el año fiscal 2024, puede excluir hasta <strong>$126,500</strong> de ingresos del extranjero.</p>
+<h3>Pruebas de Calificación</h3>
+<p>Debe cumplir una de dos pruebas:</p>
+<p><strong>Prueba de Residencia Bona Fide:</strong> Ha sido residente bona fide de un país extranjero por un período ininterrumpido que incluye un año fiscal completo.</p>
+<p><strong>Prueba de Presencia Física:</strong> Ha estado físicamente presente en un país extranjero por al menos <strong>330 días completos</strong> durante cualquier período de 12 meses.</p>
+<h3>¿Qué Ingresos Califican?</h3>
+<p>Solo los <strong>ingresos del trabajo</strong> califican — sueldos, salarios, ingresos de trabajo independiente. Los ingresos por inversiones y pensiones NO califican.</p>
+<h3>Exclusión de Vivienda en el Extranjero</h3>
+<p>Además de la FEIE, también puede excluir o deducir ciertos <strong>gastos de vivienda</strong> que excedan un monto base (aproximadamente $18,272 para 2024).</p>
+<h3>Cómo Reclamar</h3>
+<p>Presente el <strong>Formulario 2555</strong> con su Formulario 1040. Debe presentar una declaración incluso si la exclusión elimina su obligación fiscal.</p>
+<h2>Especialistas en Impuestos para Expatriados</h2>
+<p>Nuestros Agentes Inscritos se especializan en tributación para expatriados. Maximizaremos su FEIE y exclusión de vivienda.</p>`,
+    },
+  },
 ];
