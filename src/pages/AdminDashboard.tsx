@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -35,6 +35,18 @@ import ClientDetailsSheet from "@/components/admin/ClientDetailsSheet";
 import ContractTemplateEditor from "@/components/admin/ContractTemplateEditor";
 import ESignatureSection from "@/components/admin/ESignatureSection";
 import DocumentsSection from "@/components/admin/DocumentsSection";
+import { useMessages } from "@/hooks/useMessages";
+
+const formatTimeAgo = (dateStr: string) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+};
 
 const submissions = [
   { id: 1, client: "Jane Smith", form: "1040", status: "Accepted", irsId: "IRS-2024-88712", date: "Apr 10, 2025" },
@@ -43,11 +55,7 @@ const submissions = [
   { id: 4, client: "Acme Corp", form: "1120-S", status: "Rejected", irsId: "—", date: "Apr 5, 2025" },
 ];
 
-const adminMessages = [
-  { id: 1, client: "John Doe", text: "Should I upload my mortgage interest statement too?", time: "1h ago", unread: true },
-  { id: 2, client: "Alice Williams", text: "When can I expect my return to be filed?", time: "3h ago", unread: true },
-  { id: 3, client: "Acme Corp", text: "Here are the updated payroll records.", time: "Yesterday", unread: false },
-];
+// Admin messages are now fetched from the database
 
 const statusColor = (status: string) => {
   switch (status) {
@@ -74,9 +82,61 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [replyText, setReplyText] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const { toast } = useToast();
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Real-time messages (admin sees all)
+  const { messages: allMessages, sendMessage, markConversationRead } = useMessages();
+  const [profilesMap, setProfilesMap] = useState<Record<string, string>>({});
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Get unique conversations grouped by sender
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const userIds = [...new Set(allMessages.map(m => m.sender_id === user?.id ? m.receiver_id : m.sender_id))];
+      if (userIds.length === 0) return;
+      const { data } = await supabase.from("profiles").select("user_id, full_name").in("user_id", userIds);
+      if (data) {
+        const map: Record<string, string> = {};
+        data.forEach(p => { map[p.user_id] = p.full_name || "Client"; });
+        setProfilesMap(map);
+      }
+    };
+    fetchProfiles();
+  }, [allMessages, user]);
+
+  // Group messages into conversations by other user
+  const conversations = (() => {
+    if (!user) return [];
+    const convMap = new Map<string, { otherUserId: string; name: string; lastMessage: string; lastTime: string; unreadCount: number }>();
+    allMessages.forEach(m => {
+      const otherId = m.sender_id === user.id ? m.receiver_id : m.sender_id;
+      const existing = convMap.get(otherId);
+      const isUnread = !m.read && m.receiver_id === user.id;
+      if (!existing || new Date(m.created_at) > new Date(existing.lastTime)) {
+        convMap.set(otherId, {
+          otherUserId: otherId,
+          name: profilesMap[otherId] || "Client",
+          lastMessage: m.content,
+          lastTime: m.created_at,
+          unreadCount: (existing?.unreadCount || 0) + (isUnread ? 1 : 0),
+        });
+      } else if (isUnread) {
+        existing.unreadCount++;
+      }
+    });
+    return Array.from(convMap.values()).sort((a, b) => new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime());
+  })();
+
+  const [selectedConvUserId, setSelectedConvUserId] = useState<string | null>(null);
+  const conversationMessages = selectedConvUserId
+    ? allMessages.filter(m =>
+        (m.sender_id === user?.id && m.receiver_id === selectedConvUserId) ||
+        (m.sender_id === selectedConvUserId && m.receiver_id === user?.id)
+      )
+    : [];
 
   // Real client data from DB
   const [dbClients, setDbClients] = useState<any[]>([]);
@@ -249,18 +309,20 @@ const AdminDashboard = () => {
                 <div className="rounded-2xl border border-border bg-card shadow-elegant p-5">
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4">New Messages</h3>
                   <div className="space-y-3">
-                    {adminMessages.map((m) => (
-                      <div key={m.id} className="flex items-start gap-3 py-2 border-b border-border last:border-0">
+                    {conversations.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No messages yet.</p>
+                    ) : conversations.slice(0, 3).map((conv) => (
+                      <div key={conv.otherUserId} className="flex items-start gap-3 py-2 border-b border-border last:border-0 cursor-pointer hover:bg-muted/30 rounded-lg px-2 -mx-2" onClick={() => { setSelectedConvUserId(conv.otherUserId); setActiveTab("messages"); }}>
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
-                          {m.client.split(" ").map(n => n[0]).join("")}
+                          {conv.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-foreground">{m.client}</p>
-                            {m.unread && <span className="w-2 h-2 rounded-full bg-accent" />}
+                            <p className="text-sm font-medium text-foreground">{conv.name}</p>
+                            {conv.unreadCount > 0 && <span className="w-2 h-2 rounded-full bg-accent" />}
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">{m.text}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{m.time}</p>
+                          <p className="text-sm text-muted-foreground truncate">{conv.lastMessage}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{formatTimeAgo(conv.lastTime)}</p>
                         </div>
                       </div>
                     ))}
@@ -390,39 +452,99 @@ const AdminDashboard = () => {
           {activeTab === "messages" && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="font-display text-xl font-bold text-foreground">Client Messages</h2>
-              <div className="space-y-4">
-                {adminMessages.map((m) => (
-                  <div key={m.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
-                        {m.client.split(" ").map(n => n[0]).join("")}
+              <div className="flex gap-6" style={{ height: "calc(100vh - 200px)" }}>
+                {/* Conversation List */}
+                <div className="w-72 shrink-0 rounded-2xl border border-border bg-card shadow-elegant overflow-auto">
+                  <div className="p-3 border-b border-border">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Conversations</p>
+                  </div>
+                  {conversations.length === 0 ? (
+                    <p className="p-4 text-sm text-muted-foreground text-center">No conversations</p>
+                  ) : conversations.map((conv) => (
+                    <button
+                      key={conv.otherUserId}
+                      onClick={() => { setSelectedConvUserId(conv.otherUserId); markConversationRead(conv.otherUserId); }}
+                      className={`w-full text-left p-4 border-b border-border hover:bg-muted/30 transition-colors ${selectedConvUserId === conv.otherUserId ? "bg-muted/50" : ""}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+                          {conv.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium text-foreground truncate">{conv.name}</p>
+                            {conv.unreadCount > 0 && (
+                              <span className="bg-accent text-accent-foreground text-xs font-bold px-1.5 py-0.5 rounded-full">{conv.unreadCount}</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground truncate">{conv.lastMessage}</p>
+                          <p className="text-[10px] text-muted-foreground/60">{formatTimeAgo(conv.lastTime)}</p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium text-foreground">{m.client}</p>
-                          {m.unread && <Badge className="bg-accent/10 text-accent text-xs">New</Badge>}
-                          <span className="text-xs text-muted-foreground ml-auto">{m.time}</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{m.text}</p>
-                        <div className="flex gap-2 mt-3">
-                          <Input
-                            placeholder="Type a reply..."
-                            className="flex-1"
-                            value={replyText}
-                            onChange={(e) => setReplyText(e.target.value)}
-                          />
-                          <Button
-                            size="sm"
-                            className="bg-accent text-accent-foreground hover:bg-brand-green-dark"
-                            onClick={() => { setReplyText(""); toast({ title: "Reply sent to " + m.client }); }}
-                          >
-                            <SendIcon className="h-4 w-4" />
-                          </Button>
-                        </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Chat Area */}
+                <div className="flex-1 rounded-2xl border border-border bg-card shadow-elegant flex flex-col">
+                  {!selectedConvUserId ? (
+                    <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                      <div className="text-center">
+                        <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                        <p className="font-display text-lg">Select a conversation</p>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ) : (
+                    <>
+                      <div className="p-4 border-b border-border">
+                        <p className="font-medium text-foreground">{profilesMap[selectedConvUserId] || "Client"}</p>
+                      </div>
+                      <div className="flex-1 p-5 overflow-auto space-y-4">
+                        {conversationMessages.map((msg) => {
+                          const isMe = msg.sender_id === user?.id;
+                          return (
+                            <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+                              <div className={`max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
+                                <p className="text-xs font-semibold text-muted-foreground mb-1">{isMe ? "You" : profilesMap[msg.sender_id] || "Client"}</p>
+                                <p className="text-sm">{msg.content}</p>
+                                <span className="text-[10px] text-muted-foreground/60 block text-right mt-1">{formatTimeAgo(msg.created_at)}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <div ref={messagesEndRef} />
+                      </div>
+                      <div className="border-t border-border p-4 flex gap-3">
+                        <Input
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="Type a reply..."
+                          className="flex-1"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey && selectedConvUserId) {
+                              e.preventDefault();
+                              sendMessage(selectedConvUserId, replyText);
+                              setReplyText("");
+                            }
+                          }}
+                        />
+                        <Button
+                          size="sm"
+                          className="bg-accent text-accent-foreground hover:bg-brand-green-dark"
+                          disabled={!replyText.trim()}
+                          onClick={() => {
+                            if (selectedConvUserId) {
+                              sendMessage(selectedConvUserId, replyText);
+                              setReplyText("");
+                            }
+                          }}
+                        >
+                          <SendIcon className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           )}
