@@ -55,6 +55,27 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
         title: "Signed Successfully!",
         description: "Your e-filing authorization has been recorded. Your return will be submitted to the IRS.",
       });
+
+      // Send confirmation email to client
+      if (sig.email) {
+        supabase.functions.invoke("send-notification", {
+          body: { type: "signature_completed", to: sig.email, clientName: typedName.trim() },
+        }).catch(err => console.error("Email error:", err));
+      }
+
+      // Notify admin
+      const { data: adminRoles } = await supabase.from("user_roles").select("user_id").eq("role", "admin").limit(1);
+      if (adminRoles?.[0]) {
+        const { data: adminProfile } = await supabase.from("profiles").select("*").eq("user_id", adminRoles[0].user_id).single();
+        // We'd need admin email - for now notify via the system
+        supabase.from("notifications").insert({
+          user_id: adminRoles[0].user_id,
+          title: "New Signature",
+          message: `${typedName.trim()} has signed their e-filing authorization.`,
+          type: "signature",
+        }).then(() => {});
+      }
+
       setSigningId(null);
       setTypedName("");
       setConsented(false);

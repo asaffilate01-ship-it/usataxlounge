@@ -9,6 +9,9 @@ export interface Message {
   content: string;
   read: boolean;
   created_at: string;
+  attachment_url?: string | null;
+  attachment_name?: string | null;
+  attachment_type?: string | null;
 }
 
 export const useMessages = (otherUserId?: string) => {
@@ -92,13 +95,19 @@ export const useMessages = (otherUserId?: string) => {
     };
   }, [user, otherUserId]);
 
-  const sendMessage = async (receiverId: string, content: string) => {
-    if (!user || !content.trim()) return;
-    const { error } = await supabase.from("messages").insert({
+  const sendMessage = async (receiverId: string, content: string, attachment?: { url: string; name: string; type: string }) => {
+    if (!user || (!content.trim() && !attachment)) return;
+    const insertData: any = {
       sender_id: user.id,
       receiver_id: receiverId,
-      content: content.trim(),
-    });
+      content: content.trim() || (attachment ? `📎 ${attachment.name}` : ''),
+    };
+    if (attachment) {
+      insertData.attachment_url = attachment.url;
+      insertData.attachment_name = attachment.name;
+      insertData.attachment_type = attachment.type;
+    }
+    const { error } = await supabase.from("messages").insert(insertData);
     return error;
   };
 

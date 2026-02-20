@@ -22,6 +22,9 @@ import {
   PenLine,
   FolderOpen,
   FileSignature,
+  Paperclip,
+  File,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -506,7 +509,20 @@ const AdminDashboard = () => {
                             <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                               <div className={`max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
                                 <p className="text-xs font-semibold text-muted-foreground mb-1">{isMe ? "You" : profilesMap[msg.sender_id] || "Client"}</p>
-                                <p className="text-sm">{msg.content}</p>
+                                {msg.attachment_url && (
+                                  <div className="mb-2">
+                                    {msg.attachment_type?.startsWith("image/") ? (
+                                      <img src={msg.attachment_url} alt={msg.attachment_name || "attachment"} className="rounded-lg max-w-full max-h-48 object-cover cursor-pointer" onClick={() => window.open(msg.attachment_url!, "_blank")} />
+                                    ) : (
+                                      <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-border bg-background/50 hover:bg-muted/50 transition-colors">
+                                        <File className="h-4 w-4 text-accent shrink-0" />
+                                        <span className="text-xs text-foreground truncate">{msg.attachment_name || "File"}</span>
+                                        <Download className="h-3 w-3 text-muted-foreground shrink-0" />
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+                                {msg.content && !msg.content.startsWith("📎 ") && <p className="text-sm">{msg.content}</p>}
                                 <span className="text-[10px] text-muted-foreground/60 block text-right mt-1">{formatTimeAgo(msg.created_at)}</span>
                               </div>
                             </div>
@@ -515,6 +531,30 @@ const AdminDashboard = () => {
                         <div ref={messagesEndRef} />
                       </div>
                       <div className="border-t border-border p-4 flex gap-3">
+                        <label className="cursor-pointer flex items-center">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xlsx"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file || !selectedConvUserId || !user) return;
+                              const filePath = `${user.id}/${Date.now()}_${file.name}`;
+                              const { data, error } = await supabase.storage.from("message-attachments").upload(filePath, file);
+                              if (error) {
+                                toast({ title: "Upload Error", description: error.message, variant: "destructive" });
+                                return;
+                              }
+                              const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
+                              sendMessage(selectedConvUserId, replyText, { url: urlData.publicUrl, name: file.name, type: file.type });
+                              setReplyText("");
+                              e.target.value = "";
+                            }}
+                          />
+                          <div className="h-10 w-10 rounded-md border border-input bg-background flex items-center justify-center hover:bg-muted transition-colors">
+                            <Paperclip className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        </label>
                         <Input
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
