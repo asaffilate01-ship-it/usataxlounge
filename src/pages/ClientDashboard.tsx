@@ -50,9 +50,9 @@ const filings = [
 ];
 
 const messages = [
-  { id: 1, from: "agent", name: "Sarah Mitchell, EA", text: "Hi! I've reviewed your W-2 and 1099. Everything looks great. I'll prepare your return by Friday.", time: "2h ago" },
-  { id: 2, from: "client", name: "You", text: "Thanks Sarah! Should I upload my mortgage interest statement too?", time: "1h ago" },
-  { id: 3, from: "agent", name: "Sarah Mitchell, EA", text: "Yes, please upload Form 1098. That'll help maximize your deductions.", time: "30m ago" },
+  { id: 1, from: "agent", name: "Sarah Mitchell, EA", text: "Hi! I've reviewed your W-2 and 1099. Everything looks great. I'll prepare your return by Friday.", time: "2h ago", status: "read" as const },
+  { id: 2, from: "client", name: "You", text: "Thanks Sarah! Should I upload my mortgage interest statement too?", time: "1h ago", status: "read" as const },
+  { id: 3, from: "agent", name: "Sarah Mitchell, EA", text: "Yes, please upload Form 1098. That'll help maximize your deductions.", time: "30m ago", status: "delivered" as const },
 ];
 
 const statusIcon = (status: string) => {
@@ -61,6 +61,23 @@ const statusIcon = (status: string) => {
     case "In Review": return <Clock className="h-4 w-4 text-warning" />;
     default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
   }
+};
+
+const MessageTicks = ({ status }: { status: "sent" | "delivered" | "read" }) => {
+  const tickClass = status === "read" ? "text-accent" : "text-muted-foreground/60";
+  if (status === "sent") {
+    return (
+      <svg viewBox="0 0 16 11" className={`h-3.5 w-4 ${tickClass} shrink-0`}>
+        <path fill="currentColor" d="M11.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L6.044 6.36 3.614 3.98a.457.457 0 0 0-.686 0 .48.48 0 0 0 0 .673l2.74 2.682a.474.474 0 0 0 .686-.017L11.128 1.31a.48.48 0 0 0-.057-.657Z" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 16 11" className={`h-3.5 w-4 ${tickClass} shrink-0`}>
+      <path fill="currentColor" d="M11.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L6.044 6.36 3.614 3.98a.457.457 0 0 0-.686 0 .48.48 0 0 0 0 .673l2.74 2.682a.474.474 0 0 0 .686-.017L11.128 1.31a.48.48 0 0 0-.057-.657Z" />
+      <path fill="currentColor" d="M14.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L9.044 6.36l-.429-.42-.686.673.429.42a.474.474 0 0 0 .686-.017L14.128 1.31a.48.48 0 0 0-.057-.657Z" />
+    </svg>
+  );
 };
 
 const ClientDashboard = () => {
@@ -414,8 +431,12 @@ const ClientDashboard = () => {
                   {messages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.from === "client" ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-md px-4 py-3 rounded-2xl ${msg.from === "client" ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
-                        <p className="text-xs font-semibold text-muted-foreground mb-1">{msg.name} • {msg.time}</p>
+                        <p className="text-xs font-semibold text-muted-foreground mb-1">{msg.name}</p>
                         <p className="text-sm">{msg.text}</p>
+                        <div className="flex items-center justify-end gap-1 mt-1">
+                          <span className="text-[10px] text-muted-foreground/60">{msg.time}</span>
+                          {msg.from === "client" && <MessageTicks status={msg.status} />}
+                        </div>
                       </div>
                     </div>
                   ))}
