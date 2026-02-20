@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -28,6 +28,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
 import Logo from "@/components/Logo";
+import { useMessages } from "@/hooks/useMessages";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -49,11 +51,18 @@ const filings = [
   { id: 3, year: "2024", type: "Schedule C", status: "In Review", date: "Pending", refund: "—" },
 ];
 
-const messages = [
-  { id: 1, from: "agent", name: "Sarah Mitchell, EA", text: "Hi! I've reviewed your W-2 and 1099. Everything looks great. I'll prepare your return by Friday.", time: "2h ago", status: "read" as const },
-  { id: 2, from: "client", name: "You", text: "Thanks Sarah! Should I upload my mortgage interest statement too?", time: "1h ago", status: "read" as const },
-  { id: 3, from: "agent", name: "Sarah Mitchell, EA", text: "Yes, please upload Form 1098. That'll help maximize your deductions.", time: "30m ago", status: "delivered" as const },
-];
+// Messages are now fetched from the database via useMessages hook
+
+const formatTimeAgo = (dateStr: string) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+};
 
 const statusIcon = (status: string) => {
   switch (status) {
@@ -85,12 +94,39 @@ const ClientDashboard = () => {
   const [newMessage, setNewMessage] = useState("");
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newEntry, setNewEntry] = useState({ type: "income" as "income" | "expense", category: "", description: "", amount: "" });
+
+  // Real-time messaging
+  const [adminId, setAdminId] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Find an admin user to message
+    const findAdmin = async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "admin")
+        .limit(1);
+      if (data && data.length > 0) setAdminId(data[0].user_id);
+    };
+    findAdmin();
+  }, []);
+
+  const { messages, loading: messagesLoading, sendMessage, markConversationRead } = useMessages(adminId || undefined);
+
+  // Auto-scroll and mark as read
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (adminId && activeTab === "messages") {
+      markConversationRead(adminId);
+    }
+  }, [messages, activeTab]);
 
   const handleAddEntry = async () => {
     if (!newEntry.category || !newEntry.amount) return;
@@ -428,18 +464,36 @@ const ClientDashboard = () => {
               <h2 className="font-display text-xl font-bold text-foreground">Messages</h2>
               <div className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 200px)" }}>
                 <div className="flex-1 p-5 overflow-auto space-y-4">
-                  {messages.map((msg) => (
-                    <div key={msg.id} className={`flex ${msg.from === "client" ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-md px-4 py-3 rounded-2xl ${msg.from === "client" ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
-                        <p className="text-xs font-semibold text-muted-foreground mb-1">{msg.name}</p>
-                        <p className="text-sm">{msg.text}</p>
-                        <div className="flex items-center justify-end gap-1 mt-1">
-                          <span className="text-[10px] text-muted-foreground/60">{msg.time}</span>
-                          {msg.from === "client" && <MessageTicks status={msg.status} />}
-                        </div>
-                      </div>
+                  {messagesLoading ? (
+                    <div className="flex items-center justify-center py-20">
+                      <Loader2 className="h-8 w-8 animate-spin text-accent" />
                     </div>
-                  ))}
+                  ) : messages.length === 0 ? (
+                    <div className="text-center py-20 text-muted-foreground">
+                      <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                      <p className="font-display text-lg">No messages yet</p>
+                      <p className="text-sm mt-1">Send a message to your tax agent.</p>
+                    </div>
+                  ) : (
+                    messages.map((msg) => {
+                      const isMe = msg.sender_id === user?.id;
+                      const timeAgo = formatTimeAgo(msg.created_at);
+                      const status: "sent" | "delivered" | "read" = msg.read ? "read" : "delivered";
+                      return (
+                        <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+                          <div className={`max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
+                            <p className="text-xs font-semibold text-muted-foreground mb-1">{isMe ? "You" : "Tax Agent"}</p>
+                            <p className="text-sm">{msg.content}</p>
+                            <div className="flex items-center justify-end gap-1 mt-1">
+                              <span className="text-[10px] text-muted-foreground/60">{timeAgo}</span>
+                              {isMe && <MessageTicks status={status} />}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                  <div ref={messagesEndRef} />
                 </div>
                 <div className="border-t border-border p-4 flex gap-3">
                   <Input
@@ -447,8 +501,24 @@ const ClientDashboard = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type a message..."
                     className="flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey && adminId) {
+                        e.preventDefault();
+                        sendMessage(adminId, newMessage);
+                        setNewMessage("");
+                      }
+                    }}
                   />
-                  <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark" onClick={() => { setNewMessage(""); toast({ title: "Message sent" }); }}>
+                  <Button
+                    className="bg-accent text-accent-foreground hover:bg-brand-green-dark"
+                    disabled={!adminId || !newMessage.trim()}
+                    onClick={() => {
+                      if (adminId) {
+                        sendMessage(adminId, newMessage);
+                        setNewMessage("");
+                      }
+                    }}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
