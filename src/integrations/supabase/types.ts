@@ -16,11 +16,17 @@ export type Database = {
     Tables: {
       clients: {
         Row: {
+          address: string | null
           assigned_agent: string | null
           created_at: string
+          date_of_birth: string | null
+          email: string | null
           filing_status: string | null
+          full_name: string | null
           id: string
           notes: string | null
+          occupation: string | null
+          phone: string | null
           ssn_last4: string | null
           status: string | null
           tax_year: number | null
@@ -28,11 +34,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          address?: string | null
           assigned_agent?: string | null
           created_at?: string
+          date_of_birth?: string | null
+          email?: string | null
           filing_status?: string | null
+          full_name?: string | null
           id?: string
           notes?: string | null
+          occupation?: string | null
+          phone?: string | null
           ssn_last4?: string | null
           status?: string | null
           tax_year?: number | null
@@ -40,11 +52,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          address?: string | null
           assigned_agent?: string | null
           created_at?: string
+          date_of_birth?: string | null
+          email?: string | null
           filing_status?: string | null
+          full_name?: string | null
           id?: string
           notes?: string | null
+          occupation?: string | null
+          phone?: string | null
           ssn_last4?: string | null
           status?: string | null
           tax_year?: number | null
@@ -85,6 +103,92 @@ export type Database = {
           subject?: string
         }
         Relationships: []
+      }
+      contract_templates: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          fields: Json | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          fields?: Json | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          fields?: Json | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          category: string | null
+          client_id: string | null
+          content: string | null
+          created_at: string
+          file_url: string | null
+          id: string
+          metadata: Json | null
+          status: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          client_id?: string | null
+          content?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          metadata?: Json | null
+          status?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          client_id?: string | null
+          content?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          metadata?: Json | null
+          status?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       filings: {
         Row: {
@@ -253,33 +357,52 @@ export type Database = {
       }
       signatures: {
         Row: {
+          consent_text: string | null
           created_at: string
+          document_id: string | null
+          email: string | null
           filing_id: string
           id: string
           ip_address: string | null
           signature_data: string | null
           signed_at: string | null
+          typed_name: string | null
           user_id: string
         }
         Insert: {
+          consent_text?: string | null
           created_at?: string
+          document_id?: string | null
+          email?: string | null
           filing_id: string
           id?: string
           ip_address?: string | null
           signature_data?: string | null
           signed_at?: string | null
+          typed_name?: string | null
           user_id: string
         }
         Update: {
+          consent_text?: string | null
           created_at?: string
+          document_id?: string | null
+          email?: string | null
           filing_id?: string
           id?: string
           ip_address?: string | null
           signature_data?: string | null
           signed_at?: string | null
+          typed_name?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "signatures_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "signatures_filing_id_fkey"
             columns: ["filing_id"]
