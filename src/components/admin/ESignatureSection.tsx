@@ -58,7 +58,7 @@ const ESignatureSection = ({ clients }: ESignatureSectionProps) => {
     // Create signature request
     const { error } = await supabase.from("signatures").insert({
       user_id: selectedClient.user_id || user?.id || "",
-      filing_id: doc.id, // Using filing_id field
+      filing_id: doc.id,
       document_id: doc.id,
       consent_text: "I authorize TaxLounge to e-file my tax return with the IRS. I confirm that I have reviewed the return and that all information is accurate and complete.",
       email: selectedClient.email,
@@ -68,6 +68,18 @@ const ESignatureSection = ({ clients }: ESignatureSectionProps) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Signature Request Sent", description: `E-sign request sent for ${selectedClient.full_name}` });
+      
+      // Send email notification to client
+      if (selectedClient.email) {
+        supabase.functions.invoke("send-notification", {
+          body: {
+            type: "signature_request",
+            to: selectedClient.email,
+            clientName: selectedClient.full_name || "Client",
+          },
+        }).catch(err => console.error("Email notification error:", err));
+      }
+
       setSendOpen(false);
       fetchSignatures();
     }
