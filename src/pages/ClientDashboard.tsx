@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Home,
   FileText,
+  FolderOpen,
   DollarSign,
   MessageSquare,
   Download,
@@ -30,6 +31,8 @@ import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
 import Logo from "@/components/Logo";
 import { useMessages } from "@/hooks/useMessages";
 import { supabase } from "@/integrations/supabase/client";
+import DocumentsSection from "@/components/admin/DocumentsSection";
+import ClientESignSection from "@/components/client/ClientESignSection";
 import {
   Dialog,
   DialogContent,
@@ -152,6 +155,7 @@ const ClientDashboard = () => {
   const navItems = [
     { id: "overview", label: "Overview", icon: Home },
     { id: "income", label: "Income & Expenses", icon: DollarSign },
+    { id: "documents", label: "Documents", icon: FolderOpen },
     { id: "filings", label: "My Filings", icon: FileText },
     { id: "sign", label: "E-Sign & Approve", icon: PenLine },
     { id: "messages", label: "Messages", icon: MessageSquare },
@@ -393,6 +397,9 @@ const ClientDashboard = () => {
             </div>
           )}
 
+          {/* Documents */}
+          {activeTab === "documents" && <DocumentsSection />}
+
           {/* Filings */}
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
@@ -427,36 +434,7 @@ const ClientDashboard = () => {
           )}
 
           {/* E-Sign */}
-          {activeTab === "sign" && (
-            <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-xl font-bold text-foreground">E-Sign & Approve</h2>
-              <div className="p-6 rounded-2xl border border-border bg-card shadow-elegant">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center">
-                    <PenLine className="h-6 w-6 text-warning" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-display text-lg font-semibold text-foreground">Form 1040 — Tax Year 2024</h3>
-                    <p className="text-muted-foreground text-sm mt-1">Your return is ready for review. Please review the details and sign to authorize filing.</p>
-                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border">
-                      <p className="text-sm text-foreground"><strong>Filing Status:</strong> Single</p>
-                      <p className="text-sm text-foreground mt-1"><strong>Adjusted Gross Income:</strong> ${totalIncome.toLocaleString()}</p>
-                      <p className="text-sm text-foreground mt-1"><strong>Total Deductions:</strong> ${totalExpenses.toLocaleString()}</p>
-                      <p className="text-sm text-foreground mt-1"><strong>Net Taxable:</strong> <span className="text-accent font-semibold">${(totalIncome - totalExpenses).toLocaleString()}</span></p>
-                    </div>
-                    <div className="flex gap-3 mt-6">
-                      <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent" onClick={() => toast({ title: "Form Signed!", description: "Your 1040 has been approved and submitted for e-filing." })}>
-                        <PenLine className="h-4 w-4 mr-2" /> E-Sign & Approve
-                      </Button>
-                      <Button variant="outline">
-                        <Download className="h-4 w-4 mr-2" /> Download PDF
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === "sign" && <ClientESignSection userId={user?.id} />}
 
           {/* Messages */}
           {activeTab === "messages" && (
