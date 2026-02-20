@@ -71,7 +71,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <a href="mailto:info@taxlounge.com" className="text-sm text-muted-foreground hover:text-accent transition-colors">info@taxlounge.com</a>
+                <a href="mailto:hello@taxlounge.tax" className="text-sm text-muted-foreground hover:text-accent transition-colors">hello@taxlounge.tax</a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" />
