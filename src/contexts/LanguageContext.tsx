@@ -150,6 +150,7 @@ const translations: Record<string, Record<Language, string>> = {
   "footer.servicesTitle": { en: "Services", es: "Servicios" },
   "footer.companyTitle": { en: "Company", es: "Empresa" },
   "footer.contactTitle": { en: "Contact Us", es: "Contáctenos" },
+  "footer.enquiryLink": { en: "Send us an enquiry", es: "Envíenos una consulta" },
 
   // Forms section
   "forms.label": { en: "Tax Forms We Handle", es: "Formularios Fiscales que Manejamos" },
