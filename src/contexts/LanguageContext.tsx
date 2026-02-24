@@ -152,6 +152,11 @@ const translations: Record<string, Record<Language, string>> = {
   "footer.contactTitle": { en: "Contact Us", es: "Contáctenos" },
   "footer.enquiryLink": { en: "Send us an enquiry", es: "Envíenos una consulta" },
   "footer.ukLink": { en: "For UK tax & accounts, please visit taxlounge.co.uk", es: "Para impuestos y contabilidad del Reino Unido, visite taxlounge.co.uk" },
+  "footer.svc1": { en: "Individual Tax Returns", es: "Declaraciones Individuales" },
+  "footer.svc2": { en: "Expat & FBAR Filing", es: "Expatriados y FBAR" },
+  "footer.svc3": { en: "Business Tax Filing", es: "Declaraciones Empresariales" },
+  "footer.svc4": { en: "IRS Representation", es: "Representación ante el IRS" },
+  "footer.svc5": { en: "Tax Planning", es: "Planificación Fiscal" },
 
   // Forms section
   "forms.label": { en: "Tax Forms We Handle", es: "Formularios Fiscales que Manejamos" },

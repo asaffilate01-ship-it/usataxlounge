@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://taxlounge.co.uk/sitemap.xml
+Sitemap: https://usa.taxlounge.co.uk/sitemap.xml
