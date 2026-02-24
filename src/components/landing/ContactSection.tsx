@@ -28,6 +28,20 @@ const ContactSection = () => {
       subject: form.subject.trim(),
       message: form.message.trim(),
     });
+
+    // Also send email notification
+    supabase.functions.invoke("send-notification", {
+      body: {
+        type: "contact_form",
+        to: "hello@taxlounge.co.uk",
+        senderName: form.name.trim(),
+        senderEmail: form.email.trim(),
+        phone: form.phone.trim() || null,
+        messageSubject: form.subject.trim(),
+        messageBody: form.message.trim(),
+      },
+    }).catch((err) => console.error("Email notification error:", err));
+
     setLoading(false);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
