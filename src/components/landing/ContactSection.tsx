@@ -13,6 +13,7 @@ const ContactSection = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +21,27 @@ const ContactSection = () => {
       toast({ title: t("contact.errorTitle"), description: t("contact.errorDesc"), variant: "destructive" });
       return;
     }
+
+    // Client-side throttle: 30 seconds between submissions
+    const now = Date.now();
+    if (now - lastSubmitTime < 30000) {
+      toast({ title: "Please wait", description: "You can submit another message in a few seconds.", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
+
+    // Server-side rate limit check (3 per hour per email)
+    const { data: allowed, error: rlError } = await supabase.rpc("check_contact_rate_limit", {
+      sender_email: form.email.trim(),
+    });
+
+    if (rlError || !allowed) {
+      setLoading(false);
+      toast({ title: "Too many messages", description: "You've reached the limit. Please try again later.", variant: "destructive" });
+      return;
+    }
+
     const { error } = await supabase.from("contact_messages").insert({
       name: form.name.trim(),
       email: form.email.trim(),
@@ -46,6 +67,7 @@ const ContactSection = () => {
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
+      setLastSubmitTime(Date.now());
       toast({ title: t("contact.successTitle"), description: t("contact.successDesc") });
       setForm({ name: "", email: "", phone: "", subject: "", message: "" });
     }
