@@ -28,7 +28,7 @@ const MFAEnroll = ({ onEnrolled, onCancelled }: MFAEnrollProps) => {
     (async () => {
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: "totp",
-        friendlyName: "TaxLounge Authenticator",
+        friendlyName: "taxloungeusa",
       });
       if (error) {
         toast({ title: "Error", description: error.message, variant: "destructive" });
