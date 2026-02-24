@@ -39,7 +39,6 @@ const ContactSection = () => {
 
   const contactInfo = [
     { icon: Phone, label: "(305) 555-0190", href: "tel:+13055550190" },
-    { icon: Mail, label: "hello@taxlounge.tax", href: "mailto:hello@taxlounge.tax" },
     { icon: MapPin, label: t("contact.address") },
     { icon: Clock, label: t("contact.hours") },
   ];

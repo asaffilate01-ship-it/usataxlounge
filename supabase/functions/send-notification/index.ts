@@ -46,7 +46,7 @@ serve(async (req) => {
             <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxLounge Team</p>
           </div>
           <div style="background: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxLounge · hello@taxlounge.tax</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxLounge</p>
           </div>
         </div>
       `;
@@ -69,7 +69,7 @@ serve(async (req) => {
             <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxLounge Team</p>
           </div>
           <div style="background: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxLounge · hello@taxlounge.tax</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxLounge</p>
           </div>
         </div>
       `;
@@ -98,7 +98,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'TaxLounge <hello@taxlounge.tax>',
+        from: 'TaxLounge <noreply@taxlounge.co.uk>',
         to: [to],
         subject,
         html,
