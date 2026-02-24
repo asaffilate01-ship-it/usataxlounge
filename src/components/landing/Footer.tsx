@@ -61,6 +61,11 @@ const Footer = () => {
               <li><a href="#process" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.process")}</a></li>
               <li><Link to="/blog" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.blog")}</Link></li>
               <li><a href="#contact" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.contact")}</a></li>
+              <li>
+                <a href="https://taxlounge.co.uk" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-accent transition-colors">
+                  UK Accounts &amp; Tax Filing
+                </a>
+              </li>
             </ul>
           </div>
 
