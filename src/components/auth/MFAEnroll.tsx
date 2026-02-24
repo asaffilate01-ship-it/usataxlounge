@@ -26,6 +26,16 @@ const MFAEnroll = ({ onEnrolled, onCancelled }: MFAEnrollProps) => {
 
   useEffect(() => {
     (async () => {
+      // Remove any existing unverified factors to avoid name conflicts
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      if (factors?.totp) {
+        for (const f of factors.totp) {
+          if ((f.status as string) !== "verified") {
+            await supabase.auth.mfa.unenroll({ factorId: f.id });
+          }
+        }
+      }
+
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: "totp",
         friendlyName: "TXLGEUSA",
