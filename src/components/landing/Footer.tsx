@@ -71,7 +71,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <a href="mailto:hello@taxlounge.tax" className="text-sm text-muted-foreground hover:text-accent transition-colors">hello@taxlounge.tax</a>
+                <a href="mailto:hello@taxlounge.co.uk" className="text-sm text-muted-foreground hover:text-accent transition-colors">hello@taxlounge.co.uk</a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" />
@@ -83,7 +83,7 @@ const Footer = () => {
 
         <div className="border-t border-border py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} TaxLounge. All rights reserved.
+            © {new Date().getFullYear()} TaxLounge. All rights reserved. | <a href="https://taxlounge.co.uk" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">taxlounge.co.uk</a>
           </p>
           <div className="flex gap-6">
             <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
