@@ -75,7 +75,7 @@ const ServicesSection = () => {
           className="mt-8 text-center p-5 rounded-2xl border border-accent/20 bg-accent/5"
         >
           <p className="text-muted-foreground text-sm">
-            For <span className="font-semibold text-foreground">UK Accounts &amp; Tax Filing</span>, please visit{" "}
+            {t("footer.ukLink").split("taxlounge.co.uk")[0]}
             <a
               href="https://taxlounge.co.uk"
               target="_blank"
