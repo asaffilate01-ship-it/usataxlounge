@@ -151,6 +151,7 @@ const translations: Record<string, Record<Language, string>> = {
   "footer.companyTitle": { en: "Company", es: "Empresa" },
   "footer.contactTitle": { en: "Contact Us", es: "Contáctenos" },
   "footer.enquiryLink": { en: "Send us an enquiry", es: "Envíenos una consulta" },
+  "footer.ukLink": { en: "For UK tax & accounts, please visit taxlounge.co.uk", es: "Para impuestos y contabilidad del Reino Unido, visite taxlounge.co.uk" },
 
   // Forms section
   "forms.label": { en: "Tax Forms We Handle", es: "Formularios Fiscales que Manejamos" },
