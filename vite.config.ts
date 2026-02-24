@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => ({
         start_url: "/auth",
         icons: [
           {
-            src: "/logo.png",
+            src: "/pwa-icon-192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
