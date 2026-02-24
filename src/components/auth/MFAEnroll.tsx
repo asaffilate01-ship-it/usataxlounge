@@ -26,13 +26,11 @@ const MFAEnroll = ({ onEnrolled, onCancelled }: MFAEnrollProps) => {
 
   useEffect(() => {
     (async () => {
-      // Remove any existing unverified factors to avoid name conflicts
+      // Remove ALL existing factors (verified or not) to avoid name conflicts
       const { data: factors } = await supabase.auth.mfa.listFactors();
       if (factors?.totp) {
         for (const f of factors.totp) {
-          if ((f.status as string) !== "verified") {
-            await supabase.auth.mfa.unenroll({ factorId: f.id });
-          }
+          await supabase.auth.mfa.unenroll({ factorId: f.id });
         }
       }
 
