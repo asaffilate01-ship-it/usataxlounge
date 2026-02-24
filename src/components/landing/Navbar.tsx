@@ -61,18 +61,6 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <a
-              href="https://taxlounge.co.uk"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`text-sm font-medium transition-colors ${
-                scrolled
-                  ? "text-muted-foreground hover:text-foreground"
-                  : "text-white/70 hover:text-white"
-              }`}
-            >
-              taxlounge.co.uk
-            </a>
             <LanguageToggle scrolled={scrolled} />
             <Button
               variant="outline"
