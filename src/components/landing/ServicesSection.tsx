@@ -67,6 +67,25 @@ const ServicesSection = () => {
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-8 text-center p-5 rounded-2xl border border-accent/20 bg-accent/5"
+        >
+          <p className="text-muted-foreground text-sm">
+            For <span className="font-semibold text-foreground">UK Accounts &amp; Tax Filing</span>, please visit{" "}
+            <a
+              href="https://taxlounge.co.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-accent hover:text-accent/80 underline underline-offset-2 transition-colors"
+            >
+              taxlounge.co.uk
+            </a>
+          </p>
+        </motion.div>
       </div>
     </section>
   );
