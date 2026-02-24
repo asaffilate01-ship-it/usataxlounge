@@ -71,7 +71,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <a href="mailto:hello@taxlounge.co.uk" className="text-sm text-muted-foreground hover:text-accent transition-colors">hello@taxlounge.co.uk</a>
+                <a href="#contact" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("footer.enquiryLink")}</a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" />
