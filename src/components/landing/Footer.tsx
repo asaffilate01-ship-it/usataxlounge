@@ -45,9 +45,9 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider mb-4">{t("footer.servicesTitle")}</h4>
             <ul className="space-y-2.5">
-              {["Individual Tax Returns", "Expat & FBAR Filing", "Business Tax Filing", "IRS Representation", "Tax Planning"].map((item) => (
-                <li key={item}>
-                  <a href="#services" className="text-sm text-muted-foreground hover:text-accent transition-colors">{item}</a>
+              {["footer.svc1", "footer.svc2", "footer.svc3", "footer.svc4", "footer.svc5"].map((key) => (
+                <li key={key}>
+                  <a href="#services" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t(key)}</a>
                 </li>
               ))}
             </ul>
