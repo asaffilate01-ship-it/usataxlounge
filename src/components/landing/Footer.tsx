@@ -63,7 +63,7 @@ const Footer = () => {
               <li><a href="#contact" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("nav.contact")}</a></li>
               <li>
                 <a href="https://taxlounge.co.uk" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                  UK Accounts &amp; Tax Filing
+                  {t("footer.ukLink").split("taxlounge.co.uk")[0]}taxlounge.co.uk
                 </a>
               </li>
             </ul>
