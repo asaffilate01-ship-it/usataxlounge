@@ -39,13 +39,9 @@ const CTASection = () => {
           </div>
 
           <div className="flex flex-wrap gap-8 justify-center text-white/60">
-            <a href="tel:+1234567890" className="flex items-center gap-2 hover:text-accent transition-colors">
-              <Phone className="h-4 w-4" />
-              <span className="text-sm">(123) 456-7890</span>
-            </a>
-            <a href="mailto:info@taxlounge.com" className="flex items-center gap-2 hover:text-accent transition-colors">
+            <a href="#contact" className="flex items-center gap-2 hover:text-accent transition-colors">
               <Mail className="h-4 w-4" />
-              <span className="text-sm">info@taxlounge.com</span>
+              <span className="text-sm">{t("footer.enquiryLink")}</span>
             </a>
           </div>
         </motion.div>

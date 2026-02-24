@@ -54,7 +54,7 @@ Name: {{client_name}}
 Date: {{signature_date}}
 
 TaxLounge — IRS Enrolled Agents
-info@taxlounge.com | (305) 555-0190`;
+(305) 555-0190`;
 
 const TEMPLATE_FIELDS = [
   { key: "client_name", label: "Client Name", source: "full_name" },
