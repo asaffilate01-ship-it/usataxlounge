@@ -122,7 +122,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'TaxLounge <noreply@taxlounge.co.uk>',
+        from: 'TaxLounge <usa@taxlounge.co.uk>',
         to: [to],
         subject,
         html,
