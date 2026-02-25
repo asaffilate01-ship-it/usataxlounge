@@ -191,6 +191,39 @@ const Auth = () => {
               {isSignUp ? t("auth.signIn") : t("auth.signUp")}
             </button>
           </div>
+
+          {/* Dev quick-fill test accounts - only on preview/dev */}
+          {!isSignUp && window.location.hostname.includes("preview") && (
+            <div className="mt-6 border-t border-border pt-4">
+              <p className="text-xs text-muted-foreground mb-2 text-center">Dev Test Accounts</p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs"
+                  onClick={() => {
+                    setEmail("amersaleem@gmail.com");
+                    setPassword("Test123!");
+                  }}
+                >
+                  Admin
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs"
+                  onClick={() => {
+                    setEmail("testclient@taxlounge.tax");
+                    setPassword("Test123!");
+                  }}
+                >
+                  Client
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
