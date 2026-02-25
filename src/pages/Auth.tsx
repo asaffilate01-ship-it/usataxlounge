@@ -217,7 +217,7 @@ const Auth = () => {
                       className="flex-1 text-xs"
                       onClick={() => {
                         setEmail("amersaleem@gmail.com");
-                        setPassword("Test123!");
+                        setPassword("TaxLounge2026!");
                       }}
                     >
                       Admin
@@ -229,7 +229,7 @@ const Auth = () => {
                       className="flex-1 text-xs"
                       onClick={() => {
                         setEmail("testclient@taxlounge.tax");
-                        setPassword("Test123!");
+                        setPassword("TaxLounge2026!");
                       }}
                     >
                       Client
