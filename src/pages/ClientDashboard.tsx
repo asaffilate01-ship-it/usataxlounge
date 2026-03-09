@@ -24,6 +24,9 @@ import {
   Paperclip,
   Image as ImageIcon,
   File,
+  Menu,
+  X,
+  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +35,11 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
+import { useFilings } from "@/hooks/useFilings";
+import { useNotifications } from "@/hooks/useNotifications";
+import { usePresence } from "@/hooks/usePresence";
 import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useMessages } from "@/hooks/useMessages";
 import { supabase } from "@/integrations/supabase/client";
 import DocumentsSection from "@/components/admin/DocumentsSection";
@@ -53,14 +60,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const filings = [
-  { id: 1, year: "2024", type: "Form 1040", status: "Filed", date: "Apr 10, 2025", refund: "$3,240" },
-  { id: 2, year: "2023", type: "Form 1040", status: "Filed", date: "Mar 28, 2024", refund: "$2,890" },
-  { id: 3, year: "2024", type: "Schedule C", status: "In Review", date: "Pending", refund: "—" },
-];
-
-// Messages are now fetched from the database via useMessages hook
-
 const formatTimeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -74,13 +73,19 @@ const formatTimeAgo = (dateStr: string) => {
 
 const statusIcon = (status: string) => {
   switch (status) {
-    case "Filed": return <CheckCircle2 className="h-4 w-4 text-success" />;
-    case "In Review": return <Clock className="h-4 w-4 text-warning" />;
+    case "filed":
+    case "accepted": return <CheckCircle2 className="h-4 w-4 text-success" />;
+    case "in_review":
+    case "submitted":
+    case "pending": return <Clock className="h-4 w-4 text-warning" />;
     default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
   }
 };
 
-const MessageTicks = ({ status }: { status: "sent" | "delivered" | "read" }) => {
+const MessageTicks = ({ status }: { status: "sending" | "sent" | "delivered" | "read" }) => {
+  if (status === "sending") {
+    return <Clock className="h-3 w-3 text-muted-foreground/40 shrink-0" />;
+  }
   const tickClass = status === "read" ? "text-accent" : "text-muted-foreground/60";
   if (status === "sent") {
     return (
@@ -100,11 +105,16 @@ const MessageTicks = ({ status }: { status: "sent" | "delivered" | "read" }) => 
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [newMessage, setNewMessage] = useState("");
+  const [sendingMessages, setSendingMessages] = useState<Set<string>>(new Set());
   const { toast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
+  const { filings, loading: filingsLoading } = useFilings();
+  const { unreadCount: notifUnreadCount } = useNotifications();
+  const { isOnline: checkOnline, fetchPresence } = usePresence();
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newEntry, setNewEntry] = useState({ type: "income" as "income" | "expense", category: "", description: "", amount: "" });
@@ -114,21 +124,25 @@ const ClientDashboard = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Find an admin user to message
     const findAdmin = async () => {
       const { data } = await supabase
         .from("user_roles")
         .select("user_id")
         .eq("role", "admin")
         .limit(1);
-      if (data && data.length > 0) setAdminId(data[0].user_id);
+      if (data && data.length > 0) {
+        setAdminId(data[0].user_id);
+        fetchPresence([data[0].user_id]);
+      }
     };
     findAdmin();
   }, []);
 
   const { messages, loading: messagesLoading, sendMessage, markConversationRead } = useMessages(adminId || undefined);
 
-  // Auto-scroll and mark as read
+  // Unread message count
+  const unreadMessageCount = messages.filter((m) => !m.read && m.sender_id !== user?.id).length;
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     if (adminId && activeTab === "messages") {
@@ -148,6 +162,18 @@ const ClientDashboard = () => {
     setAddDialogOpen(false);
   };
 
+  const handleSendMessage = async (receiverId: string, content: string, attachment?: { url: string; name: string; type: string }) => {
+    const tempId = `sending-${Date.now()}`;
+    setSendingMessages((prev) => new Set(prev).add(tempId));
+    const error = await sendMessage(receiverId, content, attachment);
+    setSendingMessages((prev) => {
+      const next = new Set(prev);
+      next.delete(tempId);
+      return next;
+    });
+    return error;
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
@@ -163,75 +189,120 @@ const ClientDashboard = () => {
     { id: "documents", label: "Documents", icon: FolderOpen },
     { id: "filings", label: "My Filings", icon: FileText },
     { id: "sign", label: "E-Sign & Approve", icon: PenLine },
-    { id: "messages", label: "Messages", icon: MessageSquare },
+    { id: "messages", label: "Messages", icon: MessageSquare, badge: unreadMessageCount > 0 ? unreadMessageCount : undefined },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
   const totalIncome = incomeExpenses.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
   const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
 
-  return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex flex-col`}
-        style={{ background: "var(--gradient-hero)" }}>
-        <div className="p-5 border-b border-white/10">
-          <Logo size="md" />
-        </div>
-        <nav className="flex-1 p-3 space-y-1">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === item.id
-                  ? "bg-white/15 text-white shadow-sm"
-                  : "text-white/60 hover:bg-white/8 hover:text-white/90"
-              }`}
-            >
+  const SidebarContent = () => (
+    <>
+      <div className="p-5 border-b border-white/10">
+        <Logo size="md" />
+      </div>
+      <nav className="flex-1 p-3 space-y-1">
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => { setActiveTab(item.id); setMobileSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              activeTab === item.id
+                ? "bg-white/15 text-white shadow-sm"
+                : "text-white/60 hover:bg-white/8 hover:text-white/90"
+            }`}
+          >
+            <span className="flex items-center gap-3">
               <item.icon className="h-4 w-4" />
               {item.label}
-            </button>
-          ))}
-        </nav>
-        <div className="p-3 border-t border-white/10">
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-semibold text-xs">
-              {initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{profile?.full_name || "Client"}</p>
-              <p className="text-xs text-white/50">Client Portal</p>
-            </div>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/8 hover:text-white/90 transition-all"
-          >
-            <LogOut className="h-4 w-4" />
-            Sign Out
+            </span>
+            {item.badge && (
+              <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                {item.badge}
+              </span>
+            )}
           </button>
+        ))}
+      </nav>
+      <div className="p-3 border-t border-white/10">
+        <div className="flex items-center gap-3 px-3 py-2 mb-2">
+          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-semibold text-xs">
+            {initials}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-white truncate">{profile?.full_name || "Client"}</p>
+            <p className="text-xs text-white/50">Client Portal</p>
+          </div>
         </div>
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/8 hover:text-white/90 transition-all"
+        >
+          <LogOut className="h-4 w-4" />
+          Sign Out
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-background">
+      {/* Mobile sidebar overlay */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileSidebarOpen(false)} />
+          <aside className="relative w-64 h-full flex flex-col" style={{ background: "var(--gradient-hero)" }}>
+            <button
+              onClick={() => setMobileSidebarOpen(false)}
+              className="absolute top-4 right-4 text-white/60 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <SidebarContent />
+          </aside>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className={`hidden lg:flex ${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex-col shrink-0`}
+        style={{ background: "var(--gradient-hero)" }}>
+        <SidebarContent />
       </aside>
 
       {/* Main */}
-      <main className="flex-1 flex flex-col">
-        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-4 sm:px-6 shrink-0">
           <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted-foreground hover:text-foreground">
+            {/* Mobile hamburger */}
+            <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden text-muted-foreground hover:text-foreground">
+              <Menu className="h-5 w-5" />
+            </button>
+            {/* Desktop toggle */}
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:block text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
             </button>
             <h1 className="font-display text-lg font-semibold text-foreground">
               {navItems.find(n => n.id === activeTab)?.label || "Dashboard"}
             </h1>
           </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button className="relative text-muted-foreground hover:text-foreground">
+              <Bell className="h-5 w-5" />
+              {notifUnreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                  {notifUnreadCount > 9 ? "9+" : notifUnreadCount}
+                </span>
+              )}
+            </button>
+          </div>
         </header>
 
-        <div className="flex-1 p-6 overflow-auto">
+        <div className="flex-1 p-4 sm:p-6 overflow-auto">
           {/* Overview */}
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-medium text-muted-foreground">Total Income</p>
@@ -266,25 +337,33 @@ const ClientDashboard = () => {
 
               <div className="rounded-2xl border border-border bg-card shadow-elegant p-5">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Filings</h3>
-                <div className="space-y-3">
-                  {filings.map((f) => (
-                    <div key={f.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                      <div className="flex items-center gap-3">
-                        {statusIcon(f.status)}
-                        <div>
-                          <p className="font-medium text-sm text-foreground">{f.type} — {f.year}</p>
-                          <p className="text-xs text-muted-foreground">{f.date}</p>
+                {filingsLoading ? (
+                  <div className="flex items-center justify-center py-10">
+                    <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                  </div>
+                ) : filings.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4">No filings yet. Your tax filings will appear here.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {filings.slice(0, 5).map((f) => (
+                      <div key={f.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                        <div className="flex items-center gap-3">
+                          {statusIcon(f.status || "draft")}
+                          <div>
+                            <p className="font-medium text-sm text-foreground">{f.form_type} — {f.tax_year}</p>
+                            <p className="text-xs text-muted-foreground">{f.submitted_at ? new Date(f.submitted_at).toLocaleDateString() : "Pending"}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <Badge variant={f.status === "Filed" ? "default" : "secondary"} className={f.status === "Filed" ? "bg-success/10 text-success border-success/20" : ""}>
-                          {f.status}
+                        <Badge variant="secondary" className={
+                          f.status === "filed" || f.status === "accepted" ? "bg-success/10 text-success border-success/20" :
+                          f.status === "in_review" || f.status === "submitted" ? "bg-warning/10 text-warning border-warning/20" : ""
+                        }>
+                          {f.status || "draft"}
                         </Badge>
-                        <p className="text-xs text-muted-foreground mt-1">{f.refund}</p>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -348,8 +427,8 @@ const ClientDashboard = () => {
                   <p className="text-sm mt-1">Click "Add Entry" to start tracking your income and expenses.</p>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
-                  <table className="w-full">
+                <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-x-auto">
+                  <table className="w-full min-w-[600px]">
                     <thead>
                       <tr className="border-b border-border bg-muted/50">
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
@@ -385,7 +464,7 @@ const ClientDashboard = () => {
               )}
 
               {incomeExpenses.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 rounded-xl border border-success/20 bg-success/5">
                     <p className="text-xs text-muted-foreground">Total Income</p>
                     <p className="text-lg font-semibold text-success">${totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
@@ -410,32 +489,51 @@ const ClientDashboard = () => {
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="font-display text-xl font-bold text-foreground">My Filings</h2>
-              <div className="space-y-4">
-                {filings.map((f) => (
-                  <div key={f.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                        <FileText className="h-5 w-5 text-accent" />
+              {filingsLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                </div>
+              ) : filings.length === 0 ? (
+                <div className="text-center py-20 text-muted-foreground">
+                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p className="font-display text-lg">No filings yet</p>
+                  <p className="text-sm mt-1">Your tax filings will appear here once submitted.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filings.map((f) => (
+                    <div key={f.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                          <FileText className="h-5 w-5 text-accent" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">{f.form_type} — Tax Year {f.tax_year}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {f.submitted_at ? `Filed: ${new Date(f.submitted_at).toLocaleDateString()}` : "Pending"}
+                            {f.irs_confirmation ? ` • IRS: ${f.irs_confirmation}` : ""}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground">{f.type} — Tax Year {f.year}</p>
-                        <p className="text-sm text-muted-foreground">Filed: {f.date} • Refund: {f.refund}</p>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="secondary" className={
+                          f.status === "filed" || f.status === "accepted" ? "bg-success/10 text-success border-success/20" :
+                          f.status === "rejected" ? "bg-destructive/10 text-destructive border-destructive/20" :
+                          f.status === "in_review" || f.status === "submitted" ? "bg-warning/10 text-warning border-warning/20" : ""
+                        }>
+                          {statusIcon(f.status || "draft")}
+                          <span className="ml-1">{f.status || "draft"}</span>
+                        </Badge>
+                        {f.file_url && (
+                          <Button variant="outline" size="sm" onClick={() => window.open(f.file_url!, "_blank")}>
+                            <Download className="h-4 w-4 mr-1" /> Download
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant={f.status === "Filed" ? "default" : "secondary"} className={f.status === "Filed" ? "bg-success/10 text-success border-success/20" : ""}>
-                        {statusIcon(f.status)}
-                        <span className="ml-1">{f.status}</span>
-                      </Badge>
-                      {f.status === "Filed" && (
-                        <Button variant="outline" size="sm" onClick={() => toast({ title: "Download started", description: `${f.type} ${f.year} downloading...` })}>
-                          <Download className="h-4 w-4 mr-1" /> Download
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -445,7 +543,15 @@ const ClientDashboard = () => {
           {/* Messages */}
           {activeTab === "messages" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-xl font-bold text-foreground">Messages</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="font-display text-xl font-bold text-foreground">Messages</h2>
+                {adminId && (
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${checkOnline(adminId) ? "bg-success animate-pulse" : "bg-muted-foreground/40"}`} />
+                    <span className="text-xs text-muted-foreground">{checkOnline(adminId) ? "Online" : "Offline"}</span>
+                  </div>
+                )}
+              </div>
               <div className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 200px)" }}>
                 <div className="flex-1 p-5 overflow-auto space-y-4">
                   {messagesLoading ? (
@@ -462,10 +568,10 @@ const ClientDashboard = () => {
                     messages.map((msg) => {
                       const isMe = msg.sender_id === user?.id;
                       const timeAgo = formatTimeAgo(msg.created_at);
-                      const status: "sent" | "delivered" | "read" = msg.read ? "read" : "delivered";
+                      const status: "sending" | "sent" | "delivered" | "read" = msg.read ? "read" : "delivered";
                       return (
                         <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                          <div className={`max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
+                          <div className={`max-w-[85%] sm:max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
                             <p className="text-xs font-semibold text-muted-foreground mb-1">{isMe ? "You" : "Tax Agent"}</p>
                             {msg.attachment_url && (
                               <div className="mb-2">
@@ -492,7 +598,7 @@ const ClientDashboard = () => {
                   )}
                   <div ref={messagesEndRef} />
                 </div>
-                <div className="border-t border-border p-4 flex gap-3">
+                <div className="border-t border-border p-3 sm:p-4 flex gap-2 sm:gap-3">
                   <label className="cursor-pointer flex items-center">
                     <input
                       type="file"
@@ -508,7 +614,7 @@ const ClientDashboard = () => {
                           return;
                         }
                         const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
-                        sendMessage(adminId, newMessage, { url: urlData.publicUrl, name: file.name, type: file.type });
+                        handleSendMessage(adminId, newMessage, { url: urlData.publicUrl, name: file.name, type: file.type });
                         setNewMessage("");
                         e.target.value = "";
                       }}
@@ -525,7 +631,7 @@ const ClientDashboard = () => {
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey && adminId) {
                         e.preventDefault();
-                        sendMessage(adminId, newMessage);
+                        handleSendMessage(adminId, newMessage);
                         setNewMessage("");
                       }
                     }}
@@ -535,7 +641,7 @@ const ClientDashboard = () => {
                     disabled={!adminId || !newMessage.trim()}
                     onClick={() => {
                       if (adminId) {
-                        sendMessage(adminId, newMessage);
+                        handleSendMessage(adminId, newMessage);
                         setNewMessage("");
                       }
                     }}

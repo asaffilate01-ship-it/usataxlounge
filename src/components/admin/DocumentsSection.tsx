@@ -27,6 +27,7 @@ const DocumentsSection = () => {
   const [scanOpen, setScanOpen] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,6 +46,9 @@ const DocumentsSection = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
     // If it's an image, offer AI extraction
     if (file.type.startsWith("image/")) {
       setScanOpen(true);
@@ -52,33 +56,67 @@ const DocumentsSection = () => {
       setScanResult(null);
 
       try {
+        // First upload the file to storage
+        const filePath = `${user.id}/${Date.now()}_${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("documents")
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path);
+        const fileUrl = urlData.publicUrl;
+
+        // Then try AI extraction
         const reader = new FileReader();
         reader.onload = async () => {
           const base64 = (reader.result as string).split(",")[1];
-          const { data, error } = await supabase.functions.invoke("extract-receipt", {
-            body: { imageBase64: base64, mimeType: file.type },
-          });
-          if (error) throw error;
-          setScanResult(data);
+          try {
+            const { data, error } = await supabase.functions.invoke("extract-receipt", {
+              body: { imageBase64: base64, mimeType: file.type },
+            });
+            if (error) throw error;
+            setScanResult({ ...data, fileUrl, filePath: uploadData.path });
+          } catch (err: any) {
+            // AI extraction failed but file is still uploaded
+            setScanResult({ error: "Could not extract data. File has been saved.", fileUrl, filePath: uploadData.path });
+          }
           setScanning(false);
         };
         reader.readAsDataURL(file);
       } catch (err: any) {
-        toast({ title: "Scan Error", description: err.message, variant: "destructive" });
+        toast({ title: "Upload Error", description: err.message, variant: "destructive" });
         setScanning(false);
+        setScanOpen(false);
       }
     } else {
-      // Save as regular document
-      const user = (await supabase.auth.getUser()).data.user;
-      await supabase.from("documents").insert({
-        user_id: user?.id || "",
-        title: file.name,
-        type: "document",
-        category: "uploaded",
-        status: "saved",
-      });
-      fetchDocuments();
-      toast({ title: "Document Saved" });
+      // Upload file to storage then save document record
+      setUploading(true);
+      try {
+        const filePath = `${user.id}/${Date.now()}_${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("documents")
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path);
+
+        await supabase.from("documents").insert({
+          user_id: user.id,
+          title: file.name,
+          type: "document",
+          category: "uploaded",
+          status: "saved",
+          file_url: urlData.publicUrl,
+        });
+
+        fetchDocuments();
+        toast({ title: "Document Uploaded", description: file.name });
+      } catch (err: any) {
+        toast({ title: "Upload Error", description: err.message, variant: "destructive" });
+      }
+      setUploading(false);
     }
     e.target.value = "";
   };
@@ -87,29 +125,32 @@ const DocumentsSection = () => {
     if (!scanResult) return;
     const user = (await supabase.auth.getUser()).data.user;
 
-    // Save as income_expense entry
-    const { error } = await supabase.from("income_expenses").insert({
-      user_id: user?.id || "",
-      type: scanResult.type || "expense",
-      category: scanResult.category || "Uncategorized",
-      description: scanResult.description || "",
-      amount: scanResult.amount || 0,
-    });
+    // Save as income_expense entry if we have amount
+    if (scanResult.amount) {
+      await supabase.from("income_expenses").insert({
+        user_id: user?.id || "",
+        type: scanResult.type || "expense",
+        category: scanResult.category || "Uncategorized",
+        description: scanResult.description || "",
+        amount: scanResult.amount || 0,
+      });
+    }
 
-    // Also save as document
-    await supabase.from("documents").insert({
+    // Save as document with file URL
+    const { error } = await supabase.from("documents").insert({
       user_id: user?.id || "",
       title: `Receipt: ${scanResult.description || "Scanned"}`,
       type: "receipt",
       category: scanResult.category || "expense",
       status: "saved",
       metadata: scanResult,
+      file_url: scanResult.fileUrl || null,
     });
 
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Receipt Saved", description: `${scanResult.category}: $${scanResult.amount}` });
+      toast({ title: "Receipt Saved", description: scanResult.amount ? `${scanResult.category}: $${scanResult.amount}` : "Document saved" });
       setScanOpen(false);
       setScanResult(null);
       fetchDocuments();
@@ -117,6 +158,11 @@ const DocumentsSection = () => {
   };
 
   const handlePrint = (doc: any) => {
+    if (doc.file_url) {
+      const w = window.open(doc.file_url, "_blank");
+      if (w) setTimeout(() => w.print(), 1000);
+      return;
+    }
     const w = window.open("", "_blank");
     if (w) {
       w.document.write(`<html><head><title>${doc.title}</title><style>body{font-family:sans-serif;padding:40px;max-width:800px;margin:0 auto}</style></head><body><h1>${doc.title}</h1><p>Type: ${doc.type}</p><p>Category: ${doc.category || "—"}</p><p>Status: ${doc.status}</p><p>Created: ${new Date(doc.created_at).toLocaleDateString()}</p>${doc.content ? `<pre>${doc.content}</pre>` : ""}</body></html>`);
@@ -126,6 +172,14 @@ const DocumentsSection = () => {
   };
 
   const handleDownload = (doc: any) => {
+    if (doc.file_url) {
+      const a = document.createElement("a");
+      a.href = doc.file_url;
+      a.download = doc.title;
+      a.target = "_blank";
+      a.click();
+      return;
+    }
     const content = `${doc.title}\nType: ${doc.type}\nCategory: ${doc.category || ""}\nStatus: ${doc.status}\nCreated: ${new Date(doc.created_at).toLocaleDateString()}\n\n${doc.content || ""}`;
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -138,11 +192,25 @@ const DocumentsSection = () => {
 
   const handleEmail = (doc: any) => {
     const subject = encodeURIComponent(doc.title);
-    const body = encodeURIComponent(`${doc.title}\n\n${doc.content || "See attached document."}`);
+    const body = encodeURIComponent(`${doc.title}\n\n${doc.file_url ? `File: ${doc.file_url}` : doc.content || "See attached document."}`);
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
 
   const handleDelete = async (id: string) => {
+    // Find the doc to delete from storage too
+    const doc = documents.find(d => d.id === id);
+    if (doc?.file_url) {
+      // Try to extract storage path from URL and delete from storage
+      try {
+        const url = new URL(doc.file_url);
+        const pathMatch = url.pathname.match(/\/object\/public\/documents\/(.*)/);
+        if (pathMatch) {
+          await supabase.storage.from("documents").remove([decodeURIComponent(pathMatch[1])]);
+        }
+      } catch {
+        // Ignore storage deletion errors
+      }
+    }
     await supabase.from("documents").delete().eq("id", id);
     fetchDocuments();
     toast({ title: "Document Deleted" });
@@ -165,13 +233,13 @@ const DocumentsSection = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <h2 className="font-display text-xl font-bold text-foreground">Documents</h2>
         <div className="flex gap-2">
           <label className="cursor-pointer">
-            <input type="file" className="hidden" accept="image/*,.pdf,.doc,.docx" onChange={handleFileUpload} />
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
-              <span><Upload className="h-4 w-4 mr-2" /> Upload</span>
+            <input type="file" className="hidden" accept="image/*,.pdf,.doc,.docx,.xlsx,.csv,.txt" onChange={handleFileUpload} />
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-brand-green-dark" disabled={uploading}>
+              <span>{uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />} Upload</span>
             </Button>
           </label>
           <label className="cursor-pointer">
@@ -183,8 +251,8 @@ const DocumentsSection = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search documents..." className="pl-10" />
         </div>
@@ -210,8 +278,8 @@ const DocumentsSection = () => {
           <p className="text-sm mt-1">Upload documents or scan receipts to get started.</p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-hidden">
-          <table className="w-full">
+        <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-x-auto">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Document</th>
@@ -226,7 +294,7 @@ const DocumentsSection = () => {
                 <tr key={doc.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-5 py-3">
                     <p className="text-sm font-medium text-foreground">{doc.title}</p>
-                    <p className="text-xs text-muted-foreground">{doc.status}</p>
+                    <p className="text-xs text-muted-foreground">{doc.status} {doc.file_url ? "• Stored" : ""}</p>
                   </td>
                   <td className="px-5 py-3">
                     <Badge className={typeColor(doc.type)}>{doc.type}</Badge>
@@ -262,6 +330,19 @@ const DocumentsSection = () => {
               <div><span className="text-muted-foreground">Status:</span> <span className="text-foreground">{previewDoc?.status}</span></div>
               <div><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{previewDoc ? new Date(previewDoc.created_at).toLocaleDateString() : ""}</span></div>
             </div>
+            {previewDoc?.file_url && (
+              <div className="rounded-xl border border-border bg-muted/30 p-4">
+                {previewDoc.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                  <img src={previewDoc.file_url} alt={previewDoc.title} className="max-w-full rounded-lg" />
+                ) : previewDoc.file_url.match(/\.pdf$/i) ? (
+                  <iframe src={previewDoc.file_url} className="w-full h-96 rounded-lg" title={previewDoc.title} />
+                ) : (
+                  <a href={previewDoc.file_url} target="_blank" rel="noopener noreferrer" className="text-accent underline text-sm">
+                    Open file in new tab
+                  </a>
+                )}
+              </div>
+            )}
             {previewDoc?.content && (
               <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm whitespace-pre-wrap">{previewDoc.content}</div>
             )}
@@ -288,9 +369,9 @@ const DocumentsSection = () => {
             </div>
           ) : scanResult ? (
             <div className="space-y-4">
-              {scanResult.error ? (
-                <p className="text-destructive text-sm">{scanResult.error}</p>
-              ) : (
+              {scanResult.error && !scanResult.amount ? (
+                <p className="text-muted-foreground text-sm">{scanResult.error}</p>
+              ) : scanResult.amount ? (
                 <div className="space-y-3 rounded-xl border border-border bg-muted/30 p-4">
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div><span className="text-muted-foreground">Type:</span> <span className="text-foreground capitalize">{scanResult.type}</span></div>
@@ -311,7 +392,7 @@ const DocumentsSection = () => {
                     </div>
                   )}
                 </div>
-              )}
+              ) : null}
               <div className="flex gap-2">
                 <Button onClick={handleSaveExtracted} className="flex-1 bg-accent text-accent-foreground hover:bg-brand-green-dark">
                   Save to System
