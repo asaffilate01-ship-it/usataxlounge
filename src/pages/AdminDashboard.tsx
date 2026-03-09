@@ -81,7 +81,7 @@ const statusColor = (status: string) => {
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
   const { toast } = useToast();

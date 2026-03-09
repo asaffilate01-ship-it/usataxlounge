@@ -107,7 +107,7 @@ const ClientDashboard = () => {
   const [newMessage, setNewMessage] = useState("");
   const [sendingMessages, setSendingMessages] = useState<Set<string>>(new Set());
   const { toast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
