@@ -9,7 +9,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   userRole: "admin" | "client" | null;
-  profile: { full_name: string; avatar_url: string | null } | null;
+  profile: { full_name: string; avatar_url: string | null; phone: string | null } | null;
   mfaStatus: MFAStatus;
   refreshMFAStatus: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -33,13 +33,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<"admin" | "client" | null>(null);
-  const [profile, setProfile] = useState<{ full_name: string; avatar_url: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string; avatar_url: string | null; phone: string | null } | null>(null);
   const [mfaStatus, setMfaStatus] = useState<MFAStatus>("loading");
 
   const fetchUserData = async (userId: string) => {
     const [rolesRes, profileRes] = await Promise.all([
       supabase.from("user_roles").select("role").eq("user_id", userId),
-      supabase.from("profiles").select("full_name, avatar_url").eq("user_id", userId).single(),
+      supabase.from("profiles").select("full_name, avatar_url, phone").eq("user_id", userId).single(),
     ]);
 
     if (rolesRes.data && rolesRes.data.length > 0) {
