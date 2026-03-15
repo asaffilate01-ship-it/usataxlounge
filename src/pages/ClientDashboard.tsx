@@ -711,6 +711,7 @@ const ClientDashboard = () => {
               <h2 className="font-display text-xl font-bold text-foreground">Settings</h2>
               <ProfileSettings />
               <MFASettings />
+              <GDPRDataRights />
             </div>
           )}
         </div>
