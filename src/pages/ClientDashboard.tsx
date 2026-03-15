@@ -190,10 +190,13 @@ const ClientDashboard = () => {
     return error;
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut();
     navigate("/");
-  };
+  }, [signOut, navigate]);
+
+  // 15-minute inactivity timeout (IRS Pub 4557)
+  useInactivityTimeout(handleSignOut, !!user);
 
   // Show onboarding if not completed
   if (onboardingDone === null) {
