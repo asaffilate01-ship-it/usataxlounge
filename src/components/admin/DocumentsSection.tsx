@@ -240,6 +240,7 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     } else {
       toast({ title: `Document ${newStatus}` });
       fetchDocuments();
+      if (isAdmin) logAction(`document_${newStatus}`, "documents", docId);
     }
   };
 
