@@ -11,7 +11,6 @@ import Logo from "@/components/Logo";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Auth = () => {
-  const [showDevAccounts, setShowDevAccounts] = useState(false);
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(searchParams.get("tab") === "signup");
   const [showPassword, setShowPassword] = useState(false);

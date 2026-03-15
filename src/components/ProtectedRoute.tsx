@@ -23,16 +23,22 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     return <Navigate to="/auth" replace />;
   }
 
-  // MFA bypassed for dev — re-enable for production
-  // if (mfaStatus === "not_enrolled") {
-  //   return <MFAEnroll onEnrolled={() => refreshMFAStatus()} onCancelled={() => signOut()} />;
-  // }
-  // if (mfaStatus === "enrolled") {
-  //   return <MFAChallenge onVerified={() => refreshMFAStatus()} onSignOut={() => signOut()} />;
-  // }
-  // if (mfaStatus === "loading") {
-  //   return <div className="min-h-screen flex items-center justify-center bg-background"><div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" /></div>;
-  // }
+  // MFA enforcement
+  if (mfaStatus === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (mfaStatus === "not_enrolled") {
+    return <MFAEnroll onEnrolled={() => refreshMFAStatus()} onCancelled={() => signOut()} />;
+  }
+
+  if (mfaStatus === "enrolled") {
+    return <MFAChallenge onVerified={() => refreshMFAStatus()} onSignOut={() => signOut()} />;
+  }
 
   // Admin can access client routes too
   if (requiredRole === "admin" && userRole !== "admin") {
