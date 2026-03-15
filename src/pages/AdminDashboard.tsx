@@ -165,10 +165,13 @@ const AdminDashboard = () => {
     if (data) setDbClients(data);
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut();
     navigate("/");
-  };
+  }, [signOut, navigate]);
+
+  // 15-minute inactivity timeout (IRS Pub 4557)
+  useInactivityTimeout(handleSignOut, !!user);
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
