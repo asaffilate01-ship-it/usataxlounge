@@ -22,11 +22,9 @@ import {
   TrendingDown,
   BarChart3,
   Paperclip,
-  Image as ImageIcon,
   File,
   Menu,
   X,
-  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,10 +34,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
 import { useFilings } from "@/hooks/useFilings";
-import { useNotifications } from "@/hooks/useNotifications";
 import { usePresence } from "@/hooks/usePresence";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationDropdown from "@/components/client/NotificationDropdown";
+import ProfileSettings from "@/components/client/ProfileSettings";
+import ExportButtons from "@/components/client/ExportButtons";
+import OnboardingQuestionnaire from "@/components/client/OnboardingQuestionnaire";
 import { useMessages } from "@/hooks/useMessages";
 import { supabase } from "@/integrations/supabase/client";
 import DocumentsSection from "@/components/admin/DocumentsSection";
@@ -67,8 +68,7 @@ const formatTimeAgo = (dateStr: string) => {
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
 };
 
 const statusIcon = (status: string) => {
@@ -113,8 +113,22 @@ const ClientDashboard = () => {
   const navigate = useNavigate();
   const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
   const { filings, loading: filingsLoading } = useFilings();
-  const { unreadCount: notifUnreadCount } = useNotifications();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
+
+  // Onboarding check
+  const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("user_id", user.id)
+        .single();
+      setOnboardingDone(data?.onboarding_completed ?? false);
+    };
+    checkOnboarding();
+  }, [user]);
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newEntry, setNewEntry] = useState({ type: "income" as "income" | "expense", category: "", description: "", amount: "" });
@@ -139,8 +153,6 @@ const ClientDashboard = () => {
   }, []);
 
   const { messages, loading: messagesLoading, sendMessage, markConversationRead } = useMessages(adminId || undefined);
-
-  // Unread message count
   const unreadMessageCount = messages.filter((m) => !m.read && m.sender_id !== user?.id).length;
 
   useEffect(() => {
@@ -179,6 +191,18 @@ const ClientDashboard = () => {
     navigate("/");
   };
 
+  // Show onboarding if not completed
+  if (onboardingDone === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+  if (!onboardingDone) {
+    return <OnboardingQuestionnaire onComplete={() => setOnboardingDone(true)} />;
+  }
+
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : "U";
@@ -195,6 +219,22 @@ const ClientDashboard = () => {
 
   const totalIncome = incomeExpenses.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
   const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
+
+  const incomeExpenseColumns = [
+    { key: "category", label: "Category" },
+    { key: "type", label: "Type" },
+    { key: "description", label: "Description" },
+    { key: "amount", label: "Amount" },
+    { key: "created_at", label: "Date" },
+  ];
+
+  const filingColumns = [
+    { key: "form_type", label: "Form" },
+    { key: "tax_year", label: "Year" },
+    { key: "status", label: "Status" },
+    { key: "submitted_at", label: "Filed Date" },
+    { key: "irs_confirmation", label: "IRS Confirmation" },
+  ];
 
   const SidebarContent = () => (
     <>
@@ -273,11 +313,9 @@ const ClientDashboard = () => {
       <main className="flex-1 flex flex-col min-w-0">
         <header className="h-14 border-b border-border bg-card flex items-center justify-between px-4 sm:px-6 shrink-0">
           <div className="flex items-center gap-3">
-            {/* Mobile hamburger */}
             <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden text-muted-foreground hover:text-foreground">
               <Menu className="h-5 w-5" />
             </button>
-            {/* Desktop toggle */}
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:block text-muted-foreground hover:text-foreground">
               <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
             </button>
@@ -287,14 +325,7 @@ const ClientDashboard = () => {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <button className="relative text-muted-foreground hover:text-foreground">
-              <Bell className="h-5 w-5" />
-              {notifUnreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                  {notifUnreadCount > 9 ? "9+" : notifUnreadCount}
-                </span>
-              )}
-            </button>
+            <NotificationDropdown />
           </div>
         </header>
 
@@ -371,49 +402,52 @@ const ClientDashboard = () => {
           {/* Income & Expenses */}
           {activeTab === "income" && (
             <div className="space-y-6 animate-fade-in">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="font-display text-xl font-bold text-foreground">Income & Expenses</h2>
-                <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
-                      <Plus className="h-4 w-4 mr-2" /> Add Entry
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add Income/Expense Entry</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 pt-2">
-                      <div>
-                        <Label>Type</Label>
-                        <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense" })}>
-                          <SelectTrigger className="mt-1.5">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="income">Income</SelectItem>
-                            <SelectItem value="expense">Expense</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Category</Label>
-                        <Input className="mt-1.5" placeholder="e.g. W-2 Wages, Home Office" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
-                      </div>
-                      <div>
-                        <Label>Description (optional)</Label>
-                        <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.description} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })} />
-                      </div>
-                      <div>
-                        <Label>Amount ($)</Label>
-                        <Input className="mt-1.5" type="number" min="0" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
-                      </div>
-                      <Button onClick={handleAddEntry} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
-                        Add Entry
+                <div className="flex gap-2">
+                  <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
+                  <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                        <Plus className="h-4 w-4 mr-2" /> Add Entry
                       </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add Income/Expense Entry</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <Label>Type</Label>
+                          <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense" })}>
+                            <SelectTrigger className="mt-1.5">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="income">Income</SelectItem>
+                              <SelectItem value="expense">Expense</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Category</Label>
+                          <Input className="mt-1.5" placeholder="e.g. W-2 Wages, Home Office" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
+                        </div>
+                        <div>
+                          <Label>Description (optional)</Label>
+                          <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.description} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })} />
+                        </div>
+                        <div>
+                          <Label>Amount ($)</Label>
+                          <Input className="mt-1.5" type="number" min="0" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
+                        </div>
+                        <Button onClick={handleAddEntry} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                          Add Entry
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
 
               {ieLoading ? (
@@ -488,7 +522,12 @@ const ClientDashboard = () => {
           {/* Filings */}
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-xl font-bold text-foreground">My Filings</h2>
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <h2 className="font-display text-xl font-bold text-foreground">My Filings</h2>
+                {filings.length > 0 && (
+                  <ExportButtons data={filings} filename="my-filings" columns={filingColumns} />
+                )}
+              </div>
               {filingsLoading ? (
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="h-8 w-8 animate-spin text-accent" />
@@ -654,7 +693,13 @@ const ClientDashboard = () => {
           )}
 
           {/* Settings */}
-          {activeTab === "settings" && <MFASettings />}
+          {activeTab === "settings" && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="font-display text-xl font-bold text-foreground">Settings</h2>
+              <ProfileSettings />
+              <MFASettings />
+            </div>
+          )}
         </div>
       </main>
     </div>
