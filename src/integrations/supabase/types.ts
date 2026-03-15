@@ -20,13 +20,17 @@ export type Database = {
           assigned_agent: string | null
           created_at: string
           date_of_birth: string | null
+          deductions: string[] | null
+          dependents: number | null
           email: string | null
           filing_status: string | null
           full_name: string | null
           id: string
+          income_sources: string[] | null
           notes: string | null
           occupation: string | null
           phone: string | null
+          ssn_encrypted: string | null
           ssn_last4: string | null
           status: string | null
           tax_year: number | null
@@ -38,13 +42,17 @@ export type Database = {
           assigned_agent?: string | null
           created_at?: string
           date_of_birth?: string | null
+          deductions?: string[] | null
+          dependents?: number | null
           email?: string | null
           filing_status?: string | null
           full_name?: string | null
           id?: string
+          income_sources?: string[] | null
           notes?: string | null
           occupation?: string | null
           phone?: string | null
+          ssn_encrypted?: string | null
           ssn_last4?: string | null
           status?: string | null
           tax_year?: number | null
@@ -56,13 +64,17 @@ export type Database = {
           assigned_agent?: string | null
           created_at?: string
           date_of_birth?: string | null
+          deductions?: string[] | null
+          dependents?: number | null
           email?: string | null
           filing_status?: string | null
           full_name?: string | null
           id?: string
+          income_sources?: string[] | null
           notes?: string | null
           occupation?: string | null
           phone?: string | null
+          ssn_encrypted?: string | null
           ssn_last4?: string | null
           status?: string | null
           tax_year?: number | null
@@ -340,6 +352,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          onboarding_completed: boolean | null
           phone: string | null
           updated_at: string
           user_id: string
@@ -349,6 +362,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          onboarding_completed?: boolean | null
           phone?: string | null
           updated_at?: string
           user_id: string
@@ -358,6 +372,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          onboarding_completed?: boolean | null
           phone?: string | null
           updated_at?: string
           user_id?: string
