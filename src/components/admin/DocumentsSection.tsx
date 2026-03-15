@@ -222,6 +222,25 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     return matchSearch && matchType;
   });
 
+  const statusColor = (status: string) => {
+    switch (status) {
+      case "approved": return "bg-success/10 text-success";
+      case "rejected": return "bg-destructive/10 text-destructive";
+      case "pending_review": return "bg-warning/10 text-warning";
+      default: return "bg-muted text-muted-foreground";
+    }
+  };
+
+  const handleApproval = async (docId: string, newStatus: "approved" | "rejected") => {
+    const { error } = await supabase.from("documents").update({ status: newStatus }).eq("id", docId);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: `Document ${newStatus}` });
+      fetchDocuments();
+    }
+  };
+
   const typeColor = (type: string) => {
     switch (type) {
       case "receipt": return "bg-warning/10 text-warning";
