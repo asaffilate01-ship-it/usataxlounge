@@ -726,13 +726,14 @@ const AdminDashboard = () => {
                       <p className="text-sm font-medium text-foreground mb-1">{msg.subject}</p>
                       <p className="text-sm text-muted-foreground">{msg.message}</p>
                       {!msg.read && (
-                        <Button
+                         <Button
                           variant="ghost"
                           size="sm"
                           className="mt-3 text-accent"
                           onClick={async () => {
                             await supabase.from("contact_messages").update({ read: true }).eq("id", msg.id);
                             setContactMessages(prev => prev.map(m => m.id === msg.id ? { ...m, read: true } : m));
+                            logAction("mark_inquiry_read", "contact_messages", msg.id);
                           }}
                         >
                           <Eye className="h-4 w-4 mr-1" /> Mark Read

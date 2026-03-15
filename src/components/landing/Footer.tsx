@@ -99,7 +99,7 @@ const Footer = () => {
             <div className="flex gap-6">
               <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
               <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.terms")}</Link>
-              <a href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.sitemap")}</a>
+              <a href="/sitemap.xml" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.sitemap")}</a>
             </div>
           </div>
         </div>
