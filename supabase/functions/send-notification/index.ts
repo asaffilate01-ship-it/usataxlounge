@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 serve(async (req) => {
@@ -38,7 +38,7 @@ serve(async (req) => {
               <p style="color: #64748b; margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">What you need to do:</p>
               <ol style="color: #334155; margin: 8px 0 0 0; padding-left: 20px; line-height: 1.8;">
                 <li>Log in to your TaxLounge portal</li>
-                <li>Go to "E-Sign & Approve"</li>
+                <li>Go to "E-Sign &amp; Approve"</li>
                 <li>Review your return details</li>
                 <li>Type your name to sign</li>
               </ol>
