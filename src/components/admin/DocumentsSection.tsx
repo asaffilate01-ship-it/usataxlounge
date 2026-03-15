@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FileText, Search, Filter, Printer, Download, Send, Trash2, Upload, Eye, Camera, Loader2 } from "lucide-react";
+import { FileText, Search, Filter, Printer, Download, Send, Trash2, Upload, Eye, Camera, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
