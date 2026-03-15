@@ -318,7 +318,9 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                   <td className="px-5 py-3">
                     <Badge className={typeColor(doc.type)}>{doc.type}</Badge>
                   </td>
-                  <td className="px-5 py-3 text-sm text-muted-foreground">{doc.category || "—"}</td>
+                  <td className="px-5 py-3">
+                    <Badge className={statusColor(doc.status)}>{doc.status || "draft"}</Badge>
+                  </td>
                   <td className="px-5 py-3 text-sm text-muted-foreground">{new Date(doc.created_at).toLocaleDateString()}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1">
