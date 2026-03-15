@@ -9,7 +9,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   userRole: "admin" | "client" | null;
-  profile: { full_name: string; avatar_url: string | null } | null;
+  profile: { full_name: string; avatar_url: string | null; phone: string | null } | null;
   mfaStatus: MFAStatus;
   refreshMFAStatus: () => Promise<void>;
   signOut: () => Promise<void>;
