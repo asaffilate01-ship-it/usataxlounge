@@ -41,6 +41,7 @@ const App = () => (
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/client" element={
                   <ProtectedRoute requiredRole="client">
                     <ClientDashboard />
