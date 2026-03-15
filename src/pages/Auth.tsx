@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff, ArrowLeft, Bug } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,6 @@ import Logo from "@/components/Logo";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Auth = () => {
-  const [showDevAccounts, setShowDevAccounts] = useState(false);
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(searchParams.get("tab") === "signup");
   const [showPassword, setShowPassword] = useState(false);
@@ -193,52 +192,6 @@ const Auth = () => {
             </button>
           </div>
 
-          {/* Dev quick-fill toggle */}
-          {!isSignUp && (
-            <>
-              <div className="mt-4 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setShowDevAccounts(!showDevAccounts)}
-                  className="text-muted-foreground/40 hover:text-muted-foreground transition-colors"
-                  title="Dev accounts"
-                >
-                  <Bug className="h-4 w-4" />
-                </button>
-              </div>
-              {showDevAccounts && (
-                <div className="mt-2 border-t border-border pt-3">
-                  <p className="text-xs text-muted-foreground mb-2 text-center">Dev Test Accounts</p>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => {
-                        setEmail("amersaleem@gmail.com");
-                        setPassword("TaxLounge2026!");
-                      }}
-                    >
-                      Admin
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => {
-                        setEmail("testclient@taxlounge.tax");
-                        setPassword("TaxLounge2026!");
-                      }}
-                    >
-                      Client
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
         </div>
       </div>
     </div>

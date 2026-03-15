@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FileText, Search, Filter, Printer, Download, Send, Trash2, Upload, Eye, Camera, Loader2 } from "lucide-react";
+import { FileText, Search, Filter, Printer, Download, Send, Trash2, Upload, Eye, Camera, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-const DocumentsSection = () => {
+const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const [documents, setDocuments] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -222,6 +222,25 @@ const DocumentsSection = () => {
     return matchSearch && matchType;
   });
 
+  const statusColor = (status: string) => {
+    switch (status) {
+      case "approved": return "bg-success/10 text-success";
+      case "rejected": return "bg-destructive/10 text-destructive";
+      case "pending_review": return "bg-warning/10 text-warning";
+      default: return "bg-muted text-muted-foreground";
+    }
+  };
+
+  const handleApproval = async (docId: string, newStatus: "approved" | "rejected") => {
+    const { error } = await supabase.from("documents").update({ status: newStatus }).eq("id", docId);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: `Document ${newStatus}` });
+      fetchDocuments();
+    }
+  };
+
   const typeColor = (type: string) => {
     switch (type) {
       case "receipt": return "bg-warning/10 text-warning";
@@ -284,7 +303,7 @@ const DocumentsSection = () => {
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Document</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Status</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Date</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
               </tr>
@@ -299,10 +318,18 @@ const DocumentsSection = () => {
                   <td className="px-5 py-3">
                     <Badge className={typeColor(doc.type)}>{doc.type}</Badge>
                   </td>
-                  <td className="px-5 py-3 text-sm text-muted-foreground">{doc.category || "—"}</td>
+                  <td className="px-5 py-3">
+                    <Badge className={statusColor(doc.status)}>{doc.status || "draft"}</Badge>
+                  </td>
                   <td className="px-5 py-3 text-sm text-muted-foreground">{new Date(doc.created_at).toLocaleDateString()}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1">
+                      {isAdmin && doc.status !== "approved" && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={(e) => { e.stopPropagation(); handleApproval(doc.id, "approved"); }} title="Approve"><CheckCircle2 className="h-4 w-4" /></Button>
+                      )}
+                      {isAdmin && doc.status !== "rejected" && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); handleApproval(doc.id, "rejected"); }} title="Reject"><XCircle className="h-4 w-4" /></Button>
+                      )}
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPreviewDoc(doc)}><Eye className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePrint(doc)}><Printer className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(doc)}><Download className="h-4 w-4" /></Button>
