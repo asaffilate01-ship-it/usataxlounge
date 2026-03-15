@@ -32,6 +32,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-8">
             {[
               { href: "#services", label: t("nav.services") },
+              { href: "#pricing", label: t("nav.pricing") },
               { href: "#why-us", label: t("nav.whyUs") },
               { href: "#process", label: t("nav.process") },
               { href: "#contact", label: t("nav.contact") },
@@ -93,6 +94,7 @@ const Navbar = () => {
           <div className={`md:hidden py-4 border-t ${scrolled ? "border-border" : "border-white/10"}`}>
             <div className="flex flex-col gap-3">
               <a href="#services" className="text-sm font-medium text-muted-foreground py-2">{t("nav.services")}</a>
+              <a href="#pricing" className="text-sm font-medium text-muted-foreground py-2">{t("nav.pricing")}</a>
               <a href="#why-us" className="text-sm font-medium text-muted-foreground py-2">{t("nav.whyUs")}</a>
               <a href="#process" className="text-sm font-medium text-muted-foreground py-2">{t("nav.process")}</a>
               <Link to="/blog" className="text-sm font-medium text-muted-foreground py-2">{t("nav.blog")}</Link>

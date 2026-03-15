@@ -64,14 +64,18 @@ const GDPRDataRights = () => {
     if (!user) return;
     setDeleting(true);
     try {
-      // Delete user data from all tables
+      // Delete user data from all tables (order matters for foreign keys)
       await Promise.all([
+        supabase.from("signatures").delete().eq("user_id", user.id),
         supabase.from("income_expenses").delete().eq("user_id", user.id),
         supabase.from("documents").delete().eq("user_id", user.id),
         supabase.from("messages").delete().or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`),
         supabase.from("notifications").delete().eq("user_id", user.id),
-        supabase.from("clients").delete().eq("user_id", user.id),
       ]);
+      // Then delete dependent records
+      await supabase.from("filings").delete().eq("user_id", user.id);
+      await supabase.from("clients").delete().eq("user_id", user.id);
+      await supabase.from("profiles").delete().eq("user_id", user.id);
 
       // Sign out — full account deletion requires admin action for auth.users
       await signOut();

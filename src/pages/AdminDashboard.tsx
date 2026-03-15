@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -47,6 +47,7 @@ import { useFilings } from "@/hooks/useFilings";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePresence } from "@/hooks/usePresence";
 import { useAuditLog } from "@/hooks/useAuditLog";
+import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
 
 const formatTimeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -165,10 +166,13 @@ const AdminDashboard = () => {
     if (data) setDbClients(data);
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut();
     navigate("/");
-  };
+  }, [signOut, navigate]);
+
+  // 15-minute inactivity timeout (IRS Pub 4557)
+  useInactivityTimeout(handleSignOut, !!user);
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)

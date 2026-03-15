@@ -36,11 +36,11 @@ const ProfileSettings = () => {
     if (!file || !user) return;
     setUploading(true);
     const filePath = `${user.id}/avatar_${Date.now()}.${file.name.split(".").pop()}`;
-    const { data, error } = await supabase.storage.from("documents").upload(filePath, file);
+    const { data, error } = await supabase.storage.from("message-attachments").upload(filePath, file);
     if (error) {
       toast({ title: "Upload Error", description: error.message, variant: "destructive" });
     } else {
-      const { data: urlData } = supabase.storage.from("documents").getPublicUrl(data.path);
+      const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
       setAvatarUrl(urlData.publicUrl);
     }
     setUploading(false);
