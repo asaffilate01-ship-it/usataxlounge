@@ -193,52 +193,6 @@ const Auth = () => {
             </button>
           </div>
 
-          {/* Dev quick-fill toggle */}
-          {!isSignUp && (
-            <>
-              <div className="mt-4 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setShowDevAccounts(!showDevAccounts)}
-                  className="text-muted-foreground/40 hover:text-muted-foreground transition-colors"
-                  title="Dev accounts"
-                >
-                  <Bug className="h-4 w-4" />
-                </button>
-              </div>
-              {showDevAccounts && (
-                <div className="mt-2 border-t border-border pt-3">
-                  <p className="text-xs text-muted-foreground mb-2 text-center">Dev Test Accounts</p>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => {
-                        setEmail("amersaleem@gmail.com");
-                        setPassword("TaxLounge2026!");
-                      }}
-                    >
-                      Admin
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => {
-                        setEmail("testclient@taxlounge.tax");
-                        setPassword("TaxLounge2026!");
-                      }}
-                    >
-                      Client
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
         </div>
       </div>
     </div>
