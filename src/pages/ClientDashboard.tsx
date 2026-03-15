@@ -46,6 +46,10 @@ import { supabase } from "@/integrations/supabase/client";
 import DocumentsSection from "@/components/admin/DocumentsSection";
 import ClientESignSection from "@/components/client/ClientESignSection";
 import MFASettings from "@/components/client/MFASettings";
+import ReceiptScanner from "@/components/client/ReceiptScanner";
+import DashboardCharts from "@/components/client/DashboardCharts";
+import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
+import MFASettings from "@/components/client/MFASettings";
 import {
   Dialog,
   DialogContent,
