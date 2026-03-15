@@ -414,7 +414,10 @@ const ClientDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="font-display text-xl font-bold text-foreground">Income & Expenses</h2>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
+                  <ReceiptScanner onExtracted={(data) => {
+                    addItem(data);
+                  }} />
                   <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>

@@ -69,8 +69,8 @@ const PricingSection = () => {
       nameKey: "pricing.expat.name",
       priceKey: "pricing.expat.price",
       descKey: "pricing.expat.desc",
+      planKey: "expat",
       featuresKeys: [
-        "pricing.expat.f1",
         "pricing.expat.f2",
         "pricing.expat.f3",
         "pricing.expat.f4",
