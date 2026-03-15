@@ -403,6 +403,9 @@ const ClientDashboard = () => {
                   </div>
                 )}
               </div>
+
+              {/* Charts */}
+              <DashboardCharts incomeExpenses={incomeExpenses} filings={filings} />
             </div>
           )}
 
