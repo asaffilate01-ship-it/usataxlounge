@@ -42,8 +42,8 @@ const PricingSection = () => {
       nameKey: "pricing.individual.name",
       priceKey: "pricing.individual.price",
       descKey: "pricing.individual.desc",
+      planKey: "individual",
       featuresKeys: [
-        "pricing.individual.f1",
         "pricing.individual.f2",
         "pricing.individual.f3",
         "pricing.individual.f4",
