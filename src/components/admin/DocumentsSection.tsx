@@ -324,6 +324,12 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                   <td className="px-5 py-3 text-sm text-muted-foreground">{new Date(doc.created_at).toLocaleDateString()}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1">
+                      {isAdmin && doc.status !== "approved" && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={(e) => { e.stopPropagation(); handleApproval(doc.id, "approved"); }} title="Approve"><CheckCircle2 className="h-4 w-4" /></Button>
+                      )}
+                      {isAdmin && doc.status !== "rejected" && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); handleApproval(doc.id, "rejected"); }} title="Reject"><XCircle className="h-4 w-4" /></Button>
+                      )}
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPreviewDoc(doc)}><Eye className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePrint(doc)}><Printer className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(doc)}><Download className="h-4 w-4" /></Button>
