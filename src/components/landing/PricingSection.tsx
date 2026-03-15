@@ -148,17 +148,19 @@ const PricingSection = () => {
               </ul>
 
               <Button
-                asChild
+                onClick={() => handlePayment(plan.planKey)}
+                disabled={loadingPlan === plan.planKey}
                 className={`w-full h-11 ${
                   plan.popular
                     ? "bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
                     : "bg-primary text-primary-foreground hover:bg-primary/90"
                 }`}
               >
-                <Link to="/auth?tab=signup">
-                  {t("pricing.cta")}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                {loadingPlan === plan.planKey ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
+                {user ? t("pricing.cta") : t("pricing.cta")}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
           ))}
