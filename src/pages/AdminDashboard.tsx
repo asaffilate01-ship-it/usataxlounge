@@ -46,6 +46,7 @@ import { useMessages } from "@/hooks/useMessages";
 import { useFilings } from "@/hooks/useFilings";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePresence } from "@/hooks/usePresence";
+import { useAuditLog } from "@/hooks/useAuditLog";
 
 const formatTimeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
