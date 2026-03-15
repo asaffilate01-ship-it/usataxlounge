@@ -94,6 +94,7 @@ const AdminDashboard = () => {
   const { filings, loading: filingsLoading } = useFilings();
   const { unreadCount: notifUnreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
+  const { logAction } = useAuditLog();
   const [profilesMap, setProfilesMap] = useState<Record<string, string>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
