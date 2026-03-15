@@ -8,8 +8,34 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
+const PLAN_KEYS = ["individual", "business", "expat"] as const;
+
 const PricingSection = () => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handlePayment = async (plan: string) => {
+    if (!user) {
+      window.location.href = "/auth?tab=signup";
+      return;
+    }
+    setLoadingPlan(plan);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment", {
+        body: { plan },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Payment error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   const plans = [
     {
