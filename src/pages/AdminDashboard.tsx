@@ -537,7 +537,7 @@ const AdminDashboard = () => {
 
           {/* Documents */}
           {activeTab === "documents" && (
-            <DocumentsSection />
+            <DocumentsSection isAdmin />
           )}
 
           {/* Messages */}
