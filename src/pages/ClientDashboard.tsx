@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -46,6 +46,9 @@ import { supabase } from "@/integrations/supabase/client";
 import DocumentsSection from "@/components/admin/DocumentsSection";
 import ClientESignSection from "@/components/client/ClientESignSection";
 import MFASettings from "@/components/client/MFASettings";
+import ReceiptScanner from "@/components/client/ReceiptScanner";
+import DashboardCharts from "@/components/client/DashboardCharts";
+import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
 import {
   Dialog,
   DialogContent,
@@ -186,10 +189,13 @@ const ClientDashboard = () => {
     return error;
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await signOut();
     navigate("/");
-  };
+  }, [signOut, navigate]);
+
+  // 15-minute inactivity timeout (IRS Pub 4557)
+  useInactivityTimeout(handleSignOut, !!user);
 
   // Show onboarding if not completed
   if (onboardingDone === null) {
@@ -396,6 +402,9 @@ const ClientDashboard = () => {
                   </div>
                 )}
               </div>
+
+              {/* Charts */}
+              <DashboardCharts incomeExpenses={incomeExpenses} filings={filings} />
             </div>
           )}
 
@@ -404,7 +413,10 @@ const ClientDashboard = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="font-display text-xl font-bold text-foreground">Income & Expenses</h2>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
+                  <ReceiptScanner onExtracted={(data) => {
+                    addItem(data);
+                  }} />
                   <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>

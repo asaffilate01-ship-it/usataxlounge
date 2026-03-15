@@ -1,19 +1,49 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ArrowRight, Star } from "lucide-react";
+import { CheckCircle2, ArrowRight, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+
+const PLAN_KEYS = ["individual", "business", "expat"] as const;
 
 const PricingSection = () => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handlePayment = async (plan: string) => {
+    if (!user) {
+      window.location.href = "/auth?tab=signup";
+      return;
+    }
+    setLoadingPlan(plan);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment", {
+        body: { plan },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Payment error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   const plans = [
     {
       nameKey: "pricing.individual.name",
       priceKey: "pricing.individual.price",
       descKey: "pricing.individual.desc",
+      planKey: "individual",
       featuresKeys: [
-        "pricing.individual.f1",
         "pricing.individual.f2",
         "pricing.individual.f3",
         "pricing.individual.f4",
@@ -25,8 +55,8 @@ const PricingSection = () => {
       nameKey: "pricing.business.name",
       priceKey: "pricing.business.price",
       descKey: "pricing.business.desc",
+      planKey: "business",
       featuresKeys: [
-        "pricing.business.f1",
         "pricing.business.f2",
         "pricing.business.f3",
         "pricing.business.f4",
@@ -39,8 +69,8 @@ const PricingSection = () => {
       nameKey: "pricing.expat.name",
       priceKey: "pricing.expat.price",
       descKey: "pricing.expat.desc",
+      planKey: "expat",
       featuresKeys: [
-        "pricing.expat.f1",
         "pricing.expat.f2",
         "pricing.expat.f3",
         "pricing.expat.f4",
@@ -118,17 +148,19 @@ const PricingSection = () => {
               </ul>
 
               <Button
-                asChild
+                onClick={() => handlePayment(plan.planKey)}
+                disabled={loadingPlan === plan.planKey}
                 className={`w-full h-11 ${
                   plan.popular
                     ? "bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
                     : "bg-primary text-primary-foreground hover:bg-primary/90"
                 }`}
               >
-                <Link to="/auth?tab=signup">
-                  {t("pricing.cta")}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                {loadingPlan === plan.planKey ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
+                {user ? t("pricing.cta") : t("pricing.cta")}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
           ))}
