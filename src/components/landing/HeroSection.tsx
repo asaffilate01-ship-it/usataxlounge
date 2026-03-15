@@ -122,7 +122,7 @@ const HeroSection = () => {
                 transition={{ duration: 0.5, delay: 0.8 }}
                 className="absolute -bottom-6 -left-6 bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-elegant p-4"
               >
-                <p className="text-2xl font-display font-bold text-accent">15,000+</p>
+                <p className="text-2xl font-display font-bold text-accent">5,000+</p>
                 <p className="text-xs text-muted-foreground">{t("whyUs.s1")}</p>
               </motion.div>
               <motion.div
