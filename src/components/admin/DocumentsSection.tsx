@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import { FileText, Search, Filter, Printer, Download, Send, Trash2, Upload, Eye, Camera, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
+  const { logAction } = useAuditLog();
   const [documents, setDocuments] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -238,6 +240,7 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     } else {
       toast({ title: `Document ${newStatus}` });
       fetchDocuments();
+      if (isAdmin) logAction(`document_${newStatus}`, "documents", docId);
     }
   };
 

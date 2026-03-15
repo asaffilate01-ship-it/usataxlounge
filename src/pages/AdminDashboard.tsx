@@ -46,6 +46,7 @@ import { useMessages } from "@/hooks/useMessages";
 import { useFilings } from "@/hooks/useFilings";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePresence } from "@/hooks/usePresence";
+import { useAuditLog } from "@/hooks/useAuditLog";
 
 const formatTimeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -93,6 +94,7 @@ const AdminDashboard = () => {
   const { filings, loading: filingsLoading } = useFilings();
   const { unreadCount: notifUnreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
+  const { logAction } = useAuditLog();
   const [profilesMap, setProfilesMap] = useState<Record<string, string>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
@@ -724,13 +726,14 @@ const AdminDashboard = () => {
                       <p className="text-sm font-medium text-foreground mb-1">{msg.subject}</p>
                       <p className="text-sm text-muted-foreground">{msg.message}</p>
                       {!msg.read && (
-                        <Button
+                         <Button
                           variant="ghost"
                           size="sm"
                           className="mt-3 text-accent"
                           onClick={async () => {
                             await supabase.from("contact_messages").update({ read: true }).eq("id", msg.id);
                             setContactMessages(prev => prev.map(m => m.id === msg.id ? { ...m, read: true } : m));
+                            logAction("mark_inquiry_read", "contact_messages", msg.id);
                           }}
                         >
                           <Eye className="h-4 w-4 mr-1" /> Mark Read

@@ -111,6 +111,29 @@ serve(async (req) => {
           </div>
         </div>
       `;
+    } else if (type === 'new_message') {
+      subject = `New Message from ${senderName || 'Your Tax Agent'} — TaxLounge`;
+      html = `
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxLounge</h1>
+            <p style="color: #94a3b8; margin: 8px 0 0 0; font-size: 14px;">Secure Tax Filing Portal</p>
+          </div>
+          <div style="padding: 32px;">
+            <h2 style="color: #1a2332; margin: 0 0 16px 0;">You Have a New Message</h2>
+            <p style="color: #475569; line-height: 1.6;">Hi ${clientName || 'there'},</p>
+            <p style="color: #475569; line-height: 1.6;">${senderName || 'Your tax agent'} sent you a message while you were offline:</p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
+              <p style="color: #334155; margin: 0; line-height: 1.6; white-space: pre-wrap;">${messageBody || ''}</p>
+            </div>
+            <p style="color: #475569; line-height: 1.6;">Log in to your TaxLounge portal to reply.</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxLounge Team</p>
+          </div>
+          <div style="background: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxLounge</p>
+          </div>
+        </div>
+      `;
     } else {
       throw new Error('Unknown notification type');
     }
