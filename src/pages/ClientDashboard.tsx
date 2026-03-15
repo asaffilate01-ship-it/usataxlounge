@@ -49,7 +49,6 @@ import MFASettings from "@/components/client/MFASettings";
 import ReceiptScanner from "@/components/client/ReceiptScanner";
 import DashboardCharts from "@/components/client/DashboardCharts";
 import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
-import MFASettings from "@/components/client/MFASettings";
 import {
   Dialog,
   DialogContent,
