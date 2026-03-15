@@ -303,7 +303,7 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Document</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Status</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Date</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
               </tr>
