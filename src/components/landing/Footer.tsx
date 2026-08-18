@@ -23,7 +23,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 py-10">
           {/* Brand */}
           <div className="space-y-5">
-            <Logo size="md" />
+            <Logo size="xl" />
             <p className="text-sm text-muted-foreground leading-relaxed">
               {t("footer.copy")}
             </p>
@@ -94,7 +94,7 @@ const Footer = () => {
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} TaxNuvia. All rights reserved. | ThreeOneThree Ltd
+              © {new Date().getFullYear()} TaxNuvia. All rights reserved. TaxNuvia is a trading name of iTechLounge LLC.
             </p>
             <div className="flex gap-6">
               <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
