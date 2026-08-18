@@ -1,9 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
+
+const ADMIN_EMAIL = 'hello@taxlounge.co.uk';
+const PUBLIC_TYPES = ['contact_form'];
+
+const esc = (v: unknown) =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const isEmail = (v: unknown) => typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -16,11 +30,69 @@ serve(async (req) => {
       throw new Error('RESEND_API_KEY is not configured');
     }
 
-    const body = await req.json();
-    const { type, to, clientName, agentName, senderName, senderEmail, phone, messageSubject, messageBody } = body;
+    const admin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
 
+    const body = await req.json();
+    const rawType = String(body?.type ?? '');
+    const { clientName, senderName, senderEmail, phone, messageSubject, messageBody } = body;
+    let to = body?.to;
+
+    // ---- Authorisation ---------------------------------------------------
+    if (PUBLIC_TYPES.includes(rawType)) {
+      // Public path: recipient is always our own inbox, never caller-controlled.
+      to = ADMIN_EMAIL;
+      if (!isEmail(senderEmail)) throw new Error('Invalid sender email');
+
+      const { data: allowed } = await admin.rpc('check_contact_rate_limit', { sender_email: senderEmail });
+      const { count } = await admin
+        .from('contact_messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('email', senderEmail)
+        .gte('created_at', new Date(Date.now() - 10 * 60 * 1000).toISOString());
+
+      // Must correspond to a genuine, recent form submission and stay in budget.
+      if (!count || (allowed === false && count > 3)) {
+        return new Response(JSON.stringify({ error: 'Rate limited' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } else {
+      const authHeader = req.headers.get('Authorization') ?? '';
+      const token = authHeader.replace('Bearer ', '');
+      if (!token) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const { data: userData } = await admin.auth.getUser(token);
+      const user = userData?.user;
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const { data: isAdmin } = await admin.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+
+      if (!isEmail(to)) throw new Error('Invalid recipient');
+      if (!isAdmin && to !== user.email && to !== ADMIN_EMAIL) {
+        return new Response(JSON.stringify({ error: 'Forbidden recipient' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    // ---- Templates -------------------------------------------------------
     let subject = '';
     let html = '';
+    const type = rawType;
 
     if (type === 'signature_request') {
       subject = 'Action Required: E-Sign Your Tax Return — TaxLounge';
@@ -32,7 +104,7 @@ serve(async (req) => {
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">E-Signature Required</h2>
-            <p style="color: #475569; line-height: 1.6;">Hi ${clientName || 'there'},</p>
+            <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'},</p>
             <p style="color: #475569; line-height: 1.6;">Your tax return has been prepared and is ready for your review. Please log in to your TaxLounge portal to review and electronically sign your return to authorize e-filing with the IRS.</p>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
               <p style="color: #64748b; margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">What you need to do:</p>
@@ -61,7 +133,7 @@ serve(async (req) => {
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">✅ Signature Confirmed</h2>
-            <p style="color: #475569; line-height: 1.6;">Hi ${clientName || 'there'},</p>
+            <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'},</p>
             <p style="color: #475569; line-height: 1.6;">Your e-filing authorization has been successfully recorded. Your tax return will now be submitted to the IRS for processing.</p>
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 24px 0;">
               <p style="color: #166534; margin: 0; font-weight: 600;">What happens next?</p>
@@ -75,7 +147,7 @@ serve(async (req) => {
         </div>
       `;
     } else if (type === 'signature_admin_notify') {
-      subject = `Client ${clientName} Has Signed Their Tax Return`;
+      subject = `Client ${esc(clientName)} Has Signed Their Tax Return`;
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
@@ -83,13 +155,27 @@ serve(async (req) => {
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">New Signature Received</h2>
-            <p style="color: #475569; line-height: 1.6;"><strong>${clientName}</strong> has signed their e-filing authorization. The return is now ready for submission to the IRS.</p>
+            <p style="color: #475569; line-height: 1.6;"><strong>${esc(clientName)}</strong> has signed their e-filing authorization. The return is now ready for submission to the IRS.</p>
             <p style="color: #475569; line-height: 1.6;">Log in to the admin dashboard to review and process the filing.</p>
           </div>
         </div>
       `;
+    } else if (type === 'payment_received') {
+      subject = 'Payment Confirmed — TaxLounge';
+      html = `
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxLounge</h1>
+          </div>
+          <div style="padding: 32px;">
+            <h2 style="color: #1a2332; margin: 0 0 16px 0;">Payment Confirmed</h2>
+            <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'}, we've received your payment${messageSubject ? ` for the ${esc(messageSubject)} plan` : ''}. Your engagement is now active and your preparer will be in touch shortly.</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxLounge Team</p>
+          </div>
+        </div>
+      `;
     } else if (type === 'contact_form') {
-      subject = `New Enquiry: ${messageSubject || 'Contact Form'}`;
+      subject = `New Enquiry: ${esc(messageSubject) || 'Contact Form'}`;
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
@@ -99,20 +185,20 @@ serve(async (req) => {
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">New Contact Form Submission</h2>
             <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px; width: 100px;">Name:</td><td style="color: #1e293b; padding: 8px 0; font-weight: 600;">${senderName || 'N/A'}</td></tr>
-              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px;">Email:</td><td style="color: #1e293b; padding: 8px 0;"><a href="mailto:${senderEmail}" style="color: #2563eb;">${senderEmail || 'N/A'}</a></td></tr>
-              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px;">Phone:</td><td style="color: #1e293b; padding: 8px 0;">${phone || 'Not provided'}</td></tr>
-              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px;">Subject:</td><td style="color: #1e293b; padding: 8px 0;">${messageSubject || 'N/A'}</td></tr>
+              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px; width: 100px;">Name:</td><td style="color: #1e293b; padding: 8px 0; font-weight: 600;">${esc(senderName) || 'N/A'}</td></tr>
+              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px;">Email:</td><td style="color: #1e293b; padding: 8px 0;">${esc(senderEmail)}</td></tr>
+              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px;">Phone:</td><td style="color: #1e293b; padding: 8px 0;">${esc(phone) || 'Not provided'}</td></tr>
+              <tr><td style="color: #64748b; padding: 8px 0; font-size: 13px;">Subject:</td><td style="color: #1e293b; padding: 8px 0;">${esc(messageSubject) || 'N/A'}</td></tr>
             </table>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
               <p style="color: #64748b; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Message:</p>
-              <p style="color: #334155; margin: 0; line-height: 1.6; white-space: pre-wrap;">${messageBody || 'No message'}</p>
+              <p style="color: #334155; margin: 0; line-height: 1.6; white-space: pre-wrap;">${esc(messageBody) || 'No message'}</p>
             </div>
           </div>
         </div>
       `;
     } else if (type === 'new_message') {
-      subject = `New Message from ${senderName || 'Your Tax Agent'} — TaxLounge`;
+      subject = `New Message from ${esc(senderName) || 'Your Tax Agent'} — TaxLounge`;
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
@@ -121,10 +207,10 @@ serve(async (req) => {
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">You Have a New Message</h2>
-            <p style="color: #475569; line-height: 1.6;">Hi ${clientName || 'there'},</p>
-            <p style="color: #475569; line-height: 1.6;">${senderName || 'Your tax agent'} sent you a message while you were offline:</p>
+            <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'},</p>
+            <p style="color: #475569; line-height: 1.6;">${esc(senderName) || 'Your tax agent'} sent you a message while you were offline:</p>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
-              <p style="color: #334155; margin: 0; line-height: 1.6; white-space: pre-wrap;">${messageBody || ''}</p>
+              <p style="color: #334155; margin: 0; line-height: 1.6; white-space: pre-wrap;">${esc(messageBody)}</p>
             </div>
             <p style="color: #475569; line-height: 1.6;">Log in to your TaxLounge portal to reply.</p>
             <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxLounge Team</p>
@@ -147,6 +233,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'TaxLounge <usa@taxlounge.co.uk>',
         to: [to],
+        reply_to: type === 'contact_form' && isEmail(senderEmail) ? senderEmail : undefined,
         subject,
         html,
       }),
@@ -162,7 +249,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error sending notification:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

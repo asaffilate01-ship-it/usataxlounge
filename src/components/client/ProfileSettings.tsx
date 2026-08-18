@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { User, Phone, Camera, Loader2 } from "lucide-react";
+import { useSignedUrl } from "@/hooks/useSignedUrl";
 
 const ProfileSettings = () => {
   const { user, profile } = useAuth();
@@ -15,6 +16,7 @@ const ProfileSettings = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
+  const avatarPreview = useSignedUrl("avatars", avatarUrl);
 
   const handleSave = async () => {
     if (!user) return;
@@ -36,12 +38,11 @@ const ProfileSettings = () => {
     if (!file || !user) return;
     setUploading(true);
     const filePath = `${user.id}/avatar_${Date.now()}.${file.name.split(".").pop()}`;
-    const { data, error } = await supabase.storage.from("message-attachments").upload(filePath, file);
+    const { data, error } = await supabase.storage.from("avatars").upload(filePath, file);
     if (error) {
       toast({ title: "Upload Error", description: error.message, variant: "destructive" });
     } else {
-      const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
-      setAvatarUrl(urlData.publicUrl);
+      setAvatarUrl(data.path);
     }
     setUploading(false);
     e.target.value = "";
@@ -57,8 +58,8 @@ const ProfileSettings = () => {
 
       <div className="flex items-center gap-4 mb-6">
         <div className="relative">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="Avatar" className="w-16 h-16 rounded-full object-cover border-2 border-border" />
+          {avatarPreview ? (
+            <img src={avatarPreview} alt="Avatar" className="w-16 h-16 rounded-full object-cover border-2 border-border" />
           ) : (
             <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-semibold text-lg">
               {initials}

@@ -26,6 +26,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import SecureAttachment from "@/components/SecureAttachment";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -627,15 +628,7 @@ const ClientDashboard = () => {
                             <p className="text-xs font-semibold text-muted-foreground mb-1">{isMe ? "You" : "Tax Agent"}</p>
                             {msg.attachment_url && (
                               <div className="mb-2">
-                                {msg.attachment_type?.startsWith("image/") ? (
-                                  <img src={msg.attachment_url} alt={msg.attachment_name || "attachment"} className="rounded-lg max-w-full max-h-48 object-cover cursor-pointer" onClick={() => window.open(msg.attachment_url!, "_blank")} />
-                                ) : (
-                                  <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-border bg-background/50 hover:bg-muted/50 transition-colors">
-                                    <File className="h-4 w-4 text-accent shrink-0" />
-                                    <span className="text-xs text-foreground truncate">{msg.attachment_name || "File"}</span>
-                                    <Download className="h-3 w-3 text-muted-foreground shrink-0" />
-                                  </a>
-                                )}
+                                <SecureAttachment url={msg.attachment_url} name={msg.attachment_name} type={msg.attachment_type} />
                               </div>
                             )}
                             {msg.content && !msg.content.startsWith("📎 ") && <p className="text-sm">{msg.content}</p>}
@@ -665,8 +658,8 @@ const ClientDashboard = () => {
                           toast({ title: "Upload Error", description: error.message, variant: "destructive" });
                           return;
                         }
-                        const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
-                        handleSendMessage(adminId, newMessage, { url: urlData.publicUrl, name: file.name, type: file.type });
+
+                        handleSendMessage(adminId, newMessage, { url: data.path, name: file.name, type: file.type });
                         setNewMessage("");
                         e.target.value = "";
                       }}

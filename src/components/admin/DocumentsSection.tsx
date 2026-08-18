@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getSignedUrl, toStoragePath } from "@/lib/storage";
+import { useSignedUrl } from "@/hooks/useSignedUrl";
 
 const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { logAction } = useAuditLog();
@@ -26,6 +28,7 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [previewDoc, setPreviewDoc] = useState<any>(null);
+  const previewUrl = useSignedUrl("documents", previewDoc?.file_url);
   const [scanOpen, setScanOpen] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<any>(null);
@@ -66,8 +69,7 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
 
         if (uploadError) throw uploadError;
 
-        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path);
-        const fileUrl = urlData.publicUrl;
+        const fileUrl = uploadData.path;
 
         // Then try AI extraction
         const reader = new FileReader();
@@ -102,15 +104,13 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
 
         if (uploadError) throw uploadError;
 
-        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path);
-
         await supabase.from("documents").insert({
           user_id: user.id,
           title: file.name,
           type: "document",
           category: "uploaded",
           status: "saved",
-          file_url: urlData.publicUrl,
+          file_url: uploadData.path,
         });
 
         fetchDocuments();
@@ -159,10 +159,15 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     }
   };
 
-  const handlePrint = (doc: any) => {
+  const handlePrint = async (doc: any) => {
     if (doc.file_url) {
-      const w = window.open(doc.file_url, "_blank");
-      if (w) setTimeout(() => w.print(), 1000);
+      const signed = await getSignedUrl("documents", doc.file_url);
+      if (signed) {
+        const w = window.open(signed, "_blank", "noopener,noreferrer");
+        if (w) setTimeout(() => w.print(), 1000);
+        return;
+      }
+      toast({ title: "Unable to open file", variant: "destructive" });
       return;
     }
     const w = window.open("", "_blank");
@@ -173,10 +178,15 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     }
   };
 
-  const handleDownload = (doc: any) => {
+  const handleDownload = async (doc: any) => {
     if (doc.file_url) {
+      const signed = await getSignedUrl("documents", doc.file_url);
+      if (!signed) {
+        toast({ title: "Unable to download file", variant: "destructive" });
+        return;
+      }
       const a = document.createElement("a");
-      a.href = doc.file_url;
+      a.href = signed;
       a.download = doc.title;
       a.target = "_blank";
       a.click();
@@ -192,9 +202,10 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     URL.revokeObjectURL(url);
   };
 
-  const handleEmail = (doc: any) => {
+  const handleEmail = async (doc: any) => {
     const subject = encodeURIComponent(doc.title);
-    const body = encodeURIComponent(`${doc.title}\n\n${doc.file_url ? `File: ${doc.file_url}` : doc.content || "See attached document."}`);
+    const signed = doc.file_url ? await getSignedUrl("documents", doc.file_url, 60 * 60 * 24) : null;
+    const body = encodeURIComponent(`${doc.title}\n\n${signed ? `Secure link (expires in 24h): ${signed}` : doc.content || "See attached document."}`);
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
 
@@ -204,11 +215,8 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     if (doc?.file_url) {
       // Try to extract storage path from URL and delete from storage
       try {
-        const url = new URL(doc.file_url);
-        const pathMatch = url.pathname.match(/\/object\/public\/documents\/(.*)/);
-        if (pathMatch) {
-          await supabase.storage.from("documents").remove([decodeURIComponent(pathMatch[1])]);
-        }
+        const path = toStoragePath("documents", doc.file_url);
+        if (path) await supabase.storage.from("documents").remove([path]);
       } catch {
         // Ignore storage deletion errors
       }
@@ -362,14 +370,18 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             </div>
             {previewDoc?.file_url && (
               <div className="rounded-xl border border-border bg-muted/30 p-4">
-                {previewDoc.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                  <img src={previewDoc.file_url} alt={previewDoc.title} className="max-w-full rounded-lg" />
-                ) : previewDoc.file_url.match(/\.pdf$/i) ? (
-                  <iframe src={previewDoc.file_url} className="w-full h-96 rounded-lg" title={previewDoc.title} />
+                {previewUrl ? (
+                  previewDoc.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                    <img src={previewUrl} alt={previewDoc.title} className="max-w-full rounded-lg" />
+                  ) : previewDoc.file_url.match(/\.pdf$/i) ? (
+                    <iframe src={previewUrl} className="w-full h-96 rounded-lg" title={previewDoc.title} />
+                  ) : (
+                    <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-accent underline text-sm">
+                      Open file in new tab
+                    </a>
+                  )
                 ) : (
-                  <a href={previewDoc.file_url} target="_blank" rel="noopener noreferrer" className="text-accent underline text-sm">
-                    Open file in new tab
-                  </a>
+                  <div className="h-24 rounded-lg bg-muted animate-pulse" aria-label="Loading secure preview" />
                 )}
               </div>
             )}
