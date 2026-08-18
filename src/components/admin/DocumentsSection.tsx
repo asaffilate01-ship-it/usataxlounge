@@ -20,6 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getSignedUrl, toStoragePath } from "@/lib/storage";
+import { useSignedUrl } from "@/hooks/useSignedUrl";
 
 const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const { logAction } = useAuditLog();
@@ -27,6 +28,7 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [previewDoc, setPreviewDoc] = useState<any>(null);
+  const previewUrl = useSignedUrl("documents", previewDoc?.file_url);
   const [scanOpen, setScanOpen] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<any>(null);
