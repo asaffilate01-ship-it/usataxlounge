@@ -55,7 +55,7 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
   "promo.screens.mobile": { en: "Mobile", es: "Móvil" },
   "promo.shot.hero": { en: "Landing experience", es: "Página principal" },
   "promo.shot.services": { en: "Service catalogue", es: "Catálogo de servicios" },
-  "promo.shot.pricing": { en: "Transparent pricing", es: "Precios transparentes" },
+  "promo.shot.pricing": { en: "Trust & process", es: "Confianza y proceso" },
   "promo.shot.mobileHero": { en: "Mobile home", es: "Inicio móvil" },
   "promo.shot.mobileAuth": { en: "Secure sign-in", es: "Acceso seguro" },
 
