@@ -665,7 +665,7 @@ const ClientDashboard = () => {
                           toast({ title: "Upload Error", description: error.message, variant: "destructive" });
                           return;
                         }
-                        const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
+
                         handleSendMessage(adminId, newMessage, { url: urlData.publicUrl, name: file.name, type: file.type });
                         setNewMessage("");
                         e.target.value = "";
