@@ -72,7 +72,7 @@ const Promo = () => {
       <PromoNav />
 
       {/* Hero */}
-      <section id="overview" className="relative overflow-hidden bg-primary text-primary-foreground">
+      <section id="overview" className="relative overflow-hidden gradient-hero text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,hsl(var(--accent)/0.25),transparent_55%),radial-gradient(circle_at_85%_0%,hsl(var(--primary-glow,var(--accent))/0.18),transparent_50%)]" />
         <div className="container mx-auto px-4 relative z-10 pt-28 md:pt-40 pb-16 md:pb-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -86,7 +86,7 @@ const Promo = () => {
                 <br />
                 <span className="text-accent">{t("promo.hero.title2")}</span>
               </h1>
-              <p className="mt-6 text-base md:text-lg text-primary-foreground/80 max-w-xl">
+              <p className="mt-6 text-base md:text-lg text-white/80 max-w-xl">
                 {t("promo.hero.subtitle")}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -102,12 +102,12 @@ const Promo = () => {
                   size="lg"
                   variant="outline"
                   onClick={() => scrollTo("features")}
-                  className="border-white/40 bg-white/5 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground"
+                  className="border-white/40 bg-white/5 text-white hover:bg-white/15 hover:text-white"
                 >
                   {t("promo.hero.cta2")}
                 </Button>
               </div>
-              <p className="mt-5 text-xs text-primary-foreground/60">{t("promo.hero.note")}</p>
+              <p className="mt-5 text-xs text-white/60">{t("promo.hero.note")}</p>
             </div>
 
             <div className="relative">
@@ -119,7 +119,7 @@ const Promo = () => {
               <img
                 src={lang === "es" ? mobileShotEs : mobileShotEn}
                 alt={t("promo.shot.mobileHero")}
-                className="hidden sm:block absolute -bottom-8 -left-6 w-28 md:w-36 rounded-2xl border-4 border-primary shadow-2xl"
+                className="hidden sm:block absolute -bottom-10 -left-10 w-28 md:w-36 rounded-2xl border-4 border-primary shadow-2xl"
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ const Promo = () => {
                 <dt className="sr-only">{t(s.key)}</dt>
                 <dd>
                   <span className="block text-2xl md:text-3xl font-bold text-accent">{s.value}</span>
-                  <span className="mt-1 block text-xs md:text-sm text-primary-foreground/70">
+                  <span className="mt-1 block text-xs md:text-sm text-white/70">
                     {t(s.key)}
                   </span>
                 </dd>
@@ -249,12 +249,12 @@ const Promo = () => {
       </section>
 
       {/* Access */}
-      <section id="access" className="py-20 md:py-28 bg-primary text-primary-foreground">
+      <section id="access" className="py-20 md:py-28 gradient-hero text-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-5xl font-bold mb-4">{t("promo.cta.title")}</h2>
-              <p className="text-primary-foreground/80">{t("promo.cta.subtitle")}</p>
+              <p className="text-white/80">{t("promo.cta.subtitle")}</p>
             </div>
             <div className="flex lg:justify-end">
               <AccessGate />
