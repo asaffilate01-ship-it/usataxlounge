@@ -368,14 +368,18 @@ const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             </div>
             {previewDoc?.file_url && (
               <div className="rounded-xl border border-border bg-muted/30 p-4">
-                {previewDoc.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                  <img src={previewDoc.file_url} alt={previewDoc.title} className="max-w-full rounded-lg" />
-                ) : previewDoc.file_url.match(/\.pdf$/i) ? (
-                  <iframe src={previewDoc.file_url} className="w-full h-96 rounded-lg" title={previewDoc.title} />
+                {previewUrl ? (
+                  previewDoc.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                    <img src={previewUrl} alt={previewDoc.title} className="max-w-full rounded-lg" />
+                  ) : previewDoc.file_url.match(/\.pdf$/i) ? (
+                    <iframe src={previewUrl} className="w-full h-96 rounded-lg" title={previewDoc.title} />
+                  ) : (
+                    <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-accent underline text-sm">
+                      Open file in new tab
+                    </a>
+                  )
                 ) : (
-                  <a href={previewDoc.file_url} target="_blank" rel="noopener noreferrer" className="text-accent underline text-sm">
-                    Open file in new tab
-                  </a>
+                  <div className="h-24 rounded-lg bg-muted animate-pulse" aria-label="Loading secure preview" />
                 )}
               </div>
             )}
