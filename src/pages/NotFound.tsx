@@ -20,10 +20,10 @@ const NotFound = () => {
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t("notFound.desc")}</p>
         <div className="flex gap-3 justify-center">
           <Button variant="outline" asChild>
-            <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> {t("notFound.goBack")}</Link>
+            <Link to="/home"><ArrowLeft className="h-4 w-4 mr-2" /> {t("notFound.goBack")}</Link>
           </Button>
           <Button asChild className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
-            <Link to="/"><Home className="h-4 w-4 mr-2" /> {t("notFound.home")}</Link>
+            <Link to="/home"><Home className="h-4 w-4 mr-2" /> {t("notFound.home")}</Link>
           </Button>
         </div>
       </div>

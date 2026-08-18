@@ -85,7 +85,7 @@ const Auth = () => {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
         <Button variant="ghost" size="sm" asChild className="absolute top-4 left-4 text-muted-foreground">
-          <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> {t("auth.back")}</Link>
+          <Link to="/home"><ArrowLeft className="h-4 w-4 mr-2" /> {t("auth.back")}</Link>
         </Button>
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
