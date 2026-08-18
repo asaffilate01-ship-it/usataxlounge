@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import logoDark from "@/assets/taxnuvia-logo.png.asset.json";
-import logoLight from "@/assets/taxnuvia-logo-light.png.asset.json";
+import logoDark from "@/assets/taxnuvia-logo.png";
+import logoLight from "@/assets/taxnuvia-logo-light.png";
 
 interface LogoProps {
   className?: string;
@@ -24,15 +24,15 @@ const Logo = ({ className = "", size = "md", variant = "auto", to = "/" }: LogoP
   return (
     <Link to={to} className={`flex items-center ${className}`} aria-label="TaxNuvia home">
       {variant === "light" ? (
-        <img src={logoLight.url} alt="TaxNuvia — File clearly. Move forward." className={cls} />
+        <img src={logoLight} alt="TaxNuvia — File clearly. Move forward." className={cls} />
       ) : (
         <>
           <img
-            src={logoDark.url}
+            src={logoDark}
             alt="TaxNuvia — File clearly. Move forward."
             className={`${cls} block dark:hidden`}
           />
-          <img src={logoLight.url} alt="" aria-hidden className={`${cls} hidden dark:block`} />
+          <img src={logoLight} alt="" aria-hidden className={`${cls} hidden dark:block`} />
         </>
       )}
     </Link>

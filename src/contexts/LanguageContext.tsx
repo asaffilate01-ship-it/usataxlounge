@@ -21,8 +21,8 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Hero
   "hero.badge": { en: "IRS Authorised Enrolled Agents", es: "Agentes Inscritos Autorizados por el IRS" },
-  "hero.title1": { en: "Making Tax", es: "Haciendo Impuestos" },
-  "hero.title2": { en: "Less Taxing.", es: "Menos Agotadores." },
+  "hero.title1": { en: "File clearly.", es: "Declare con claridad." },
+  "hero.title2": { en: "Move forward.", es: "Avance con confianza." },
   "hero.subtitle": {
     en: "We represent you before the IRS, file all federal and state forms, and maximize your refund — for individuals and businesses alike.",
     es: "Lo representamos ante el IRS, presentamos todos los formularios federales y estatales, y maximizamos su reembolso — tanto para individuos como para empresas.",
