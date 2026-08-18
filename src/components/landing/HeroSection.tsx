@@ -25,7 +25,7 @@ const HeroSection = () => {
       {/* Decorative glow */}
       <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
 
-      <div className="container mx-auto px-4 relative z-10 pt-20">
+      <div className="container mx-auto px-4 relative z-10 pt-28 md:pt-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left — Text */}
           <div>
