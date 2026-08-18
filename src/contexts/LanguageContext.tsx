@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { promoTranslations } from "@/i18n/promo";
 
 type Language = "en" | "es";
 
@@ -349,6 +350,8 @@ const translations: Record<string, Record<Language, string>> = {
   "faq.q8": { en: "How do I get started?", es: "¿Cómo empiezo?" },
   "faq.a8": { en: "Simply create a free account on our portal, upload your tax documents, and your assigned Enrolled Agent will review everything and prepare your return. You can e-sign and approve it right from your dashboard.", es: "Simplemente cree una cuenta gratuita en nuestro portal, suba sus documentos fiscales, y su Agente Inscrito asignado revisará todo y preparará su declaración. Puede firmar electrónicamente y aprobarla directamente desde su panel." },
 };
+
+Object.assign(translations, promoTranslations);
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: "en",
