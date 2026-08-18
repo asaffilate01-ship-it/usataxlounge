@@ -68,7 +68,7 @@ const Promo = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-20 lg:pb-0">
+    <div className="min-h-screen bg-background pb-28 lg:pb-0">
       <PromoNav />
 
       {/* Hero */}
