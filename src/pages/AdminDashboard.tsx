@@ -660,8 +660,7 @@ const AdminDashboard = () => {
                                 toast({ title: "Upload Error", description: error.message, variant: "destructive" });
                                 return;
                               }
-                              const { data: urlData } = supabase.storage.from("message-attachments").getPublicUrl(data.path);
-                              sendMessage(selectedConvUserId, replyText, { url: urlData.publicUrl, name: file.name, type: file.type });
+                              sendMessage(selectedConvUserId, replyText, { url: data.path, name: file.name, type: file.type });
                               setReplyText("");
                               e.target.value = "";
                             }}

@@ -666,7 +666,7 @@ const ClientDashboard = () => {
                           return;
                         }
 
-                        handleSendMessage(adminId, newMessage, { url: urlData.publicUrl, name: file.name, type: file.type });
+                        handleSendMessage(adminId, newMessage, { url: data.path, name: file.name, type: file.type });
                         setNewMessage("");
                         e.target.value = "";
                       }}
