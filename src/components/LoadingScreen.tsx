@@ -38,7 +38,7 @@ const LoadingScreen = () => {
           aria-label="Loading"
           className="h-[3px] w-36 overflow-hidden rounded-full bg-muted"
         >
-          <span className="block h-full w-2/5 rounded-full gradient-accent animate-[loader-slide_1.1s_ease-in-out_infinite] motion-reduce:animate-none" />
+          <span className="block h-full w-2/5 rounded-full gradient-accent animate-loader-slide motion-reduce:animate-none" />
         </div>
       </div>
     </div>
