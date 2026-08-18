@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { promoTranslations } from "@/i18n/promo";
 
 type Language = "en" | "es";
 
@@ -21,8 +22,8 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Hero
   "hero.badge": { en: "IRS Authorised Enrolled Agents", es: "Agentes Inscritos Autorizados por el IRS" },
-  "hero.title1": { en: "Making Tax", es: "Haciendo Impuestos" },
-  "hero.title2": { en: "Less Taxing.", es: "Menos Agotadores." },
+  "hero.title1": { en: "File clearly.", es: "Declare con claridad." },
+  "hero.title2": { en: "Move forward.", es: "Avance con confianza." },
   "hero.subtitle": {
     en: "We represent you before the IRS, file all federal and state forms, and maximize your refund — for individuals and businesses alike.",
     es: "Lo representamos ante el IRS, presentamos todos los formularios federales y estatales, y maximizamos su reembolso — tanto para individuos como para empresas.",
@@ -66,7 +67,7 @@ const translations: Record<string, Record<Language, string>> = {
   "services.estate.desc": { en: "Form 706 estate tax returns, Form 709 gift tax returns, and trust income tax filings (Form 1041).", es: "Declaraciones de impuesto sobre herencias (Formulario 706), impuesto sobre donaciones (Formulario 709) y declaraciones de fideicomisos (Formulario 1041)." },
 
   // Why Us
-  "whyUs.label": { en: "Why TaxLounge", es: "¿Por Qué TaxLounge?" },
+  "whyUs.label": { en: "Why TaxNuvia", es: "¿Por Qué TaxNuvia?" },
   "whyUs.title": { en: "Trusted by Thousands", es: "La Confianza de Miles" },
   "whyUs.r1.title": { en: "IRS Enrolled Agents", es: "Agentes Inscritos del IRS" },
   "whyUs.r1.desc": { en: "Federally licensed tax practitioners with unlimited rights to represent taxpayers before the IRS.", es: "Profesionales fiscales con licencia federal y derechos ilimitados para representar contribuyentes ante el IRS." },
@@ -102,8 +103,8 @@ const translations: Record<string, Record<Language, string>> = {
   "cta.title1": { en: "Ready to File with", es: "¿Listo para Declarar con" },
   "cta.title2": { en: "Confidence?", es: "Confianza?" },
   "cta.subtitle": {
-    en: "Join thousands of clients who trust TaxLounge's IRS Enrolled Agents with their taxes. Get started in minutes.",
-    es: "Únase a miles de clientes que confían en los Agentes Inscritos de TaxLounge para sus impuestos. Comience en minutos.",
+    en: "Join thousands of clients who trust TaxNuvia's IRS Enrolled Agents with their taxes. Get started in minutes.",
+    es: "Únase a miles de clientes que confían en los Agentes Inscritos de TaxNuvia para sus impuestos. Comience en minutos.",
   },
   "cta.button": { en: "Create Free Account", es: "Crear Cuenta Gratis" },
 
@@ -144,7 +145,7 @@ const translations: Record<string, Record<Language, string>> = {
   "whatsapp.label": { en: "Chat with Us", es: "Escríbenos" },
 
   // Footer
-  "footer.copy": { en: "IRS Authorised Enrolled Agents. Making Tax Less Taxing.", es: "Agentes Inscritos Autorizados por el IRS. Haciendo Impuestos Menos Agotadores." },
+  "footer.copy": { en: "IRS Authorised Enrolled Agents. File clearly. Move forward..", es: "Agentes Inscritos Autorizados por el IRS. Haciendo Impuestos Menos Agotadores." },
   "footer.privacy": { en: "Privacy Policy", es: "Política de Privacidad" },
   "footer.terms": { en: "Terms of Service", es: "Términos de Servicio" },
   "footer.sitemap": { en: "Sitemap", es: "Mapa del Sitio" },
@@ -221,11 +222,11 @@ const translations: Record<string, Record<Language, string>> = {
 
   "testimonial.1.name": { en: "Maria Rodriguez", es: "María Rodríguez" },
   "testimonial.1.role": { en: "Small Business Owner", es: "Dueña de Pequeña Empresa" },
-  "testimonial.1.text": { en: "TaxLounge made filing my business taxes so easy. Their team handled my Schedule C and 1120-S with precision. I saved over $4,000 this year!", es: "TaxLounge hizo que declarar mis impuestos empresariales fuera muy fácil. Su equipo manejó mi Anexo C y 1120-S con precisión. ¡Ahorré más de $4,000 este año!" },
+  "testimonial.1.text": { en: "TaxNuvia made filing my business taxes so easy. Their team handled my Schedule C and 1120-S with precision. I saved over $4,000 this year!", es: "TaxNuvia hizo que declarar mis impuestos empresariales fuera muy fácil. Su equipo manejó mi Anexo C y 1120-S con precisión. ¡Ahorré más de $4,000 este año!" },
 
   "testimonial.2.name": { en: "James Chen", es: "James Chen" },
   "testimonial.2.role": { en: "US Expat in London", es: "Expatriado en Londres" },
-  "testimonial.2.text": { en: "As a US citizen living abroad, FBAR and FATCA filing was a nightmare until I found TaxLounge. They handle everything seamlessly.", es: "Como ciudadano estadounidense viviendo en el extranjero, la declaración FBAR y FATCA era una pesadilla hasta que encontré TaxLounge. Lo manejan todo sin problemas." },
+  "testimonial.2.text": { en: "As a US citizen living abroad, FBAR and FATCA filing was a nightmare until I found TaxNuvia. They handle everything seamlessly.", es: "Como ciudadano estadounidense viviendo en el extranjero, la declaración FBAR y FATCA era una pesadilla hasta que encontré TaxNuvia. Lo manejan todo sin problemas." },
 
   "testimonial.3.name": { en: "Sarah Mitchell", es: "Sarah Mitchell" },
   "testimonial.3.role": { en: "Freelance Designer", es: "Diseñadora Freelance" },
@@ -233,7 +234,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   "testimonial.4.name": { en: "Robert Williams", es: "Robert Williams" },
   "testimonial.4.role": { en: "Retired Teacher", es: "Maestro Jubilado" },
-  "testimonial.4.text": { en: "I've been using TaxLounge for 5 years now. Their enrolled agents are always available and my returns are always filed on time.", es: "Llevo 5 años usando TaxLounge. Sus agentes inscritos siempre están disponibles y mis declaraciones siempre se presentan a tiempo." },
+  "testimonial.4.text": { en: "I've been using TaxNuvia for 5 years now. Their enrolled agents are always available and my returns are always filed on time.", es: "Llevo 5 años usando TaxNuvia. Sus agentes inscritos siempre están disponibles y mis declaraciones siempre se presentan a tiempo." },
 
   "testimonial.5.name": { en: "Lisa Park", es: "Lisa Park" },
   "testimonial.5.role": { en: "Real Estate Investor", es: "Inversionista Inmobiliaria" },
@@ -241,7 +242,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   "testimonial.6.name": { en: "David Okafor", es: "David Okafor" },
   "testimonial.6.role": { en: "Tech Startup Founder", es: "Fundador de Startup Tecnológica" },
-  "testimonial.6.text": { en: "TaxLounge helped us set up our S-Corp structure and saved us thousands in self-employment tax. Highly recommend!", es: "TaxLounge nos ayudó a configurar nuestra estructura S-Corp y nos ahorró miles en impuestos de autoempleo. ¡Muy recomendado!" },
+  "testimonial.6.text": { en: "TaxNuvia helped us set up our S-Corp structure and saved us thousands in self-employment tax. Highly recommend!", es: "TaxNuvia nos ayudó a configurar nuestra estructura S-Corp y nos ahorró miles en impuestos de autoempleo. ¡Muy recomendado!" },
 
   // Auth
   "auth.welcomeBack": { en: "Welcome Back", es: "Bienvenido de Nuevo" },
@@ -349,6 +350,8 @@ const translations: Record<string, Record<Language, string>> = {
   "faq.q8": { en: "How do I get started?", es: "¿Cómo empiezo?" },
   "faq.a8": { en: "Simply create a free account on our portal, upload your tax documents, and your assigned Enrolled Agent will review everything and prepare your return. You can e-sign and approve it right from your dashboard.", es: "Simplemente cree una cuenta gratuita en nuestro portal, suba sus documentos fiscales, y su Agente Inscrito asignado revisará todo y preparará su declaración. Puede firmar electrónicamente y aprobarla directamente desde su panel." },
 };
+
+Object.assign(translations, promoTranslations);
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: "en",

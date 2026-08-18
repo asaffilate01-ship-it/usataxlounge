@@ -8,9 +8,11 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import CookieConsent from "@/components/CookieConsent";
+import PreviewRoute from "@/components/promo/PreviewRoute";
 import LoadingScreen from "@/components/LoadingScreen";
 
 const Index = lazy(() => import("./pages/Index"));
+const Promo = lazy(() => import("./pages/Promo"));
 const Auth = lazy(() => import("./pages/Auth"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogArticlePage = lazy(() => import("./pages/BlogArticlePage"));
@@ -34,12 +36,13 @@ const App = () => (
           <AuthProvider>
             <Suspense fallback={<LoadingScreen />}>
               <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/blog" element={<BlogPage />} />
-                <Route path="/blog/:slug" element={<BlogArticlePage />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/" element={<Promo />} />
+                <Route path="/home" element={<PreviewRoute><Index /></PreviewRoute>} />
+                <Route path="/auth" element={<PreviewRoute><Auth /></PreviewRoute>} />
+                <Route path="/blog" element={<PreviewRoute><BlogPage /></PreviewRoute>} />
+                <Route path="/blog/:slug" element={<PreviewRoute><BlogArticlePage /></PreviewRoute>} />
+                <Route path="/privacy" element={<PreviewRoute><PrivacyPolicy /></PreviewRoute>} />
+                <Route path="/terms" element={<PreviewRoute><TermsOfService /></PreviewRoute>} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/client" element={

@@ -26,7 +26,7 @@ Phone: {{client_phone}}
 
 Dear {{client_name}},
 
-Thank you for choosing TaxLounge for your tax preparation needs. This letter confirms the terms of our engagement to prepare your {{tax_year}} federal and state income tax returns.
+Thank you for choosing TaxNuvia for your tax preparation needs. This letter confirms the terms of our engagement to prepare your {{tax_year}} federal and state income tax returns.
 
 SCOPE OF SERVICES:
 We will prepare your Form {{form_type}} for the tax year {{tax_year}} based on the information you provide. Our services include:
@@ -53,7 +53,7 @@ Authorized by: ___________________________
 Name: {{client_name}}
 Date: {{signature_date}}
 
-TaxLounge — IRS Enrolled Agents
+TaxNuvia — IRS Enrolled Agents
 (305) 555-0190`;
 
 const TEMPLATE_FIELDS = [
@@ -163,7 +163,7 @@ const ContractTemplateEditor = ({ clients }: ContractTemplateEditorProps) => {
   };
 
   const handleEmail = () => {
-    const subject = encodeURIComponent("Tax Preparation Engagement Letter — TaxLounge");
+    const subject = encodeURIComponent("Tax Preparation Engagement Letter — TaxNuvia");
     const body = encodeURIComponent(previewContent);
     window.open(`mailto:${selectedClient?.email || ""}?subject=${subject}&body=${body}`);
   };

@@ -51,7 +51,7 @@ const FloatingButtons = () => {
 
       {/* WhatsApp — brand green with label */}
       <a
-        href="https://wa.me/13055550190?text=Hi%20TaxLounge%2C%20I%20have%20a%20tax%20question"
+        href="https://wa.me/13055550190?text=Hi%20TaxNuvia%2C%20I%20have%20a%20tax%20question"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2 rounded-full bg-accent text-accent-foreground pl-4 pr-5 py-3 shadow-accent hover:shadow-xl hover:scale-[1.03] transition-all duration-300"

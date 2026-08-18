@@ -18,7 +18,7 @@ const BlogPage = () => {
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
             <Button variant="ghost" asChild className="text-muted-foreground mb-4">
-              <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" />{t("blog.backHome")}</Link>
+              <Link to="/home"><ArrowLeft className="h-4 w-4 mr-2" />{t("blog.backHome")}</Link>
             </Button>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">

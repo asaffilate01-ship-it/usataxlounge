@@ -26,8 +26,8 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Logo size="lg" />
+        <div className="flex items-center justify-between h-20 md:h-28">
+          <Logo size="2xl" variant={scrolled ? "auto" : "light"} to="/home" />
 
           <div className="hidden md:flex items-center gap-8">
             {[

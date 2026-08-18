@@ -75,7 +75,7 @@ const WhyUsSection = () => {
           >
             <img
               src={aboutTeamImg}
-              alt="TaxLounge Team of Enrolled Agents"
+              alt="TaxNuvia Team of Enrolled Agents"
               className="rounded-2xl shadow-elegant w-full object-cover h-64 md:h-96"
               loading="lazy"
             />

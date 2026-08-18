@@ -128,7 +128,7 @@ const GDPRDataRights = () => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete all your personal data from TaxLounge. Tax filing records may be retained for up to 7 years as required by IRS Publication 4557 and HMRC regulations.
+                    This will permanently delete all your personal data from TaxNuvia. Tax filing records may be retained for up to 7 years as required by IRS Publication 4557 and HMRC regulations.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
