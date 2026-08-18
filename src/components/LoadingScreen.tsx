@@ -1,4 +1,4 @@
-import taxloungeLogo from "@/assets/taxlounge-logo.png";
+import taxloungeLogo from "@/assets/taxnuvia-logo.png";
 
 const LoadingScreen = () => {
   return (
