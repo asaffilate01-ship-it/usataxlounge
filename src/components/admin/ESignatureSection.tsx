@@ -60,7 +60,7 @@ const ESignatureSection = ({ clients }: ESignatureSectionProps) => {
       user_id: selectedClient.user_id || user?.id || "",
       filing_id: doc.id,
       document_id: doc.id,
-      consent_text: "I authorize TaxLounge to e-file my tax return with the IRS. I confirm that I have reviewed the return and that all information is accurate and complete.",
+      consent_text: "I authorize TaxNuvia to e-file my tax return with the IRS. I confirm that I have reviewed the return and that all information is accurate and complete.",
       email: selectedClient.email,
     });
 

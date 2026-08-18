@@ -26,8 +26,8 @@ const PrivacyPolicy = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "TaxLounge es el responsable del tratamiento de sus datos personales. TaxLounge opera como un servicio de preparación de impuestos con licencia federal de EE.UU., con sede virtual en Miami, Florida, EE.UU., y está asociado con TaxLounge UK (taxlounge.co.uk). Para consultas sobre privacidad, contacte con nosotros en la sección de contacto de nuestra página web."
-                : "TaxLounge is the data controller for your personal data. TaxLounge operates as a US federally-licensed tax preparation service with a virtual office in Miami, Florida, USA, and is associated with TaxLounge UK (taxlounge.co.uk). For privacy enquiries, please contact us via the enquiry form on our website."}
+                ? "TaxNuvia es el responsable del tratamiento de sus datos personales. TaxNuvia opera como un servicio de preparación de impuestos con licencia federal de EE.UU., con sede virtual en Miami, Florida, EE.UU., y está asociado con TaxNuvia UK (taxlounge.co.uk). Para consultas sobre privacidad, contacte con nosotros en la sección de contacto de nuestra página web."
+                : "TaxNuvia is the data controller for your personal data. TaxNuvia operates as a US federally-licensed tax preparation service with a virtual office in Miami, Florida, USA, and is associated with TaxNuvia UK (taxlounge.co.uk). For privacy enquiries, please contact us via the enquiry form on our website."}
             </p>
           </section>
 

@@ -136,7 +136,7 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
                               <p className="text-xs font-semibold text-muted-foreground">IRS E-FILE AUTHORIZATION (Form 8879 Equivalent)</p>
                             </div>
                             <p className="text-sm text-foreground leading-relaxed">
-                              {sig.consent_text || "I authorize TaxLounge to e-file my tax return with the IRS. I confirm that I have reviewed the return and that all information is accurate and complete."}
+                              {sig.consent_text || "I authorize TaxNuvia to e-file my tax return with the IRS. I confirm that I have reviewed the return and that all information is accurate and complete."}
                             </p>
                           </div>
 
@@ -148,7 +148,7 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
                               onCheckedChange={(v) => setConsented(!!v)}
                             />
                             <label htmlFor={`consent-${sig.id}`} className="text-sm text-foreground leading-snug cursor-pointer">
-                              I have reviewed my tax return and authorize TaxLounge to electronically file it with the IRS on my behalf. I understand this constitutes my electronic signature under IRS guidelines.
+                              I have reviewed my tax return and authorize TaxNuvia to electronically file it with the IRS on my behalf. I understand this constitutes my electronic signature under IRS guidelines.
                             </label>
                           </div>
 

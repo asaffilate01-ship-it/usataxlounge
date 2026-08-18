@@ -19,7 +19,7 @@ const Logo = ({ className = "", size = "md", showTagline = false }: LogoProps) =
     <Link to="/" className={`flex items-center gap-2 ${className}`}>
       <img
         src={taxloungeLogo}
-        alt="TaxLounge - Making Tax Less Taxing"
+        alt="TaxNuvia - File clearly. Move forward."
         className={`${sizeClasses[size]} w-auto`}
       />
     </Link>

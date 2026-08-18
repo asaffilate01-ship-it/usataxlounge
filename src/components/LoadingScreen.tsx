@@ -5,7 +5,7 @@ const LoadingScreen = () => {
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background">
       <img
         src={taxloungeLogo}
-        alt="TaxLounge"
+        alt="TaxNuvia"
         className="h-16 w-auto animate-pulse"
       />
       <div className="mt-6 flex space-x-1">

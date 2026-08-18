@@ -26,8 +26,8 @@ const TermsOfService = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "Al acceder y utilizar los servicios de TaxLounge (operado por TaxLounge UK, taxlounge.co.uk), usted acepta estar sujeto a estos Términos de Servicio, nuestra Política de Privacidad y nuestra Política de Cookies. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar nuestros servicios."
-                : "By accessing and using TaxLounge services (operated by TaxLounge UK, taxlounge.co.uk), you agree to be bound by these Terms of Service, our Privacy Policy, and our Cookie Policy. If you do not agree with any part of these terms, you should not use our services."}
+                ? "Al acceder y utilizar los servicios de TaxNuvia (operado por TaxNuvia UK, taxlounge.co.uk), usted acepta estar sujeto a estos Términos de Servicio, nuestra Política de Privacidad y nuestra Política de Cookies. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar nuestros servicios."
+                : "By accessing and using TaxNuvia services (operated by TaxNuvia UK, taxlounge.co.uk), you agree to be bound by these Terms of Service, our Privacy Policy, and our Cookie Policy. If you do not agree with any part of these terms, you should not use our services."}
             </p>
           </section>
 
@@ -38,8 +38,8 @@ const TermsOfService = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "TaxLounge proporciona servicios de preparación y presentación de impuestos de EE.UU., representación ante el IRS, planificación fiscal, contabilidad y servicios relacionados a través de Agentes Inscritos con licencia federal. Nuestros servicios están disponibles para individuos, empresas y ciudadanos estadounidenses que viven en el extranjero, incluidos los residentes del Reino Unido."
-                : "TaxLounge provides US tax preparation and filing services, IRS representation, tax planning, bookkeeping, and related services through federally-licensed Enrolled Agents. Our services are available for individuals, businesses, and US citizens living abroad, including UK residents."}
+                ? "TaxNuvia proporciona servicios de preparación y presentación de impuestos de EE.UU., representación ante el IRS, planificación fiscal, contabilidad y servicios relacionados a través de Agentes Inscritos con licencia federal. Nuestros servicios están disponibles para individuos, empresas y ciudadanos estadounidenses que viven en el extranjero, incluidos los residentes del Reino Unido."
+                : "TaxNuvia provides US tax preparation and filing services, IRS representation, tax planning, bookkeeping, and related services through federally-licensed Enrolled Agents. Our services are available for individuals, businesses, and US citizens living abroad, including UK residents."}
             </p>
           </section>
 
@@ -86,8 +86,8 @@ const TermsOfService = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "TaxLounge no será responsable por daños indirectos, incidentales o consecuentes que surjan de nuestros servicios. Nuestra responsabilidad total se limita a las tarifas pagadas por el servicio específico en cuestión. No somos responsables de penalidades del IRS resultantes de información inexacta proporcionada por el cliente. Nada en estos términos excluye o limita nuestra responsabilidad por negligencia que cause muerte o lesiones personales, fraude, o cualquier otra responsabilidad que no pueda ser excluida por ley."
-                : "TaxLounge shall not be liable for indirect, incidental, or consequential damages arising from our services. Our total liability is limited to the fees paid for the specific service in question. We are not responsible for IRS penalties resulting from inaccurate information provided by the client. Nothing in these terms excludes or limits our liability for negligence causing death or personal injury, fraud, or any other liability that cannot be excluded by law."}
+                ? "TaxNuvia no será responsable por daños indirectos, incidentales o consecuentes que surjan de nuestros servicios. Nuestra responsabilidad total se limita a las tarifas pagadas por el servicio específico en cuestión. No somos responsables de penalidades del IRS resultantes de información inexacta proporcionada por el cliente. Nada en estos términos excluye o limita nuestra responsabilidad por negligencia que cause muerte o lesiones personales, fraude, o cualquier otra responsabilidad que no pueda ser excluida por ley."
+                : "TaxNuvia shall not be liable for indirect, incidental, or consequential damages arising from our services. Our total liability is limited to the fees paid for the specific service in question. We are not responsible for IRS penalties resulting from inaccurate information provided by the client. Nothing in these terms excludes or limits our liability for negligence causing death or personal injury, fraud, or any other liability that cannot be excluded by law."}
             </p>
           </section>
 

@@ -94,7 +94,7 @@ const Footer = () => {
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} TaxLounge. All rights reserved. | ThreeOneThree Ltd
+              © {new Date().getFullYear()} TaxNuvia. All rights reserved. | ThreeOneThree Ltd
             </p>
             <div className="flex gap-6">
               <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
