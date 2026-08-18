@@ -49,8 +49,26 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/payment-success`,
+      metadata: { plan, user_id: user.id },
+      success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/payment-success?cancelled=true`,
+    });
+
+    // Record a pending payment so revenue is always traceable in our own DB
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
+    );
+    await serviceClient.from("payments").insert({
+      user_id: user.id,
+      email: user.email,
+      plan,
+      stripe_session_id: session.id,
+      stripe_customer_id: customerId ?? null,
+      amount: session.amount_total ?? null,
+      currency: session.currency ?? null,
+      status: "pending",
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
