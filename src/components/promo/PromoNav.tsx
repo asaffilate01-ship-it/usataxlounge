@@ -90,12 +90,12 @@ const PromoNav = () => {
         </div>
       </header>
 
-      {/* Native-style bottom tab bar (mobile) */}
+      {/* Native-style floating bottom tab bar (mobile) */}
       <nav
         aria-label="Preview sections"
-        className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
+        className="lg:hidden fixed bottom-0 inset-x-0 z-50 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2"
       >
-        <ul className="grid grid-cols-5">
+        <ul className="grid grid-cols-5 rounded-[1.6rem] border border-border/70 bg-background/85 shadow-[0_10px_30px_-12px_hsl(var(--foreground)/0.35)] backdrop-blur-xl">
           {sections.map(({ id, key, icon: Icon }) => {
             const isActive = active === id;
             return (
@@ -103,18 +103,18 @@ const PromoNav = () => {
                 <button
                   onClick={() => scrollTo(id)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`w-full flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-colors ${
+                  className={`w-full min-h-[58px] flex flex-col items-center justify-center gap-1 rounded-[1.6rem] px-1 py-2 text-[10px] font-semibold transition-colors active:scale-[0.96] ${
                     isActive ? "text-accent" : "text-muted-foreground"
                   }`}
                 >
                   <span
-                    className={`flex h-8 w-12 items-center justify-center rounded-full transition-colors ${
-                      isActive ? "bg-accent/12" : ""
+                    className={`flex h-7 w-12 items-center justify-center rounded-full transition-all duration-300 ${
+                      isActive ? "bg-accent/15 scale-100" : "scale-95"
                     }`}
                   >
                     <Icon className="h-[18px] w-[18px]" aria-hidden />
                   </span>
-                  <span className="leading-none">{t(key)}</span>
+                  <span className="leading-none truncate max-w-full">{t(key)}</span>
                 </button>
               </li>
             );
