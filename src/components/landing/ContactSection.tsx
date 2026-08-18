@@ -50,23 +50,22 @@ const ContactSection = () => {
       message: form.message.trim(),
     });
 
-    // Also send email notification
-    supabase.functions.invoke("send-notification", {
-      body: {
-        type: "contact_form",
-        to: "hello@taxlounge.co.uk",
-        senderName: form.name.trim(),
-        senderEmail: form.email.trim(),
-        phone: form.phone.trim() || null,
-        messageSubject: form.subject.trim(),
-        messageBody: form.message.trim(),
-      },
-    }).catch((err) => console.error("Email notification error:", err));
-
     setLoading(false);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
+      // Notify us by email only once the message is safely stored
+      supabase.functions.invoke("send-notification", {
+        body: {
+          type: "contact_form",
+          senderName: form.name.trim(),
+          senderEmail: form.email.trim(),
+          phone: form.phone.trim() || null,
+          messageSubject: form.subject.trim(),
+          messageBody: form.message.trim(),
+        },
+      }).catch((err) => console.error("Email notification error:", err));
+
       setLastSubmitTime(Date.now());
       toast({ title: t("contact.successTitle"), description: t("contact.successDesc") });
       setForm({ name: "", email: "", phone: "", subject: "", message: "" });
