@@ -273,13 +273,13 @@ const Promo = () => {
           <p className="text-sm text-muted-foreground">{t("promo.footer.legal")}</p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
             <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              {isEs ? "Política de Privacidad" : "Privacy Policy"}
+              {lang === "es" ? "Política de Privacidad" : "Privacy Policy"}
             </Link>
             <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              {isEs ? "Términos de Servicio" : "Terms of Service"}
+              {lang === "es" ? "Términos de Servicio" : "Terms of Service"}
             </Link>
             <Link to="/cookies" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              {isEs ? "Política de Cookies" : "Cookie Policy"}
+              {lang === "es" ? "Política de Cookies" : "Cookie Policy"}
             </Link>
             <CookieSettingsLink />
           </div>
