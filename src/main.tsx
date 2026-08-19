@@ -1,6 +1,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { initCookieConsent } from "./lib/cookieConsent";
+
+initCookieConsent();
+
 
 // Check for saved theme preference or default to dark
 const savedTheme = localStorage.getItem("theme");
