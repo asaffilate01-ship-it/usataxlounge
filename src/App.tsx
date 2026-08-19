@@ -18,6 +18,8 @@ const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogArticlePage = lazy(() => import("./pages/BlogArticlePage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+
 const ClientDashboard = lazy(() => import("./pages/ClientDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -41,8 +43,10 @@ const App = () => (
                 <Route path="/auth" element={<PreviewRoute><Auth /></PreviewRoute>} />
                 <Route path="/blog" element={<PreviewRoute><BlogPage /></PreviewRoute>} />
                 <Route path="/blog/:slug" element={<PreviewRoute><BlogArticlePage /></PreviewRoute>} />
-                <Route path="/privacy" element={<PreviewRoute><PrivacyPolicy /></PreviewRoute>} />
-                <Route path="/terms" element={<PreviewRoute><TermsOfService /></PreviewRoute>} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/cookies" element={<CookiePolicy />} />
+
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/client" element={

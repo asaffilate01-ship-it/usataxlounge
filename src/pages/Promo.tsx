@@ -14,7 +14,10 @@ import {
   Check,
   Sparkles,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Logo from "@/components/Logo";
+import CookieSettingsLink from "@/components/CookieSettingsLink";
+
 import PromoNav from "@/components/promo/PromoNav";
 import AccessGate from "@/components/promo/AccessGate";
 import ScreenshotShowcase from "@/components/promo/ScreenshotShowcase";
@@ -268,9 +271,22 @@ const Promo = () => {
         <div className="container mx-auto px-4 flex flex-col items-center gap-4 text-center">
           <Logo size="xl" to="/" />
           <p className="text-sm text-muted-foreground">{t("promo.footer.legal")}</p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              {lang === "es" ? "Política de Privacidad" : "Privacy Policy"}
+            </Link>
+            <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              {lang === "es" ? "Términos de Servicio" : "Terms of Service"}
+            </Link>
+            <Link to="/cookies" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              {lang === "es" ? "Política de Cookies" : "Cookie Policy"}
+            </Link>
+            <CookieSettingsLink />
+          </div>
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} iTechLounge LLC. All rights reserved.
           </p>
+
         </div>
       </footer>
     </div>
