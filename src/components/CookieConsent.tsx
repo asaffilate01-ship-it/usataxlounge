@@ -70,12 +70,15 @@ const CookieConsent = () => {
               {isEs ? (
                 <>
                   Utilizamos cookies para el funcionamiento del sitio. Las cookies analíticas y funcionales solo se activan con su consentimiento explícito (conforme al RGPD del Reino Unido y la CCPA). Lea nuestra{" "}
-                  <Link to="/privacy" className="text-accent underline hover:text-accent/80">Política de Privacidad</Link>.
+                  <Link to="/privacy" className="text-accent underline hover:text-accent/80">Política de Privacidad</Link>{" "}y{" "}
+                  <Link to="/cookies" className="text-accent underline hover:text-accent/80">Política de Cookies</Link>.
                 </>
               ) : (
                 <>
                   We use cookies for site operation. Analytics and functional cookies are only activated with your explicit consent (in compliance with UK GDPR and CCPA). Read our{" "}
-                  <Link to="/privacy" className="text-accent underline hover:text-accent/80">Privacy Policy</Link>.
+                  <Link to="/privacy" className="text-accent underline hover:text-accent/80">Privacy Policy</Link>{" "}and{" "}
+                  <Link to="/cookies" className="text-accent underline hover:text-accent/80">Cookie Policy</Link>.
+
                 </>
               )}
             </div>
