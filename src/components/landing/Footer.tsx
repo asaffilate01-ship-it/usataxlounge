@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import Logo from "@/components/Logo";
 import { useLanguage } from "@/contexts/LanguageContext";
+import CookieSettingsLink from "@/components/CookieSettingsLink";
 import { Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
 
   const socialLinks = [
     { icon: Facebook, href: "https://www.facebook.com/taxlounge", label: "Facebook" },
@@ -96,11 +98,14 @@ const Footer = () => {
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} TaxNuvia. All rights reserved. TaxNuvia is a trading name of iTechLounge LLC.
             </p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
               <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.terms")}</Link>
+              <Link to="/cookies" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{lang === "es" ? "Política de Cookies" : "Cookie Policy"}</Link>
+              <CookieSettingsLink />
               <a href="/sitemap.xml" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.sitemap")}</a>
             </div>
+
           </div>
         </div>
       </div>
