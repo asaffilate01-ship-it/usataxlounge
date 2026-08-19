@@ -4,18 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Cookie, X, Settings } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-
-type CookiePreferences = {
-  essential: true;
-  analytics: boolean;
-  functional: boolean;
-};
-
-const defaultPreferences: CookiePreferences = {
-  essential: true,
-  analytics: false,
-  functional: false,
-};
+import {
+  CookiePreferences,
+  defaultPreferences,
+  getConsent,
+  saveConsent,
+  COOKIE_SETTINGS_EVENT,
+} from "@/lib/cookieConsent";
 
 const CookieConsent = () => {
   const { lang } = useLanguage();
@@ -25,16 +20,28 @@ const CookieConsent = () => {
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
 
   useEffect(() => {
-    const consent = localStorage.getItem("taxlounge-cookie-consent");
+    const consent = getConsent();
     if (!consent) {
       const timer = setTimeout(() => setVisible(true), 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
+  // Allow footers / policy pages to reopen the preference centre
+  useEffect(() => {
+    const reopen = () => {
+      setPreferences(getConsent() ?? defaultPreferences);
+      setShowSettings(true);
+      setVisible(true);
+    };
+    window.addEventListener(COOKIE_SETTINGS_EVENT, reopen);
+    return () => window.removeEventListener(COOKIE_SETTINGS_EVENT, reopen);
+  }, []);
+
   const savePreferences = (prefs: CookiePreferences) => {
-    localStorage.setItem("taxlounge-cookie-consent", JSON.stringify(prefs));
+    saveConsent(prefs);
     setVisible(false);
+    setShowSettings(false);
   };
 
   const acceptAll = () => {
@@ -50,6 +57,7 @@ const CookieConsent = () => {
   };
 
   if (!visible) return null;
+
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 animate-fade-in">
