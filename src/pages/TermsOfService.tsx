@@ -1,6 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
+import { LegalHeader, LegalFooter } from "@/components/legal/LegalChrome";
 
 const TermsOfService = () => {
   const { lang } = useLanguage();
@@ -8,7 +7,7 @@ const TermsOfService = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <LegalHeader />
       <main className="container mx-auto px-4 pt-24 pb-16 max-w-3xl">
         <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
           {isEs ? "Términos de Servicio" : "Terms of Service"}
@@ -165,7 +164,7 @@ const TermsOfService = () => {
 
         </div>
       </main>
-      <Footer />
+      <LegalFooter />
     </div>
   );
 };
