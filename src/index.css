@@ -38,6 +38,8 @@
 
     --accent: 172 78% 41%;
     --accent-foreground: 0 0% 100%;
+    --gold: 43 74% 49%;
+    --gold-foreground: 222 60% 12%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -99,6 +101,8 @@
 
     --accent: 172 70% 46%;
     --accent-foreground: 222 60% 12%;
+    --gold: 43 74% 55%;
+    --gold-foreground: 222 60% 12%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
@@ -174,5 +178,11 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+  .bg-gold {
+    background-color: hsl(var(--gold));
   }
 }

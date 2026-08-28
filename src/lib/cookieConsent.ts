@@ -6,8 +6,8 @@ export type CookiePreferences = {
 
 export const CONSENT_KEY = "taxlounge-cookie-consent";
 export const CONSENT_VERSION = 1;
-export const COOKIE_SETTINGS_EVENT = "taxnuvia:open-cookie-settings";
-export const CONSENT_CHANGE_EVENT = "taxnuvia:cookie-consent-change";
+export const COOKIE_SETTINGS_EVENT = "taxcenda:open-cookie-settings";
+export const CONSENT_CHANGE_EVENT = "taxcenda:cookie-consent-change";
 
 export const defaultPreferences: CookiePreferences = {
   essential: true,
@@ -61,7 +61,7 @@ export function applyConsent(prefs: CookiePreferences) {
 }
 
 const ANALYTICS_COOKIE_PREFIXES = ["_ga", "_gid", "_gat", "_fbp", "_hj", "ajs_"];
-const FUNCTIONAL_KEYS = ["taxnuvia-recent-views", "taxnuvia-dismissed-tips"];
+const FUNCTIONAL_KEYS = ["taxcenda-recent-views", "taxcenda-dismissed-tips"];
 
 function clearAnalyticsCookies() {
   try {

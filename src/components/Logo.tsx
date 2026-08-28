@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FileCheck2 } from "lucide-react";
+import markUrl from "@/assets/taxcenda-mark.png";
 
 interface LogoProps {
   className?: string;
@@ -23,12 +23,19 @@ const Logo = ({ className = "", size = "md", variant = "auto", to = "/" }: LogoP
 
   return (
     <Link to={to} className={`inline-flex items-center gap-2.5 ${className}`} aria-label="TaxCenda home">
-      <span className={`${sizes.mark} gradient-accent flex shrink-0 items-center justify-center rounded-xl text-white shadow-accent`}>
-        <FileCheck2 className="h-[58%] w-[58%]" strokeWidth={2.2} />
-      </span>
+      <img
+        src={markUrl}
+        alt=""
+        aria-hidden
+        className={`${sizes.mark} shrink-0 rounded-xl bg-white object-contain p-0.5 shadow-accent`}
+      />
       <span className="flex min-w-0 flex-col leading-none">
-        <span className={`${sizes.word} font-display font-bold tracking-tight ${light ? "text-white" : "text-foreground"}`}>TaxCenda</span>
-        <span className={`${sizes.tagline} mt-1 font-semibold uppercase tracking-[0.13em] ${light ? "text-white/60" : "text-muted-foreground"}`}>Evidence to filing</span>
+        <span className={`${sizes.word} font-display font-bold tracking-tight ${light ? "text-white" : "text-foreground"}`}>
+          Tax<span className="text-accent">C</span>enda
+        </span>
+        <span className={`${sizes.tagline} mt-1 font-semibold tracking-[0.08em] ${light ? "text-white/60" : "text-muted-foreground"}`}>
+          Filed right. Represented with confidence.
+        </span>
       </span>
     </Link>
   );
