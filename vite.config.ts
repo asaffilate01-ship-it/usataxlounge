@@ -18,15 +18,15 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "logo.png"],
+      includeAssets: ["taxcenda-mark.svg", "icons/*.webp"],
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
       },
       manifest: {
-        name: "TaxLounge — Client Portal",
-        short_name: "TaxLounge",
-        description: "Secure tax filing portal by IRS Enrolled Agents. Upload documents, track filings, and message your agent.",
+        name: "TaxCenda — Client Portal",
+        short_name: "TaxCenda",
+        description: "Secure tax workspace for documents, bookkeeping review, filing approvals, deadlines and payments.",
         theme_color: "#0a1628",
         background_color: "#0a1628",
         display: "standalone",
@@ -35,15 +35,15 @@ export default defineConfig(({ mode }) => ({
         start_url: "/auth",
         icons: [
           {
-            src: "/pwa-icon-192.png",
+            src: "/icons/icon-192.webp",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/logo.png",
+            src: "/icons/icon-512.webp",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any maskable",
           },
         ],

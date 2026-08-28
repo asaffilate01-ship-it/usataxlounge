@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Send, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,8 +72,7 @@ const ContactSection = () => {
     }
   };
 
-  const contactInfo = [
-    { icon: Phone, label: "(305) 555-0190", href: "tel:+13055550190" },
+  const contactInfo: { icon: typeof MapPin; label: string; href?: string }[] = [
     { icon: MapPin, label: t("contact.address") },
     { icon: Clock, label: t("contact.hours") },
   ];

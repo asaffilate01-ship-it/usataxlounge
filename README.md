@@ -1,73 +1,66 @@
-# Welcome to your Lovable project
+# TaxCenda
 
-## Project info
+TaxCenda is a secure US tax evidence, bookkeeping-review, and filing-approval workspace. Clients can upload source documents, capture receipts, enter income and expenses, answer review questions, resolve possible duplicates, maintain fixed assets, review final filing packages, and track their engagement. Tax professionals control each workflow gate through the staff review queue.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+This repository contains:
 
-## How can I edit this code?
+- React/Vite web app and installable PWA
+- Capacitor iOS and Android client apps
+- Supabase database migrations, row-level security, storage policies, and edge functions
+- Evidence-preserving receipt extraction and duplicate detection
+- Human-controlled engagement and filing-authorization workflows
 
-There are several ways of editing your application.
+## Local setup
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Requirements: Node.js 22+, npm, and a Supabase project.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The web app uses `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Keep service-role, e-file provider, bank-feed, and AI-provider credentials server-side only.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Database and functions
 
-**Use GitHub Codespaces**
+Apply migrations before deploying the new edge functions:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```sh
+npx supabase db push
+npx supabase functions deploy extract-receipt
+npx supabase functions deploy sign-filing-authorization
+```
 
-## What technologies are used for this project?
+`extract-receipt` requires `LOVABLE_API_KEY`. Both functions validate the caller's access token themselves because native and web clients share the same endpoint configuration.
 
-This project is built with:
+Before production rollout:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Back up the Supabase database and test the forward migration in staging.
+2. Assign staff only through `admin`, `preparer`, `reviewer`, or `compliance` roles.
+3. Confirm the `documents` and `message-attachments` buckets are private.
+4. Configure an approved e-file provider or MeF channel on the server. The browser contains no IRS endpoint or credentials.
+5. Verify the actual IRS signature authorization and identity requirements for every supported return type.
+6. Configure a separate open-banking provider; only provider references, never bank access tokens, belong in application tables.
 
-## How can I deploy this project?
+## Native apps
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+The native bundle ID is currently `com.taxcenda.client`. Change it before store registration if the final identifier will be different.
 
-## Can I connect a custom domain to my Lovable project?
+```sh
+npm run native:sync
+npm run native:android
+npm run native:ios
+```
 
-Yes, you can!
+The native camera captures receipt images directly into the same authenticated, duplicate-checked confirmation flow. Push notifications are installed as a native capability but still require APNs/FCM credentials and server-side device-token registration before they can be enabled.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Quality gates
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```sh
+npx tsc --noEmit
+npm test
+npm run lint
+npm run build
+```
+
+AI output is treated as a suggestion. It cannot silently create a filing, determine professional tax positions without review, or transmit a return. An engagement cannot move through protected states until its blocking questions, duplicate candidates, final package, signature evidence, and provider transmission facts satisfy the database gates.

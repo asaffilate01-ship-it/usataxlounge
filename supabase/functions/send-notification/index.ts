@@ -95,54 +95,54 @@ serve(async (req) => {
     const type = rawType;
 
     if (type === 'signature_request') {
-      subject = 'Action Required: E-Sign Your Tax Return — TaxNuvia';
+      subject = 'Action Required: E-Sign Your Tax Return — TaxCenda';
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxNuvia</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxCenda</h1>
             <p style="color: #94a3b8; margin: 8px 0 0 0; font-size: 14px;">Secure Tax Filing Portal</p>
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">E-Signature Required</h2>
             <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'},</p>
-            <p style="color: #475569; line-height: 1.6;">Your tax return has been prepared and is ready for your review. Please log in to your TaxNuvia portal to review and electronically sign your return to authorize e-filing with the IRS.</p>
+            <p style="color: #475569; line-height: 1.6;">Your tax return has been prepared and is ready for your review. Please log in to your TaxCenda portal to review and electronically sign your return to authorize e-filing with the IRS.</p>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
               <p style="color: #64748b; margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">What you need to do:</p>
               <ol style="color: #334155; margin: 8px 0 0 0; padding-left: 20px; line-height: 1.8;">
-                <li>Log in to your TaxNuvia portal</li>
+                <li>Log in to your TaxCenda portal</li>
                 <li>Go to "E-Sign &amp; Approve"</li>
                 <li>Review your return details</li>
                 <li>Type your name to sign</li>
               </ol>
             </div>
-            <p style="color: #475569; line-height: 1.6;">This electronic signature is equivalent to IRS Form 8879 and authorizes the electronic filing of your tax return.</p>
-            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxNuvia Team</p>
+            <p style="color: #475569; line-height: 1.6;">Review the included final package and applicable IRS authorization carefully. Your signature records your approval; filing remains locked until a tax professional completes the final release checks.</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxCenda Team</p>
           </div>
           <div style="background: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxNuvia</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxCenda</p>
           </div>
         </div>
       `;
     } else if (type === 'signature_completed') {
-      subject = 'Tax Return Signed — TaxNuvia';
+      subject = 'Tax Return Signed — TaxCenda';
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxNuvia</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxCenda</h1>
             <p style="color: #94a3b8; margin: 8px 0 0 0; font-size: 14px;">Secure Tax Filing Portal</p>
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">✅ Signature Confirmed</h2>
             <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'},</p>
-            <p style="color: #475569; line-height: 1.6;">Your e-filing authorization has been successfully recorded. Your tax return will now be submitted to the IRS for processing.</p>
+            <p style="color: #475569; line-height: 1.6;">Your e-filing authorization has been recorded and the package is queued for final professional review.</p>
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 24px 0;">
               <p style="color: #166534; margin: 0; font-weight: 600;">What happens next?</p>
-              <p style="color: #15803d; margin: 8px 0 0 0; line-height: 1.6;">Your return will be electronically filed with the IRS. You will receive a confirmation once the IRS accepts your return. This typically takes 24-48 hours.</p>
+              <p style="color: #15803d; margin: 8px 0 0 0; line-height: 1.6;">We will notify you separately after actual transmission and again when an acknowledgement is received from the taxing authority.</p>
             </div>
-            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxNuvia Team</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxCenda Team</p>
           </div>
           <div style="background: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxNuvia</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxCenda</p>
           </div>
         </div>
       `;
@@ -151,26 +151,26 @@ serve(async (req) => {
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxNuvia Admin</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxCenda Admin</h1>
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">New Signature Received</h2>
-            <p style="color: #475569; line-height: 1.6;"><strong>${esc(clientName)}</strong> has signed their e-filing authorization. The return is now ready for submission to the IRS.</p>
+            <p style="color: #475569; line-height: 1.6;"><strong>${esc(clientName)}</strong> has signed their e-filing authorization. The return is ready for final release checks by an authorized tax professional.</p>
             <p style="color: #475569; line-height: 1.6;">Log in to the admin dashboard to review and process the filing.</p>
           </div>
         </div>
       `;
     } else if (type === 'payment_received') {
-      subject = 'Payment Confirmed — TaxNuvia';
+      subject = 'Payment Confirmed — TaxCenda';
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxNuvia</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxCenda</h1>
           </div>
           <div style="padding: 32px;">
             <h2 style="color: #1a2332; margin: 0 0 16px 0;">Payment Confirmed</h2>
             <p style="color: #475569; line-height: 1.6;">Hi ${esc(clientName) || 'there'}, we've received your payment${messageSubject ? ` for the ${esc(messageSubject)} plan` : ''}. Your engagement is now active and your preparer will be in touch shortly.</p>
-            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxNuvia Team</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxCenda Team</p>
           </div>
         </div>
       `;
@@ -179,7 +179,7 @@ serve(async (req) => {
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxNuvia</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxCenda</h1>
             <p style="color: #94a3b8; margin: 8px 0 0 0; font-size: 14px;">New Website Enquiry</p>
           </div>
           <div style="padding: 32px;">
@@ -198,11 +198,11 @@ serve(async (req) => {
         </div>
       `;
     } else if (type === 'new_message') {
-      subject = `New Message from ${esc(senderName) || 'Your Tax Agent'} — TaxNuvia`;
+      subject = `New Message from ${esc(senderName) || 'Your Tax Agent'} — TaxCenda`;
       html = `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #1a2332, #0d1520); padding: 32px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxNuvia</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">TaxCenda</h1>
             <p style="color: #94a3b8; margin: 8px 0 0 0; font-size: 14px;">Secure Tax Filing Portal</p>
           </div>
           <div style="padding: 32px;">
@@ -212,11 +212,11 @@ serve(async (req) => {
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
               <p style="color: #334155; margin: 0; line-height: 1.6; white-space: pre-wrap;">${esc(messageBody)}</p>
             </div>
-            <p style="color: #475569; line-height: 1.6;">Log in to your TaxNuvia portal to reply.</p>
-            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxNuvia Team</p>
+            <p style="color: #475569; line-height: 1.6;">Log in to your TaxCenda portal to reply.</p>
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 24px;">— The TaxCenda Team</p>
           </div>
           <div style="background: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxNuvia</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; text-align: center;">TaxCenda</p>
           </div>
         </div>
       `;
@@ -231,7 +231,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'TaxNuvia <usa@taxlounge.co.uk>',
+        from: 'TaxCenda <usa@taxlounge.co.uk>',
         to: [to],
         reply_to: type === 'contact_form' && isEmail(senderEmail) ? senderEmail : undefined,
         subject,

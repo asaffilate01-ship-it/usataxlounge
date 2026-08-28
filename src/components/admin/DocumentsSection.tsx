@@ -1,452 +1,180 @@
-import { useState, useEffect } from "react";
-import { useAuditLog } from "@/hooks/useAuditLog";
-import { FileText, Search, Filter, Printer, Download, Send, Trash2, Upload, Eye, Camera, Loader2, CheckCircle2, XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { CheckCircle2, Download, Eye, FileText, Filter, Loader2, Search, Upload, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { getSignedUrl, toStoragePath } from "@/lib/storage";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import { useSignedUrl } from "@/hooks/useSignedUrl";
+import { useToast } from "@/hooks/use-toast";
+import { IntakeDocument, taxcenda } from "@/integrations/supabase/taxcenda";
+import { supabase } from "@/integrations/supabase/client";
+import { safeStorageFilename, sha256File, validateIntakeFile } from "@/lib/documentIntake";
+import { getErrorMessage } from "@/lib/errors";
+import { getSignedUrl } from "@/lib/storage";
+
+const statusColor = (status: string | null) => {
+  if (["approved", "client_confirmed"].includes(status ?? "")) return "bg-success/10 text-success";
+  if (status === "rejected") return "bg-destructive/10 text-destructive";
+  if (["received", "pending_review"].includes(status ?? "")) return "bg-warning/10 text-warning";
+  return "bg-muted text-muted-foreground";
+};
+
+const typeColor = (type: string) => {
+  if (type === "receipt") return "bg-warning/10 text-warning";
+  if (type === "tax_return") return "bg-primary/10 text-primary";
+  if (type === "bank_statement") return "bg-accent/10 text-accent";
+  return "bg-muted text-muted-foreground";
+};
+
+const documentType = (file: File) => {
+  const name = file.name.toLowerCase();
+  if (/bank|statement|\.ofx$|\.qfx$|\.qbo$/.test(name)) return "bank_statement";
+  if (file.type.startsWith("image/")) return "source_image";
+  return "document";
+};
 
 const DocumentsSection = ({ isAdmin = false }: { isAdmin?: boolean }) => {
-  const { logAction } = useAuditLog();
-  const [documents, setDocuments] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<IntakeDocument[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [previewDoc, setPreviewDoc] = useState<any>(null);
-  const previewUrl = useSignedUrl("documents", previewDoc?.file_url);
-  const [scanOpen, setScanOpen] = useState(false);
-  const [scanning, setScanning] = useState(false);
-  const [scanResult, setScanResult] = useState<any>(null);
+  const [previewDoc, setPreviewDoc] = useState<IntakeDocument | null>(null);
   const [uploading, setUploading] = useState(false);
+  const previewUrl = useSignedUrl("documents", previewDoc?.file_url);
   const { toast } = useToast();
+  const { logAction } = useAuditLog();
+
+  const fetchDocuments = useCallback(async () => {
+    const { data, error } = await taxcenda.from("documents").select("*").order("created_at", { ascending: false });
+    if (error) toast({ title: "Unable to load documents", description: error.message, variant: "destructive" });
+    else setDocuments(data ?? []);
+  }, [toast]);
 
   useEffect(() => {
     fetchDocuments();
-  }, []);
+  }, [fetchDocuments]);
 
-  const fetchDocuments = async () => {
-    const { data } = await supabase
-      .from("documents")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) setDocuments(data);
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
     if (!file) return;
+    setUploading(true);
+    let storagePath: string | null = null;
 
-    const user = (await supabase.auth.getUser()).data.user;
-    if (!user) return;
+    try {
+      validateIntakeFile(file);
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData.user;
+      if (!user) throw new Error("Sign in before uploading documents.");
 
-    // If it's an image, offer AI extraction
-    if (file.type.startsWith("image/")) {
-      setScanOpen(true);
-      setScanning(true);
-      setScanResult(null);
+      const contentHash = await sha256File(file);
+      const { data: existing } = await taxcenda.from("documents").select("*").eq("user_id", user.id).eq("content_sha256", contentHash).limit(1);
+      if (existing?.[0]) throw new Error(`This exact file is already stored as “${existing[0].title}”.`);
 
-      try {
-        // First upload the file to storage
-        const filePath = `${user.id}/${Date.now()}_${file.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("documents")
-          .upload(filePath, file);
+      const { data: engagements, error: engagementError } = await taxcenda
+        .from("tax_engagements")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("tax_year", { ascending: false })
+        .limit(1);
+      if (engagementError) throw engagementError;
+      const engagement = engagements?.[0];
+      if (!engagement) throw new Error("Create your tax-year workspace before uploading source records.");
 
-        if (uploadError) throw uploadError;
+      const { data: entities, error: entityError } = await taxcenda.from("tax_entities").select("*").eq("id", engagement.entity_id).limit(1);
+      if (entityError) throw entityError;
+      const entity = entities?.[0];
+      if (!entity) throw new Error("The tax entity for this workspace could not be found.");
 
-        const fileUrl = uploadData.path;
+      storagePath = `${user.id}/${engagement.tax_year}/${crypto.randomUUID()}-${safeStorageFilename(file.name)}`;
+      const { error: uploadError } = await supabase.storage.from("documents").upload(storagePath, file, { contentType: file.type || undefined, upsert: false });
+      if (uploadError) throw uploadError;
 
-        // Then try AI extraction
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const base64 = (reader.result as string).split(",")[1];
-          try {
-            const { data, error } = await supabase.functions.invoke("extract-receipt", {
-              body: { imageBase64: base64, mimeType: file.type },
-            });
-            if (error) throw error;
-            setScanResult({ ...data, fileUrl, filePath: uploadData.path });
-          } catch (err: any) {
-            // AI extraction failed but file is still uploaded
-            setScanResult({ error: "Could not extract data. File has been saved.", fileUrl, filePath: uploadData.path });
-          }
-          setScanning(false);
-        };
-        reader.readAsDataURL(file);
-      } catch (err: any) {
-        toast({ title: "Upload Error", description: err.message, variant: "destructive" });
-        setScanning(false);
-        setScanOpen(false);
-      }
-    } else {
-      // Upload file to storage then save document record
-      setUploading(true);
-      try {
-        const filePath = `${user.id}/${Date.now()}_${file.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("documents")
-          .upload(filePath, file);
+      const type = documentType(file);
+      const { error: documentError } = await taxcenda.from("documents").insert({
+        user_id: user.id,
+        entity_id: entity.id,
+        engagement_id: engagement.id,
+        title: file.name,
+        type,
+        category: type === "bank_statement" ? "banking" : "uploaded",
+        status: "received",
+        file_url: storagePath,
+        original_filename: file.name,
+        mime_type: file.type || "application/octet-stream",
+        size_bytes: file.size,
+        content_sha256: contentHash,
+        extraction_status: "not_started",
+        duplicate_status: "unchecked",
+        metadata: { uploadedFrom: "document_vault", uploadedAt: new Date().toISOString() },
+      });
+      if (documentError) throw documentError;
 
-        if (uploadError) throw uploadError;
-
-        await supabase.from("documents").insert({
-          user_id: user.id,
-          title: file.name,
-          type: "document",
-          category: "uploaded",
-          status: "saved",
-          file_url: uploadData.path,
-        });
-
-        fetchDocuments();
-        toast({ title: "Document Uploaded", description: file.name });
-      } catch (err: any) {
-        toast({ title: "Upload Error", description: err.message, variant: "destructive" });
-      }
+      toast({ title: "Document uploaded", description: "The original file and provenance are preserved for review." });
+      await fetchDocuments();
+    } catch (error) {
+      if (storagePath) await supabase.storage.from("documents").remove([storagePath]);
+      toast({ title: "Upload failed", description: getErrorMessage(error), variant: "destructive" });
+    } finally {
       setUploading(false);
     }
-    e.target.value = "";
   };
 
-  const handleSaveExtracted = async () => {
-    if (!scanResult) return;
-    const user = (await supabase.auth.getUser()).data.user;
-
-    // Save as income_expense entry if we have amount
-    if (scanResult.amount) {
-      await supabase.from("income_expenses").insert({
-        user_id: user?.id || "",
-        type: scanResult.type || "expense",
-        category: scanResult.category || "Uncategorized",
-        description: scanResult.description || "",
-        amount: scanResult.amount || 0,
-      });
-    }
-
-    // Save as document with file URL
-    const { error } = await supabase.from("documents").insert({
-      user_id: user?.id || "",
-      title: `Receipt: ${scanResult.description || "Scanned"}`,
-      type: "receipt",
-      category: scanResult.category || "expense",
-      status: "saved",
-      metadata: scanResult,
-      file_url: scanResult.fileUrl || null,
-    });
-
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Receipt Saved", description: scanResult.amount ? `${scanResult.category}: $${scanResult.amount}` : "Document saved" });
-      setScanOpen(false);
-      setScanResult(null);
-      fetchDocuments();
-    }
-  };
-
-  const handlePrint = async (doc: any) => {
-    if (doc.file_url) {
-      const signed = await getSignedUrl("documents", doc.file_url);
-      if (signed) {
-        const w = window.open(signed, "_blank", "noopener,noreferrer");
-        if (w) setTimeout(() => w.print(), 1000);
-        return;
-      }
-      toast({ title: "Unable to open file", variant: "destructive" });
+  const handleDownload = async (document: IntakeDocument) => {
+    if (!document.file_url) return;
+    const signedUrl = await getSignedUrl("documents", document.file_url);
+    if (!signedUrl) {
+      toast({ title: "Unable to download file", variant: "destructive" });
       return;
     }
-    const w = window.open("", "_blank");
-    if (w) {
-      w.document.write(`<html><head><title>${doc.title}</title><style>body{font-family:sans-serif;padding:40px;max-width:800px;margin:0 auto}</style></head><body><h1>${doc.title}</h1><p>Type: ${doc.type}</p><p>Category: ${doc.category || "—"}</p><p>Status: ${doc.status}</p><p>Created: ${new Date(doc.created_at).toLocaleDateString()}</p>${doc.content ? `<pre>${doc.content}</pre>` : ""}</body></html>`);
-      w.document.close();
-      w.print();
+    const anchor = window.document.createElement("a");
+    anchor.href = signedUrl;
+    anchor.download = document.original_filename || document.title;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.click();
+  };
+
+  const handleApproval = async (documentId: string, status: "approved" | "rejected") => {
+    const { error } = await taxcenda.from("documents").update({ status, reviewed_at: new Date().toISOString() }).eq("id", documentId);
+    if (error) toast({ title: "Document status was not changed", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: `Document ${status}` });
+      logAction(`document_${status}`, "documents", documentId);
+      await fetchDocuments();
     }
   };
 
-  const handleDownload = async (doc: any) => {
-    if (doc.file_url) {
-      const signed = await getSignedUrl("documents", doc.file_url);
-      if (!signed) {
-        toast({ title: "Unable to download file", variant: "destructive" });
-        return;
-      }
-      const a = document.createElement("a");
-      a.href = signed;
-      a.download = doc.title;
-      a.target = "_blank";
-      a.click();
-      return;
-    }
-    const content = `${doc.title}\nType: ${doc.type}\nCategory: ${doc.category || ""}\nStatus: ${doc.status}\nCreated: ${new Date(doc.created_at).toLocaleDateString()}\n\n${doc.content || ""}`;
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${doc.title.replace(/\s+/g, "_")}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleEmail = async (doc: any) => {
-    const subject = encodeURIComponent(doc.title);
-    const signed = doc.file_url ? await getSignedUrl("documents", doc.file_url, 60 * 60 * 24) : null;
-    const body = encodeURIComponent(`${doc.title}\n\n${signed ? `Secure link (expires in 24h): ${signed}` : doc.content || "See attached document."}`);
-    window.open(`mailto:?subject=${subject}&body=${body}`);
-  };
-
-  const handleDelete = async (id: string) => {
-    // Find the doc to delete from storage too
-    const doc = documents.find(d => d.id === id);
-    if (doc?.file_url) {
-      // Try to extract storage path from URL and delete from storage
-      try {
-        const path = toStoragePath("documents", doc.file_url);
-        if (path) await supabase.storage.from("documents").remove([path]);
-      } catch {
-        // Ignore storage deletion errors
-      }
-    }
-    await supabase.from("documents").delete().eq("id", id);
-    fetchDocuments();
-    toast({ title: "Document Deleted" });
-  };
-
-  const filtered = documents.filter(d => {
-    const matchSearch = d.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchType = filterType === "all" || d.type === filterType;
-    return matchSearch && matchType;
-  });
-
-  const statusColor = (status: string) => {
-    switch (status) {
-      case "approved": return "bg-success/10 text-success";
-      case "rejected": return "bg-destructive/10 text-destructive";
-      case "pending_review": return "bg-warning/10 text-warning";
-      default: return "bg-muted text-muted-foreground";
-    }
-  };
-
-  const handleApproval = async (docId: string, newStatus: "approved" | "rejected") => {
-    const { error } = await supabase.from("documents").update({ status: newStatus }).eq("id", docId);
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: `Document ${newStatus}` });
-      fetchDocuments();
-      if (isAdmin) logAction(`document_${newStatus}`, "documents", docId);
-    }
-  };
-
-  const typeColor = (type: string) => {
-    switch (type) {
-      case "receipt": return "bg-warning/10 text-warning";
-      case "contract": return "bg-accent/10 text-accent";
-      case "tax_return": return "bg-primary/10 text-primary";
-      default: return "bg-muted text-muted-foreground";
-    }
-  };
+  const filtered = useMemo(() => documents.filter((document) => {
+    const matchesSearch = document.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === "all" || document.type === filterType;
+    return matchesSearch && matchesType;
+  }), [documents, filterType, searchQuery]);
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="font-display text-xl font-bold text-foreground">Documents</h2>
-        <div className="flex gap-2">
-          <label className="cursor-pointer">
-            <input type="file" className="hidden" accept="image/*,.pdf,.doc,.docx,.xlsx,.csv,.txt" onChange={handleFileUpload} />
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-brand-green-dark" disabled={uploading}>
-              <span>{uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />} Upload</span>
-            </Button>
-          </label>
-          <label className="cursor-pointer">
-            <input type="file" className="hidden" accept="image/*" capture="environment" onChange={handleFileUpload} />
-            <Button asChild variant="outline">
-              <span><Camera className="h-4 w-4 mr-2" /> Scan Receipt</span>
-            </Button>
-          </label>
-        </div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div><h2 className="font-display text-xl font-bold text-foreground">Document vault</h2><p className="mt-1 text-sm text-muted-foreground">Original files are stored privately with a content fingerprint and tax-year provenance.</p></div>
+        {!isAdmin && <label className="cursor-pointer"><input type="file" className="hidden" accept="image/jpeg,image/png,image/webp,application/pdf,text/csv,text/plain,.docx,.xlsx,.ofx,.qfx,.qbo" onChange={handleFileUpload} /><Button asChild disabled={uploading} className="bg-accent text-accent-foreground hover:bg-brand-green-dark"><span>{uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />} Upload source file</span></Button></label>}
       </div>
 
-      <div className="flex items-center gap-4 flex-wrap">
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search documents..." className="pl-10" />
-        </div>
-        <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-40">
-            <Filter className="h-4 w-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="document">Documents</SelectItem>
-            <SelectItem value="receipt">Receipts</SelectItem>
-            <SelectItem value="contract">Contracts</SelectItem>
-            <SelectItem value="tax_return">Tax Returns</SelectItem>
-          </SelectContent>
-        </Select>
+      {!isAdmin && <p className="rounded-xl border border-border bg-muted/20 p-3 text-xs text-muted-foreground">For automatic receipt extraction, use <strong>Income &amp; Expenses → Scan receipt</strong>. Images uploaded here remain source evidence and are not posted automatically.</p>}
+
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative min-w-[220px] max-w-sm flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search documents…" className="pl-10" /></div>
+        <Select value={filterType} onValueChange={setFilterType}><SelectTrigger className="w-44"><Filter className="mr-2 h-4 w-4" /><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All types</SelectItem><SelectItem value="document">Documents</SelectItem><SelectItem value="source_image">Source images</SelectItem><SelectItem value="receipt">Receipts</SelectItem><SelectItem value="bank_statement">Bank statements</SelectItem><SelectItem value="tax_return">Tax returns</SelectItem></SelectContent></Select>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
-          <p className="font-display text-lg">No documents yet</p>
-          <p className="text-sm mt-1">Upload documents or scan receipts to get started.</p>
-        </div>
+        <div className="py-16 text-center text-muted-foreground"><FileText className="mx-auto mb-4 h-12 w-12 opacity-30" /><p className="font-display text-lg">No documents yet</p><p className="mt-1 text-sm">Upload statements, invoices, receipts, payroll files or prior-year records.</p></div>
       ) : (
-        <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-x-auto">
-          <table className="w-full min-w-[600px]">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Document</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Status</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Date</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((doc) => (
-                <tr key={doc.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-5 py-3">
-                    <p className="text-sm font-medium text-foreground">{doc.title}</p>
-                    <p className="text-xs text-muted-foreground">{doc.status} {doc.file_url ? "• Stored" : ""}</p>
-                  </td>
-                  <td className="px-5 py-3">
-                    <Badge className={typeColor(doc.type)}>{doc.type}</Badge>
-                  </td>
-                  <td className="px-5 py-3">
-                    <Badge className={statusColor(doc.status)}>{doc.status || "draft"}</Badge>
-                  </td>
-                  <td className="px-5 py-3 text-sm text-muted-foreground">{new Date(doc.created_at).toLocaleDateString()}</td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      {isAdmin && doc.status !== "approved" && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={(e) => { e.stopPropagation(); handleApproval(doc.id, "approved"); }} title="Approve"><CheckCircle2 className="h-4 w-4" /></Button>
-                      )}
-                      {isAdmin && doc.status !== "rejected" && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => { e.stopPropagation(); handleApproval(doc.id, "rejected"); }} title="Reject"><XCircle className="h-4 w-4" /></Button>
-                      )}
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPreviewDoc(doc)}><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePrint(doc)}><Printer className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(doc)}><Download className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEmail(doc)}><Send className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(doc.id)}><Trash2 className="h-4 w-4" /></Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-elegant"><table className="w-full min-w-[680px]"><thead><tr className="border-b border-border bg-muted/50"><th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground">Document</th><th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground">Type</th><th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground">Status</th><th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground">Date</th><th className="px-5 py-3 text-right text-xs font-semibold text-muted-foreground">Actions</th></tr></thead><tbody>{filtered.map((document) => (
+          <tr key={document.id} className="border-b border-border last:border-0 hover:bg-muted/30"><td className="px-5 py-3"><p className="text-sm font-medium text-foreground">{document.title}</p><p className="text-xs text-muted-foreground">{document.size_bytes ? `${(Number(document.size_bytes) / 1024 / 1024).toFixed(2)} MB` : "Stored record"}</p></td><td className="px-5 py-3"><Badge className={typeColor(document.type)}>{document.type.replace(/_/g, " ")}</Badge></td><td className="px-5 py-3"><Badge className={statusColor(document.status)}>{document.status || "received"}</Badge></td><td className="px-5 py-3 text-sm text-muted-foreground">{new Date(document.created_at).toLocaleDateString()}</td><td className="px-5 py-3"><div className="flex justify-end gap-1">{isAdmin && document.status !== "approved" && <Button variant="ghost" size="icon" className="h-8 w-8 text-success" onClick={() => handleApproval(document.id, "approved")} title="Approve"><CheckCircle2 className="h-4 w-4" /></Button>}{isAdmin && document.status !== "rejected" && <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleApproval(document.id, "rejected")} title="Reject"><XCircle className="h-4 w-4" /></Button>}<Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPreviewDoc(document)} title="Preview"><Eye className="h-4 w-4" /></Button><Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(document)} title="Download"><Download className="h-4 w-4" /></Button></div></td></tr>
+        ))}</tbody></table></div>
       )}
 
-      {/* Preview Dialog */}
-      <Dialog open={!!previewDoc} onOpenChange={() => setPreviewDoc(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{previewDoc?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div><span className="text-muted-foreground">Type:</span> <span className="text-foreground">{previewDoc?.type}</span></div>
-              <div><span className="text-muted-foreground">Category:</span> <span className="text-foreground">{previewDoc?.category || "—"}</span></div>
-              <div><span className="text-muted-foreground">Status:</span> <span className="text-foreground">{previewDoc?.status}</span></div>
-              <div><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{previewDoc ? new Date(previewDoc.created_at).toLocaleDateString() : ""}</span></div>
-            </div>
-            {previewDoc?.file_url && (
-              <div className="rounded-xl border border-border bg-muted/30 p-4">
-                {previewUrl ? (
-                  previewDoc.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                    <img src={previewUrl} alt={previewDoc.title} className="max-w-full rounded-lg" />
-                  ) : previewDoc.file_url.match(/\.pdf$/i) ? (
-                    <iframe src={previewUrl} className="w-full h-96 rounded-lg" title={previewDoc.title} />
-                  ) : (
-                    <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-accent underline text-sm">
-                      Open file in new tab
-                    </a>
-                  )
-                ) : (
-                  <div className="h-24 rounded-lg bg-muted animate-pulse" aria-label="Loading secure preview" />
-                )}
-              </div>
-            )}
-            {previewDoc?.content && (
-              <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm whitespace-pre-wrap">{previewDoc.content}</div>
-            )}
-            {previewDoc?.metadata && Object.keys(previewDoc.metadata).length > 0 && (
-              <div className="rounded-xl border border-border bg-muted/30 p-4">
-                <p className="text-xs font-semibold text-muted-foreground mb-2">Extracted Data</p>
-                <pre className="text-xs text-foreground overflow-auto">{JSON.stringify(previewDoc.metadata, null, 2)}</pre>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Scan Result Dialog */}
-      <Dialog open={scanOpen} onOpenChange={setScanOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Receipt Scan Result</DialogTitle>
-          </DialogHeader>
-          {scanning ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-accent mb-4" />
-              <p className="text-muted-foreground">Extracting data from receipt...</p>
-            </div>
-          ) : scanResult ? (
-            <div className="space-y-4">
-              {scanResult.error && !scanResult.amount ? (
-                <p className="text-muted-foreground text-sm">{scanResult.error}</p>
-              ) : scanResult.amount ? (
-                <div className="space-y-3 rounded-xl border border-border bg-muted/30 p-4">
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div><span className="text-muted-foreground">Type:</span> <span className="text-foreground capitalize">{scanResult.type}</span></div>
-                    <div><span className="text-muted-foreground">Amount:</span> <span className="text-foreground font-semibold">${scanResult.amount}</span></div>
-                    <div><span className="text-muted-foreground">Category:</span> <span className="text-foreground">{scanResult.category}</span></div>
-                    <div><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{scanResult.date || "Not detected"}</span></div>
-                  </div>
-                  <div><span className="text-muted-foreground text-sm">Description:</span> <span className="text-foreground text-sm">{scanResult.description}</span></div>
-                  {scanResult.items && scanResult.items.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground mb-1">Items:</p>
-                      {scanResult.items.map((item: any, i: number) => (
-                        <div key={i} className="flex justify-between text-xs text-foreground">
-                          <span>{item.name}</span>
-                          <span>${item.amount}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : null}
-              <div className="flex gap-2">
-                <Button onClick={handleSaveExtracted} className="flex-1 bg-accent text-accent-foreground hover:bg-brand-green-dark">
-                  Save to System
-                </Button>
-                <Button variant="outline" onClick={() => { setScanOpen(false); setScanResult(null); }}>
-                  Discard
-                </Button>
-              </div>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <Dialog open={Boolean(previewDoc)} onOpenChange={(open) => { if (!open) setPreviewDoc(null); }}><DialogContent className="max-w-2xl"><DialogHeader><DialogTitle>{previewDoc?.title}</DialogTitle></DialogHeader>{previewDoc?.file_url && (previewUrl ? (previewDoc.mime_type?.startsWith("image/") ? <img src={previewUrl} alt={previewDoc.title} className="max-h-[70vh] w-full rounded-lg object-contain" /> : previewDoc.mime_type === "application/pdf" ? <iframe src={previewUrl} className="h-[70vh] w-full rounded-lg" title={previewDoc.title} /> : <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-accent underline">Open the secure file in a new tab</a>) : <div className="h-40 animate-pulse rounded-lg bg-muted" />)}</DialogContent></Dialog>
     </div>
   );
 };

@@ -1,229 +1,172 @@
-import { useState, useEffect } from "react";
-import { PenLine, CheckCircle2, Clock, FileText, Loader2, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CheckCircle2, Clock, ExternalLink, FileText, Loader2, PenLine, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
+import { openSigned } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 interface ClientESignSectionProps {
   userId?: string;
 }
 
+type Signature = Tables<"signatures">;
+type Filing = Tables<"filings">;
+
 const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
-  const [signatures, setSignatures] = useState<any[]>([]);
+  const [signatures, setSignatures] = useState<Signature[]>([]);
+  const [filings, setFilings] = useState<Filing[]>([]);
   const [loading, setLoading] = useState(true);
   const [signingId, setSigningId] = useState<string | null>(null);
   const [typedName, setTypedName] = useState("");
   const [consented, setConsented] = useState(false);
+  const [packageOpened, setPackageOpened] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (userId) fetchSignatures();
-  }, [userId]);
+  const filingsById = useMemo(() => new Map(filings.map((filing) => [filing.id, filing])), [filings]);
 
-  const fetchSignatures = async () => {
+  const fetchSignatures = useCallback(async () => {
+    if (!userId) return;
     setLoading(true);
-    const { data } = await supabase
-      .from("signatures")
-      .select("*")
-      .eq("user_id", userId!)
-      .order("created_at", { ascending: false });
-    if (data) setSignatures(data);
+    const [signatureResult, filingResult] = await Promise.all([
+      supabase.from("signatures").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+      supabase.from("filings").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+    ]);
+    if (signatureResult.error || filingResult.error) {
+      toast({ title: "Unable to load filing authorizations", description: (signatureResult.error || filingResult.error)?.message, variant: "destructive" });
+    }
+    setSignatures(signatureResult.data ?? []);
+    setFilings(filingResult.data ?? []);
     setLoading(false);
+  }, [toast, userId]);
+
+  useEffect(() => {
+    fetchSignatures();
+  }, [fetchSignatures]);
+
+  const reviewPackage = async (filing: Filing | undefined) => {
+    if (!filing?.file_url) {
+      toast({ title: "Final package unavailable", description: "Ask your tax professional to attach the final return and authorization package.", variant: "destructive" });
+      return;
+    }
+    const opened = await openSigned("documents", filing.file_url);
+    if (!opened) {
+      toast({ title: "Unable to open final package", variant: "destructive" });
+      return;
+    }
+    setPackageOpened(true);
   };
 
-  const handleSign = async (sig: any) => {
-    if (!typedName.trim() || !consented) return;
+  const handleSign = async (signature: Signature) => {
+    if (!typedName.trim() || !consented || !packageOpened) return;
     setSubmitting(true);
+    const { data, error } = await supabase.functions.invoke("sign-filing-authorization", {
+      body: { signatureId: signature.id, typedName: typedName.trim(), consented: true },
+    });
 
-    const { error } = await supabase
-      .from("signatures")
-      .update({
-        typed_name: typedName.trim(),
-        signed_at: new Date().toISOString(),
-        ip_address: "client-side",
-      })
-      .eq("id", sig.id);
-
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    if (error || data?.error) {
+      toast({ title: "Authorization was not recorded", description: data?.error || error?.message, variant: "destructive" });
     } else {
       toast({
-        title: "Signed Successfully!",
-        description: "Your e-filing authorization has been recorded. Your return will be submitted to the IRS.",
+        title: "Authorization recorded",
+        description: "Your accountant must complete final release checks before anything is transmitted.",
       });
-
-      // Send confirmation email to client
-      if (sig.email) {
-        supabase.functions.invoke("send-notification", {
-          body: { type: "signature_completed", to: sig.email, clientName: typedName.trim() },
-        }).catch(err => console.error("Email error:", err));
-      }
-
-      // Notify admin
-      const { data: adminRoles } = await supabase.from("user_roles").select("user_id").eq("role", "admin").limit(1);
-      if (adminRoles?.[0]) {
-        const { data: adminProfile } = await supabase.from("profiles").select("*").eq("user_id", adminRoles[0].user_id).single();
-        // We'd need admin email - for now notify via the system
-        supabase.from("notifications").insert({
-          user_id: adminRoles[0].user_id,
-          title: "New Signature",
-          message: `${typedName.trim()} has signed their e-filing authorization.`,
-          type: "signature",
-        }).then(() => {});
-      }
-
       setSigningId(null);
       setTypedName("");
       setConsented(false);
-      fetchSignatures();
+      setPackageOpened(false);
+      await fetchSignatures();
     }
     setSubmitting(false);
   };
 
-  const pending = signatures.filter((s) => !s.signed_at);
-  const completed = signatures.filter((s) => s.signed_at);
+  const pending = signatures.filter((signature) => !signature.signed_at);
+  const completed = signatures.filter((signature) => signature.signed_at);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-accent" />
-      </div>
-    );
-  }
+  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-accent" /></div>;
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h2 className="font-display text-xl font-bold text-foreground">E-Sign & Approve</h2>
+      <div>
+        <h2 className="font-display text-xl font-bold text-foreground">Review, sign and approve</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Review the exact final package before providing filing authorization.</p>
+      </div>
 
       {signatures.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <PenLine className="h-12 w-12 mx-auto mb-4 opacity-30" />
-          <p className="font-display text-lg">No signature requests</p>
-          <p className="text-sm mt-1">When your tax return is ready, a signature request will appear here.</p>
-        </div>
+        <div className="py-16 text-center text-muted-foreground"><PenLine className="mx-auto mb-4 h-12 w-12 opacity-30" /><p className="font-display text-lg">No signature requests</p><p className="mt-1 text-sm">A secure request will appear when your final return package is ready.</p></div>
       ) : (
         <>
-          {/* Pending signatures */}
           {pending.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Awaiting Your Signature</h3>
-              {pending.map((sig) => (
-                <div key={sig.id} className="p-6 rounded-2xl border border-warning/30 bg-card shadow-elegant">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
-                      <PenLine className="h-6 w-6 text-warning" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge className="bg-warning/10 text-warning border-warning/20">
-                          <Clock className="h-3 w-3 mr-1" /> Pending Signature
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Requested on {new Date(sig.created_at).toLocaleDateString()}
-                      </p>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Awaiting your review</h3>
+              {pending.map((signature) => {
+                const filing = filingsById.get(signature.filing_id);
+                return (
+                  <div key={signature.id} className="rounded-2xl border border-warning/30 bg-card p-6 shadow-elegant">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-warning/10"><PenLine className="h-6 w-6 text-warning" /></div>
+                      <div className="min-w-0 flex-1">
+                        <Badge className="bg-warning/10 text-warning"><Clock className="mr-1 h-3 w-3" /> Pending review and signature</Badge>
+                        <p className="mt-3 font-medium text-foreground">{filing?.form_type || "Tax return"} — tax year {filing?.tax_year || "—"}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">Requested {new Date(signature.created_at).toLocaleDateString()}</p>
 
-                      {signingId === sig.id ? (
-                        <div className="mt-4 space-y-4">
-                          {/* IRS Consent Text */}
-                          <div className="rounded-xl border border-border bg-muted/30 p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <ShieldCheck className="h-4 w-4 text-accent" />
-                              <p className="text-xs font-semibold text-muted-foreground">IRS E-FILE AUTHORIZATION (Form 8879 Equivalent)</p>
+                        {signingId === signature.id ? (
+                          <div className="mt-5 space-y-4">
+                            <div className="rounded-xl border border-border bg-muted/20 p-4">
+                              <div className="mb-3 flex items-center gap-2"><FileText className="h-4 w-4 text-accent" /><p className="text-sm font-semibold text-foreground">Step 1 — Review the final package</p></div>
+                              <Button variant="outline" onClick={() => reviewPackage(filing)}><ExternalLink className="mr-2 h-4 w-4" /> Open final return and authorization PDF</Button>
+                              {packageOpened && <p className="mt-2 flex items-center gap-1.5 text-xs text-success"><CheckCircle2 className="h-3.5 w-3.5" /> Package opened for review</p>}
                             </div>
-                            <p className="text-sm text-foreground leading-relaxed">
-                              {sig.consent_text || "I authorize TaxNuvia to e-file my tax return with the IRS. I confirm that I have reviewed the return and that all information is accurate and complete."}
-                            </p>
-                          </div>
 
-                          {/* Consent checkbox */}
-                          <div className="flex items-start gap-3">
-                            <Checkbox
-                              id={`consent-${sig.id}`}
-                              checked={consented}
-                              onCheckedChange={(v) => setConsented(!!v)}
-                            />
-                            <label htmlFor={`consent-${sig.id}`} className="text-sm text-foreground leading-snug cursor-pointer">
-                              I have reviewed my tax return and authorize TaxNuvia to electronically file it with the IRS on my behalf. I understand this constitutes my electronic signature under IRS guidelines.
+                            <div className="rounded-xl border border-border bg-muted/20 p-4">
+                              <div className="mb-2 flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent" /><p className="text-sm font-semibold text-foreground">Step 2 — Filing authorization</p></div>
+                              <p className="text-sm leading-relaxed text-foreground">{signature.consent_text}</p>
+                            </div>
+
+                            <label className="flex cursor-pointer items-start gap-3">
+                              <Checkbox checked={consented} onCheckedChange={(value) => setConsented(Boolean(value))} />
+                              <span className="text-sm leading-snug text-foreground">I reviewed the final PDF, confirm the information is true, correct and complete to the best of my knowledge, and provide the authorization stated above.</span>
                             </label>
-                          </div>
 
-                          {/* Typed name */}
-                          <div>
-                            <label className="text-sm font-medium text-foreground block mb-1.5">
-                              Type your full legal name to sign
-                            </label>
-                            <Input
-                              value={typedName}
-                              onChange={(e) => setTypedName(e.target.value)}
-                              placeholder="e.g. John A. Smith"
-                              className="font-serif text-lg italic"
-                            />
-                            {typedName && (
-                              <div className="mt-3 p-3 rounded-lg border border-accent/20 bg-accent/5 text-center">
-                                <p className="text-xs text-muted-foreground mb-1">Signature Preview</p>
-                                <p className="font-serif text-2xl italic text-foreground">{typedName}</p>
-                              </div>
-                            )}
-                          </div>
+                            <div>
+                              <label className="mb-1.5 block text-sm font-medium text-foreground">Type your full legal name</label>
+                              <Input value={typedName} onChange={(event) => setTypedName(event.target.value)} placeholder="Full legal name" className="font-serif text-lg italic" />
+                            </div>
 
-                          <div className="flex gap-3">
-                            <Button
-                              onClick={() => handleSign(sig)}
-                              disabled={!typedName.trim() || !consented || submitting}
-                              className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
-                            >
-                              {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <PenLine className="h-4 w-4 mr-2" />}
-                              Sign & Authorize E-Filing
-                            </Button>
-                            <Button variant="outline" onClick={() => { setSigningId(null); setTypedName(""); setConsented(false); }}>
-                              Cancel
-                            </Button>
+                            <div className="flex flex-wrap gap-3">
+                              <Button onClick={() => handleSign(signature)} disabled={!typedName.trim() || !consented || !packageOpened || submitting} className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                                {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PenLine className="mr-2 h-4 w-4" />} Sign authorization
+                              </Button>
+                              <Button variant="outline" onClick={() => { setSigningId(null); setTypedName(""); setConsented(false); setPackageOpened(false); }}>Cancel</Button>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <Button
-                          className="mt-4 bg-accent text-accent-foreground hover:bg-brand-green-dark"
-                          onClick={() => setSigningId(sig.id)}
-                        >
-                          <PenLine className="h-4 w-4 mr-2" /> Review & Sign
-                        </Button>
-                      )}
+                        ) : (
+                          <Button className="mt-4 bg-accent text-accent-foreground hover:bg-brand-green-dark" onClick={() => { setSigningId(signature.id); setPackageOpened(false); setConsented(false); setTypedName(""); }}><PenLine className="mr-2 h-4 w-4" /> Review final package</Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
-          {/* Completed signatures */}
           {completed.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Completed</h3>
-              {completed.map((sig) => (
-                <div key={sig.id} className="p-5 rounded-2xl border border-success/20 bg-card shadow-elegant">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
-                        <CheckCircle2 className="h-5 w-5 text-success" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">E-Filing Authorization</p>
-                        <p className="text-sm text-muted-foreground">
-                          Signed as <span className="font-serif italic">{sig.typed_name}</span> on {new Date(sig.signed_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge className="bg-success/10 text-success border-success/20">
-                      <CheckCircle2 className="h-3 w-3 mr-1" /> Signed
-                    </Badge>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Completed</h3>
+              {completed.map((signature) => {
+                const filing = filingsById.get(signature.filing_id);
+                return (
+                  <div key={signature.id} className="flex flex-col gap-3 rounded-2xl border border-success/20 bg-card p-5 shadow-elegant sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-4"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/10"><CheckCircle2 className="h-5 w-5 text-success" /></div><div><p className="font-medium text-foreground">{filing?.form_type || "Filing authorization"} — {filing?.tax_year}</p><p className="text-sm text-muted-foreground">Signed as <span className="font-serif italic">{signature.typed_name}</span> on {new Date(signature.signed_at!).toLocaleString()}</p></div></div>
+                    <Badge className="bg-success/10 text-success"><CheckCircle2 className="mr-1 h-3 w-3" /> Signed — awaiting final release</Badge>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>

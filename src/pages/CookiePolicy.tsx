@@ -117,8 +117,8 @@ const CookiePolicy = () => {
             </h2>
             <p>
               {isEs
-                ? "Para consultas sobre esta política, utilice el formulario de contacto del sitio. TaxNuvia es un nombre comercial de iTechLounge LLC."
-                : "For questions about this policy, please use the contact form on our site. TaxNuvia is a trading name of iTechLounge LLC."}
+                ? "Para consultas sobre esta política, utilice el formulario de contacto del sitio. TaxCenda es un nombre comercial de iTechLounge LLC."
+                : "For questions about this policy, please use the contact form on our site. TaxCenda is a trading name of iTechLounge LLC."}
             </p>
             <p className="mt-4 flex gap-4">
               <Link to="/privacy" className="text-accent hover:underline">

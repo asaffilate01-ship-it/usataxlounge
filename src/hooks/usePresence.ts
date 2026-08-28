@@ -41,10 +41,12 @@ export const usePresence = () => {
 
     // Set offline on page unload
     const handleUnload = () => {
-      navigator.sendBeacon && navigator.sendBeacon(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/user_presence?user_id=eq.${user.id}`,
-        JSON.stringify({ is_online: false, last_seen: new Date().toISOString() })
-      );
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/user_presence?user_id=eq.${user.id}`,
+          JSON.stringify({ is_online: false, last_seen: new Date().toISOString() })
+        );
+      }
     };
 
     window.addEventListener("beforeunload", handleUnload);

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TaxCenda</string>
+    <string name="title_activity_main">TaxCenda</string>
+    <string name="package_name">com.taxcenda.client</string>
+    <string name="custom_url_scheme">com.taxcenda.client</string>
+</resources>

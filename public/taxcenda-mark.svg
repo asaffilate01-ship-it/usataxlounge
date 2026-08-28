@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TaxCenda">
+  <rect width="512" height="512" rx="112" fill="#14294f"/>
+  <path d="M160 104h142l66 66v238H160c-22 0-40-18-40-40V144c0-22 18-40 40-40Z" fill="#fff"/>
+  <path d="M302 104v66h66" fill="none" stroke="#39c6ad" stroke-width="28" stroke-linejoin="round"/>
+  <path d="m184 284 44 44 100-108" fill="none" stroke="#39c6ad" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

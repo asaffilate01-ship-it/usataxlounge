@@ -67,7 +67,7 @@ const translations: Record<string, Record<Language, string>> = {
   "services.estate.desc": { en: "Form 706 estate tax returns, Form 709 gift tax returns, and trust income tax filings (Form 1041).", es: "Declaraciones de impuesto sobre herencias (Formulario 706), impuesto sobre donaciones (Formulario 709) y declaraciones de fideicomisos (Formulario 1041)." },
 
   // Why Us
-  "whyUs.label": { en: "Why TaxNuvia", es: "¿Por Qué TaxNuvia?" },
+  "whyUs.label": { en: "Why TaxCenda", es: "¿Por Qué TaxCenda?" },
   "whyUs.title": { en: "Trusted by Thousands", es: "La Confianza de Miles" },
   "whyUs.r1.title": { en: "IRS Enrolled Agents", es: "Agentes Inscritos del IRS" },
   "whyUs.r1.desc": { en: "Federally licensed tax practitioners with unlimited rights to represent taxpayers before the IRS.", es: "Profesionales fiscales con licencia federal y derechos ilimitados para representar contribuyentes ante el IRS." },
@@ -103,8 +103,8 @@ const translations: Record<string, Record<Language, string>> = {
   "cta.title1": { en: "Ready to File with", es: "¿Listo para Declarar con" },
   "cta.title2": { en: "Confidence?", es: "Confianza?" },
   "cta.subtitle": {
-    en: "Join thousands of clients who trust TaxNuvia's IRS Enrolled Agents with their taxes. Get started in minutes.",
-    es: "Únase a miles de clientes que confían en los Agentes Inscritos de TaxNuvia para sus impuestos. Comience en minutos.",
+    en: "Join thousands of clients who trust TaxCenda's IRS Enrolled Agents with their taxes. Get started in minutes.",
+    es: "Únase a miles de clientes que confían en los Agentes Inscritos de TaxCenda para sus impuestos. Comience en minutos.",
   },
   "cta.button": { en: "Create Free Account", es: "Crear Cuenta Gratis" },
 
@@ -222,11 +222,11 @@ const translations: Record<string, Record<Language, string>> = {
 
   "testimonial.1.name": { en: "Maria Rodriguez", es: "María Rodríguez" },
   "testimonial.1.role": { en: "Small Business Owner", es: "Dueña de Pequeña Empresa" },
-  "testimonial.1.text": { en: "TaxNuvia made filing my business taxes so easy. Their team handled my Schedule C and 1120-S with precision. I saved over $4,000 this year!", es: "TaxNuvia hizo que declarar mis impuestos empresariales fuera muy fácil. Su equipo manejó mi Anexo C y 1120-S con precisión. ¡Ahorré más de $4,000 este año!" },
+  "testimonial.1.text": { en: "TaxCenda made filing my business taxes so easy. Their team handled my Schedule C and 1120-S with precision. I saved over $4,000 this year!", es: "TaxCenda hizo que declarar mis impuestos empresariales fuera muy fácil. Su equipo manejó mi Anexo C y 1120-S con precisión. ¡Ahorré más de $4,000 este año!" },
 
   "testimonial.2.name": { en: "James Chen", es: "James Chen" },
   "testimonial.2.role": { en: "US Expat in London", es: "Expatriado en Londres" },
-  "testimonial.2.text": { en: "As a US citizen living abroad, FBAR and FATCA filing was a nightmare until I found TaxNuvia. They handle everything seamlessly.", es: "Como ciudadano estadounidense viviendo en el extranjero, la declaración FBAR y FATCA era una pesadilla hasta que encontré TaxNuvia. Lo manejan todo sin problemas." },
+  "testimonial.2.text": { en: "As a US citizen living abroad, FBAR and FATCA filing was a nightmare until I found TaxCenda. They handle everything seamlessly.", es: "Como ciudadano estadounidense viviendo en el extranjero, la declaración FBAR y FATCA era una pesadilla hasta que encontré TaxCenda. Lo manejan todo sin problemas." },
 
   "testimonial.3.name": { en: "Sarah Mitchell", es: "Sarah Mitchell" },
   "testimonial.3.role": { en: "Freelance Designer", es: "Diseñadora Freelance" },
@@ -234,7 +234,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   "testimonial.4.name": { en: "Robert Williams", es: "Robert Williams" },
   "testimonial.4.role": { en: "Retired Teacher", es: "Maestro Jubilado" },
-  "testimonial.4.text": { en: "I've been using TaxNuvia for 5 years now. Their enrolled agents are always available and my returns are always filed on time.", es: "Llevo 5 años usando TaxNuvia. Sus agentes inscritos siempre están disponibles y mis declaraciones siempre se presentan a tiempo." },
+  "testimonial.4.text": { en: "I've been using TaxCenda for 5 years now. Their enrolled agents are always available and my returns are always filed on time.", es: "Llevo 5 años usando TaxCenda. Sus agentes inscritos siempre están disponibles y mis declaraciones siempre se presentan a tiempo." },
 
   "testimonial.5.name": { en: "Lisa Park", es: "Lisa Park" },
   "testimonial.5.role": { en: "Real Estate Investor", es: "Inversionista Inmobiliaria" },
@@ -242,7 +242,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   "testimonial.6.name": { en: "David Okafor", es: "David Okafor" },
   "testimonial.6.role": { en: "Tech Startup Founder", es: "Fundador de Startup Tecnológica" },
-  "testimonial.6.text": { en: "TaxNuvia helped us set up our S-Corp structure and saved us thousands in self-employment tax. Highly recommend!", es: "TaxNuvia nos ayudó a configurar nuestra estructura S-Corp y nos ahorró miles en impuestos de autoempleo. ¡Muy recomendado!" },
+  "testimonial.6.text": { en: "TaxCenda helped us set up our S-Corp structure and saved us thousands in self-employment tax. Highly recommend!", es: "TaxCenda nos ayudó a configurar nuestra estructura S-Corp y nos ahorró miles en impuestos de autoempleo. ¡Muy recomendado!" },
 
   // Auth
   "auth.welcomeBack": { en: "Welcome Back", es: "Bienvenido de Nuevo" },
@@ -339,7 +339,7 @@ const translations: Record<string, Record<Language, string>> = {
   "faq.a4": { en: "Our pricing depends on the complexity of your return. Simple W-2 returns start at $199, while business returns and complex filings are quoted based on your specific situation. Contact us for a free estimate.", es: "Nuestros precios dependen de la complejidad de su declaración. Las declaraciones simples W-2 comienzan en $199, mientras que las declaraciones empresariales y presentaciones complejas se cotizan según su situación específica. Contáctenos para un presupuesto gratuito." },
 
   "faq.q5": { en: "Is my financial data secure?", es: "¿Están seguros mis datos financieros?" },
-  "faq.a5": { en: "Absolutely. We use bank-level 256-bit encryption and are IRS-authorized e-file providers. Your documents are stored securely and accessible only to you and your assigned tax professional.", es: "Absolutamente. Utilizamos cifrado de nivel bancario de 256 bits y somos proveedores autorizados de e-file del IRS. Sus documentos se almacenan de forma segura y son accesibles solo para usted y su profesional fiscal asignado." },
+  "faq.a5": { en: "We use encrypted connections, private document storage and mandatory multi-factor authentication. Access is limited to you and authorized tax staff. E-file provider details are shown when configured for your engagement.", es: "Usamos conexiones cifradas, almacenamiento privado de documentos y autenticación multifactor obligatoria. El acceso está limitado a usted y al personal fiscal autorizado. Los datos del proveedor de e-file se muestran cuando están configurados para su caso." },
 
   "faq.q6": { en: "Can you help with back taxes or unfiled returns?", es: "¿Pueden ayudar con impuestos atrasados o declaraciones no presentadas?" },
   "faq.a6": { en: "Yes, we help clients file returns for prior years, submit Form 1040-X amendments, and negotiate with the IRS on penalty abatement and installment agreements for outstanding tax liabilities.", es: "Sí, ayudamos a clientes a presentar declaraciones de años anteriores, enviar enmiendas del Formulario 1040-X y negociar con el IRS sobre reducción de penalidades y acuerdos de pago para obligaciones fiscales pendientes." },

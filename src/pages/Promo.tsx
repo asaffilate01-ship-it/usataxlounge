@@ -62,11 +62,11 @@ const Promo = () => {
   const { t, lang } = useLanguage();
 
   useEffect(() => {
-    document.title = "TaxNuvia — Guided US Tax Filing Platform | Private Preview";
+    document.title = "TaxCenda — Guided US Tax Filing Platform | Private Preview";
     const desc = document.querySelector('meta[name="description"]');
     desc?.setAttribute(
       "content",
-      "TaxNuvia pairs IRS Enrolled Agents with a secure client portal: document vault, AI receipt scanning, e-signature, encrypted messaging and live filing status.",
+      "TaxCenda pairs IRS Enrolled Agents with a secure client portal: document vault, AI receipt scanning, e-signature, encrypted messaging and live filing status.",
     );
   }, []);
 
