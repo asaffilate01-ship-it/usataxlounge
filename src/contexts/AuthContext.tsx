@@ -1,14 +1,18 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, Session, AuthenticatorAssuranceLevels } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 type MFAStatus = "loading" | "enrolled" | "not_enrolled" | "verified";
+export type AppRole = "admin" | "preparer" | "reviewer" | "compliance" | "client";
+
+export const isStaffRole = (role: AppRole | null): boolean =>
+  role === "admin" || role === "preparer" || role === "reviewer" || role === "compliance";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  userRole: "admin" | "client" | null;
+  userRole: AppRole | null;
   profile: { full_name: string; avatar_url: string | null; phone: string | null } | null;
   mfaStatus: MFAStatus;
   refreshMFAStatus: () => Promise<void>;
@@ -32,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<"admin" | "client" | null>(null);
+  const [userRole, setUserRole] = useState<AppRole | null>(null);
   const [profile, setProfile] = useState<{ full_name: string; avatar_url: string | null; phone: string | null } | null>(null);
   const [mfaStatus, setMfaStatus] = useState<MFAStatus>("loading");
 
@@ -42,10 +46,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       supabase.from("profiles").select("full_name, avatar_url, phone").eq("user_id", userId).single(),
     ]);
 
-    if (rolesRes.data && rolesRes.data.length > 0) {
-      const roles = rolesRes.data.map((r) => r.role);
-      setUserRole(roles.includes("admin") ? "admin" : "client");
-    }
+    const roles = (rolesRes.data ?? []).map((r) => r.role as AppRole);
+    const priority: AppRole[] = ["admin", "compliance", "reviewer", "preparer", "client"];
+    setUserRole(priority.find((role) => roles.includes(role)) ?? "client");
 
     if (profileRes.data) {
       setProfile(profileRes.data);

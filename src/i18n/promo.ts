@@ -10,8 +10,8 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
   "promo.hero.title1": { en: "The guided US tax", es: "La plataforma fiscal" },
   "promo.hero.title2": { en: "filing platform.", es: "guiada de EE. UU." },
   "promo.hero.subtitle": {
-    en: "TaxNuvia pairs IRS Enrolled Agents with a secure client portal — document vault, AI receipt scanning, encrypted messaging, e-signature and real-time filing status, on web and mobile.",
-    es: "TaxNuvia combina Agentes Inscritos del IRS con un portal seguro — bóveda de documentos, escaneo de recibos con IA, mensajería cifrada, firma electrónica y estado de declaración en tiempo real, en web y móvil.",
+    en: "TaxCenda pairs IRS Enrolled Agents with a secure client portal — document vault, AI receipt scanning, encrypted messaging, e-signature and real-time filing status, on web and mobile.",
+    es: "TaxCenda combina Agentes Inscritos del IRS con un portal seguro — bóveda de documentos, escaneo de recibos con IA, mensajería cifrada, firma electrónica y estado de declaración en tiempo real, en web y móvil.",
   },
   "promo.hero.cta": { en: "Enter Access Code", es: "Introducir Código" },
   "promo.hero.cta2": { en: "See What's Inside", es: "Ver Qué Incluye" },
@@ -36,7 +36,7 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
   "promo.f3.title": { en: "AI Receipt Scanning", es: "Escaneo de Recibos con IA" },
   "promo.f3.desc": { en: "Photograph a receipt or bill and the amount, vendor, date and category are extracted automatically.", es: "Fotografíe un recibo o factura y el importe, proveedor, fecha y categoría se extraen automáticamente." },
   "promo.f4.title": { en: "IRS-Compliant E-Signature", es: "Firma Electrónica Conforme al IRS" },
-  "promo.f4.desc": { en: "Form 8879 equivalent e-sign with typed consent, IP address and timestamp captured for audit.", es: "Firma equivalente al Formulario 8879 con consentimiento, dirección IP y marca de tiempo registrados para auditoría." },
+  "promo.f4.desc": { en: "Review the final package and sign the applicable authorization with consent, IP address and timestamp captured for audit.", es: "Revise el paquete final y firme la autorización aplicable; el consentimiento, la dirección IP y la marca de tiempo quedan registrados para auditoría." },
   "promo.f5.title": { en: "Encrypted Messaging", es: "Mensajería Cifrada" },
   "promo.f5.desc": { en: "Real-time chat with your Enrolled Agent, read receipts, presence and file attachments — no email threads.", es: "Chat en tiempo real con su Agente Inscrito, confirmaciones de lectura, presencia y archivos adjuntos — sin cadenas de correo." },
   "promo.f6.title": { en: "Guided Onboarding", es: "Incorporación Guiada" },
@@ -62,8 +62,8 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
   "promo.app.label": { en: "Installable app", es: "App instalable" },
   "promo.app.title": { en: "Native-feeling on every phone", es: "Sensación nativa en cualquier móvil" },
   "promo.app.subtitle": {
-    en: "Install TaxNuvia to your home screen and get a full-screen app with bottom navigation, offline shell and instant document capture from the camera.",
-    es: "Instale TaxNuvia en su pantalla de inicio y obtenga una app a pantalla completa con navegación inferior, funcionamiento offline y captura instantánea de documentos con la cámara.",
+    en: "Install TaxCenda to your home screen and get a full-screen app with bottom navigation, offline shell and instant document capture from the camera.",
+    es: "Instale TaxCenda en su pantalla de inicio y obtenga una app a pantalla completa con navegación inferior, funcionamiento offline y captura instantánea de documentos con la cámara.",
   },
   "promo.app.b1": { en: "Add to home screen on iOS and Android", es: "Añadir a la pantalla de inicio en iOS y Android" },
   "promo.app.b2": { en: "Bottom tab navigation built for thumbs", es: "Navegación inferior pensada para el pulgar" },
@@ -71,8 +71,8 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
   "promo.app.b4": { en: "Push-ready notifications for filing milestones", es: "Notificaciones listas para hitos de su declaración" },
 
   "promo.faq.label": { en: "Questions", es: "Preguntas" },
-  "promo.faq.title": { en: "What TaxNuvia offers", es: "Qué ofrece TaxNuvia" },
-  "promo.faq.q1": { en: "What exactly is TaxNuvia?", es: "¿Qué es exactamente TaxNuvia?" },
+  "promo.faq.title": { en: "What TaxCenda offers", es: "Qué ofrece TaxCenda" },
+  "promo.faq.q1": { en: "What exactly is TaxCenda?", es: "¿Qué es exactamente TaxCenda?" },
   "promo.faq.a1": { en: "A guided US tax filing service delivered through our own SaaS portal. IRS Enrolled Agents prepare, review and e-file your return, while you track everything from a secure dashboard on web or mobile.", es: "Un servicio guiado de declaración de impuestos de EE. UU. entregado a través de nuestro propio portal SaaS. Agentes Inscritos del IRS preparan, revisan y presentan su declaración, mientras usted lo sigue todo desde un panel seguro en web o móvil." },
   "promo.faq.q2": { en: "Who is it for?", es: "¿Para quién es?" },
   "promo.faq.a2": { en: "Individuals, self-employed professionals, small businesses and US expats abroad — including 1040, 1040-NR, 1120, FBAR, FATCA and Form 2555 filings.", es: "Individuos, autónomos, pequeñas empresas y expatriados estadounidenses — incluidas declaraciones 1040, 1040-NR, 1120, FBAR, FATCA y Formulario 2555." },
@@ -86,7 +86,7 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
   "promo.faq.a6": { en: "The full site and client portal are in private preview while we onboard our first cohort. Enter the code you were given to unlock the complete experience.", es: "El sitio completo y el portal de clientes están en vista previa privada mientras incorporamos a nuestro primer grupo. Introduzca el código que recibió para desbloquear la experiencia completa." },
 
   "promo.gate.title": { en: "Private preview", es: "Vista previa privada" },
-  "promo.gate.desc": { en: "Enter your access code to unlock the full TaxNuvia site and client portal.", es: "Introduzca su código de acceso para desbloquear el sitio completo y el portal de clientes de TaxNuvia." },
+  "promo.gate.desc": { en: "Enter your access code to unlock the full TaxCenda site and client portal.", es: "Introduzca su código de acceso para desbloquear el sitio completo y el portal de clientes de TaxCenda." },
   "promo.gate.placeholder": { en: "Access code", es: "Código de acceso" },
   "promo.gate.submit": { en: "Unlock", es: "Desbloquear" },
   "promo.gate.error": { en: "That code isn't recognised. Please check and try again.", es: "Ese código no es válido. Verifíquelo e inténtelo de nuevo." },
@@ -94,5 +94,5 @@ export const promoTranslations: Record<string, { en: string; es: string }> = {
 
   "promo.cta.title": { en: "Ready to see the whole thing?", es: "¿Listo para verlo todo?" },
   "promo.cta.subtitle": { en: "Unlock the full site, pricing, blog and client portal with your access code.", es: "Desbloquee el sitio completo, precios, blog y portal de clientes con su código de acceso." },
-  "promo.footer.legal": { en: "TaxNuvia is a trading name of iTechLounge LLC.", es: "TaxNuvia es un nombre comercial de iTechLounge LLC." },
+  "promo.footer.legal": { en: "TaxCenda is a trading name of iTechLounge LLC.", es: "TaxCenda es un nombre comercial de iTechLounge LLC." },
 };

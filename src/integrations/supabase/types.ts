@@ -238,6 +238,7 @@ export type Database = {
       filings: {
         Row: {
           created_at: string
+          engagement_id: string | null
           file_url: string | null
           form_type: string
           id: string
@@ -250,6 +251,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          engagement_id?: string | null
           file_url?: string | null
           form_type: string
           id?: string
@@ -262,6 +264,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          engagement_id?: string | null
           file_url?: string | null
           form_type?: string
           id?: string
@@ -568,7 +571,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "client"
+      app_role: "admin" | "preparer" | "reviewer" | "compliance" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -696,7 +699,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "client"],
+      app_role: ["admin", "preparer", "reviewer", "compliance", "client"],
     },
   },
 } as const

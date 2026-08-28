@@ -25,8 +25,8 @@ const PrivacyPolicy = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "TaxNuvia es el responsable del tratamiento de sus datos personales. TaxNuvia opera como un servicio de preparación de impuestos con licencia federal de EE.UU., con sede virtual en Miami, Florida, EE.UU., y está asociado con TaxNuvia UK (taxlounge.co.uk). Para consultas sobre privacidad, contacte con nosotros en la sección de contacto de nuestra página web."
-                : "TaxNuvia is the data controller for your personal data. TaxNuvia operates as a US federally-licensed tax preparation service with a virtual office in Miami, Florida, USA, and is associated with TaxNuvia UK (taxlounge.co.uk). For privacy enquiries, please contact us via the enquiry form on our website."}
+                ? "TaxCenda es el responsable del tratamiento de sus datos personales. TaxCenda opera como un servicio de preparación de impuestos con licencia federal de EE.UU., con sede virtual en Miami, Florida, EE.UU., y está asociado con TaxCenda UK (taxlounge.co.uk). Para consultas sobre privacidad, contacte con nosotros en la sección de contacto de nuestra página web."
+                : "TaxCenda is the data controller for your personal data. TaxCenda operates as a US federally-licensed tax preparation service with a virtual office in Miami, Florida, USA, and is associated with TaxCenda UK (taxlounge.co.uk). For privacy enquiries, please contact us via the enquiry form on our website."}
             </p>
           </section>
 
@@ -61,7 +61,7 @@ const PrivacyPolicy = () => {
             </p>
             <ul className="list-disc pl-5 text-muted-foreground space-y-1.5 text-sm">
               <li><strong>{isEs ? "Ejecución de un contrato" : "Performance of a contract"}</strong> — {isEs ? "para preparar y presentar sus declaraciones de impuestos" : "to prepare and file your tax returns"}</li>
-              <li><strong>{isEs ? "Obligación legal" : "Legal obligation"}</strong> — {isEs ? "para cumplir con las regulaciones del IRS, HMRC, y leyes fiscales aplicables" : "to comply with IRS regulations, HMRC requirements, and applicable tax laws"}</li>
+              <li><strong>{isEs ? "Obligación legal" : "Legal obligation"}</strong> — {isEs ? "para cumplir con las leyes fiscales y de privacidad aplicables" : "to comply with applicable tax and privacy laws"}</li>
               <li><strong>{isEs ? "Interés legítimo" : "Legitimate interest"}</strong> — {isEs ? "para mejorar nuestros servicios, prevenir fraude y administrar nuestro negocio" : "to improve our services, prevent fraud, and administer our business"}</li>
               <li><strong>{isEs ? "Consentimiento" : "Consent"}</strong> — {isEs ? "para cookies analíticas y comunicaciones de marketing (puede retirarlo en cualquier momento)" : "for analytics cookies and marketing communications (you may withdraw at any time)"}</li>
             </ul>
@@ -103,8 +103,8 @@ const PrivacyPolicy = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "Implementamos cifrado de nivel bancario de 256 bits, autenticación multifactor obligatoria (MFA/TOTP), y medidas de seguridad estándar de la industria para proteger su información personal. Estamos autorizados por el IRS como proveedores de e-file y cumplimos con todas las regulaciones federales, estatales y del Reino Unido aplicables."
-                : "We implement bank-level 256-bit encryption, mandatory multi-factor authentication (MFA/TOTP), and industry-standard security measures to protect your personal information. We are IRS-authorised e-file providers and comply with all applicable US federal, state, and UK regulations."}
+                ? "Usamos conexiones cifradas, almacenamiento privado con control de acceso, autenticación multifactor obligatoria (MFA/TOTP), registros de auditoría y otras salvaguardas basadas en riesgos. El estado del proveedor de e-file y los canales de transmisión se informan cuando están configurados para un encargo."
+                : "We use encrypted connections, private access-controlled storage, mandatory multi-factor authentication (MFA/TOTP), audit logging, and other risk-based safeguards. E-file provider status and transmission channels are disclosed when configured for an engagement."}
             </p>
           </section>
 
@@ -115,8 +115,8 @@ const PrivacyPolicy = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "No vendemos, alquilamos ni compartimos su información personal con terceros para fines de marketing. Solo compartimos su información con: el IRS y las autoridades fiscales estatales según sea necesario; HMRC cuando sea relevante para su situación fiscal; proveedores de servicios que nos ayudan a operar (sujetos a obligaciones de confidencialidad y contratos de procesamiento de datos); y según lo requiera la ley de EE.UU. o del Reino Unido."
-                : "We do not sell, rent, or share your personal information with third parties for marketing purposes. We only share your information with: the IRS and state tax authorities as necessary; HMRC where relevant to your tax situation; service providers who help us operate (subject to confidentiality obligations and data processing agreements); and as required by US or UK law."}
+                ? "No vendemos ni alquilamos su información personal para fines de marketing. Solo la compartimos con autoridades fiscales cuando usted lo autoriza o la ley lo exige; con proveedores que nos ayudan a operar bajo obligaciones contractuales; y cuando sea necesario para cumplir la ley."
+                : "We do not sell or rent your personal information for marketing. We share it only with tax authorities when you authorize us or the law requires it, with service providers operating under contractual safeguards, and where otherwise required by law."}
             </p>
           </section>
 
@@ -127,8 +127,8 @@ const PrivacyPolicy = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "Retenemos los registros de declaraciones de impuestos y documentos de respaldo durante un mínimo de 7 años según lo requieren las regulaciones del IRS (y 6 años según las directrices de HMRC, lo que sea mayor). Los datos no esenciales se eliminan cuando ya no son necesarios. Puede solicitar la eliminación de datos no esenciales en cualquier momento."
-                : "We retain tax return records and supporting documents for a minimum of 7 years as required by IRS regulations (and 6 years per HMRC guidelines, whichever is longer). Non-essential data is deleted when no longer needed. You may request deletion of non-essential data at any time."}
+                ? "Conservamos los registros según las leyes aplicables, las obligaciones profesionales y los términos de su encargo. Los datos no esenciales se eliminan cuando dejan de ser necesarios. Puede solicitar nuestro calendario de conservación o la eliminación de datos elegibles en cualquier momento."
+                : "We retain records according to applicable law, professional obligations and your engagement terms. Non-essential data is deleted when no longer needed. You may request our retention schedule or deletion of eligible data at any time."}
             </p>
           </section>
 
@@ -253,8 +253,8 @@ const PrivacyPolicy = () => {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {isEs
-                ? "Si tiene preguntas sobre esta política de privacidad o desea ejercer sus derechos, utilice el formulario de consulta en nuestra página web o contáctenos al (305) 555-0190."
-                : "If you have questions about this privacy policy or wish to exercise your rights, please use the enquiry form on our website or contact us at (305) 555-0190."}
+                ? "Si tiene preguntas sobre esta política de privacidad o desea ejercer sus derechos, utilice el formulario de consulta en nuestra página web."
+                : "If you have questions about this privacy policy or wish to exercise your rights, please use the enquiry form on our website."}
             </p>
           </section>
 

@@ -116,7 +116,7 @@ const GDPRDataRights = () => {
           <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm font-medium text-foreground">Delete Account & Data</p>
-            <p className="text-xs text-muted-foreground mt-1">Permanently delete all your data. This cannot be undone. Note: tax records may be retained for 7 years per IRS/HMRC requirements.</p>
+            <p className="text-xs text-muted-foreground mt-1">Request deletion of your account data. Records subject to a legal, regulatory or engagement retention requirement may be preserved and explained to you.</p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm" className="mt-3" disabled={deleting}>
@@ -128,7 +128,7 @@ const GDPRDataRights = () => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete all your personal data from TaxNuvia. Tax filing records may be retained for up to 7 years as required by IRS Publication 4557 and HMRC regulations.
+                    This requests deletion of your TaxCenda account data. Records that must be retained under applicable law, professional obligations or your engagement terms will be preserved for the required period and disclosed to you.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

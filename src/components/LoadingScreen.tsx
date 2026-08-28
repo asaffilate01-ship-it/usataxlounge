@@ -1,5 +1,4 @@
-import logoDark from "@/assets/taxnuvia-logo.png";
-import logoLight from "@/assets/taxnuvia-logo-light.png";
+import Logo from "@/components/Logo";
 
 const LoadingScreen = () => {
   return (
@@ -16,17 +15,7 @@ const LoadingScreen = () => {
             aria-hidden
             className="absolute -inset-6 rounded-full bg-accent/15 blur-2xl animate-pulse"
           />
-          <img
-            src={logoDark}
-            alt="TaxNuvia"
-            className="relative h-12 w-auto object-contain block dark:hidden"
-          />
-          <img
-            src={logoLight}
-            alt=""
-            aria-hidden
-            className="relative h-12 w-auto object-contain hidden dark:block"
-          />
+          <div className="relative"><Logo size="xl" /></div>
         </div>
 
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">

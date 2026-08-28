@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { isStaffRole, useAuth } from "@/contexts/AuthContext";
 
 export interface Filing {
   id: string;
+  engagement_id: string | null;
   user_id: string;
   tax_year: number;
   form_type: string;
@@ -29,7 +30,7 @@ export const useFilings = (userId?: string) => {
       .order("created_at", { ascending: false });
 
     // If admin viewing specific user, filter by that user
-    if (userRole === "admin" && userId) {
+    if (isStaffRole(userRole) && userId) {
       query = query.eq("user_id", userId);
     } else if (userRole === "client" && user) {
       // Clients only see their own

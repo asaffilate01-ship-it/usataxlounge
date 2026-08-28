@@ -43,10 +43,10 @@ export const LegalFooter = () => {
           <CookieSettingsLink className="text-muted-foreground hover:text-accent" />
         </nav>
         <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} TaxNuvia —{" "}
+          © {new Date().getFullYear()} TaxCenda —{" "}
           {isEs
-            ? "TaxNuvia es un nombre comercial de iTechLounge LLC."
-            : "TaxNuvia is a trading name of iTechLounge LLC."}
+            ? "TaxCenda es un nombre comercial de iTechLounge LLC."
+            : "TaxCenda is a trading name of iTechLounge LLC."}
         </p>
       </div>
     </footer>
