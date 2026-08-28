@@ -309,7 +309,7 @@ const TaxWorkspace = () => {
               </tr></thead>
               <tbody>{workspace.assets.map((item) => (
                 <tr key={item.id} className="border-b border-border last:border-0">
-                  <td className="px-5 py-3"><p className="text-sm font-medium text-foreground">{item.description}</p><p className="text-xs text-muted-foreground">{item.asset_class.replaceAll("_", " ")}</p></td>
+                  <td className="px-5 py-3"><p className="text-sm font-medium text-foreground">{item.description}</p><p className="text-xs text-muted-foreground">{item.asset_class.replace(/_/g, " ")}</p></td>
                   <td className="px-5 py-3 text-sm text-muted-foreground">{new Date(`${item.placed_in_service_date}T00:00:00`).toLocaleDateString()}</td>
                   <td className="px-5 py-3 text-right text-sm font-medium text-foreground">${Number(item.cost).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                   <td className="px-5 py-3 text-right text-sm text-muted-foreground">{Number(item.business_use_percentage)}%</td>

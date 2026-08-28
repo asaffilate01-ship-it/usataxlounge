@@ -173,7 +173,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
           user_id: user.id,
           entity_id: workspace.entity.id,
           engagement_id: workspace.engagement.id,
-          title: `${result.documentType.replaceAll("_", " ")}: ${result.vendorName}`,
+          title: `${result.documentType.replace(/_/g, " ")}: ${result.vendorName}`,
           type: result.documentType,
           category: result.category,
           file_url: storagePath,

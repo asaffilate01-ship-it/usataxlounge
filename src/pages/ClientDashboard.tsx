@@ -561,7 +561,7 @@ const ClientDashboard = () => {
                               {item.type === "income" ? "Income" : "Expense"}
                             </Badge>
                           </td>
-                          <td className="px-5 py-3 text-sm text-muted-foreground capitalize">{item.entry_kind.replaceAll("_", " ")}</td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground capitalize">{item.entry_kind.replace(/_/g, " ")}</td>
                           <td className="px-5 py-3 text-sm text-muted-foreground"><span className="block text-foreground">{item.vendor_name || "—"}</span>{item.description || ""}</td>
                           <td className="px-5 py-3 text-sm text-muted-foreground">{item.transaction_date ? new Date(`${item.transaction_date}T00:00:00`).toLocaleDateString() : "—"}</td>
                           <td className="px-5 py-3 text-sm font-semibold text-foreground text-right">
