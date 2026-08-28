@@ -19,7 +19,7 @@ const LoadingScreen = () => {
         </div>
 
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-          File clearly. Move forward.
+          Filed right. Represented with confidence.
         </p>
 
         <div
