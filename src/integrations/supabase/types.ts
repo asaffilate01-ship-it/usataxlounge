@@ -47,6 +47,101 @@ export type Database = {
         }
         Relationships: []
       }
+      clarification_questions: {
+        Row: {
+          answer: string | null
+          answered_at: string | null
+          asked_by: string | null
+          context: string | null
+          created_at: string
+          engagement_id: string
+          evidence_document_id: string | null
+          id: string
+          impact: string | null
+          priority: string
+          question: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_document_id: string | null
+          source_entry_id: string | null
+          status: string
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answer?: string | null
+          answered_at?: string | null
+          asked_by?: string | null
+          context?: string | null
+          created_at?: string
+          engagement_id: string
+          evidence_document_id?: string | null
+          id?: string
+          impact?: string | null
+          priority?: string
+          question: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_document_id?: string | null
+          source_entry_id?: string | null
+          status?: string
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answer?: string | null
+          answered_at?: string | null
+          asked_by?: string | null
+          context?: string | null
+          created_at?: string
+          engagement_id?: string
+          evidence_document_id?: string | null
+          id?: string
+          impact?: string | null
+          priority?: string
+          question?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_document_id?: string | null
+          source_entry_id?: string | null
+          status?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clarification_questions_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clarification_questions_evidence_document_id_fkey"
+            columns: ["evidence_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clarification_questions_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clarification_questions_source_entry_id_fkey"
+            columns: ["source_entry_id"]
+            isOneToOne: false
+            referencedRelation: "income_expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           address: string | null
@@ -184,46 +279,91 @@ export type Database = {
       }
       documents: {
         Row: {
+          amount: number | null
           category: string | null
           client_id: string | null
           content: string | null
+          content_sha256: string | null
           created_at: string
+          document_date: string | null
+          duplicate_status: string
+          engagement_id: string | null
+          entity_id: string | null
+          extraction_confidence: number | null
+          extraction_status: string
           file_url: string | null
           id: string
           metadata: Json | null
+          mime_type: string | null
+          original_filename: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          size_bytes: number | null
           status: string | null
+          superseded_by: string | null
           title: string
           type: string
           updated_at: string
           user_id: string
+          vendor_name: string | null
         }
         Insert: {
+          amount?: number | null
           category?: string | null
           client_id?: string | null
           content?: string | null
+          content_sha256?: string | null
           created_at?: string
+          document_date?: string | null
+          duplicate_status?: string
+          engagement_id?: string | null
+          entity_id?: string | null
+          extraction_confidence?: number | null
+          extraction_status?: string
           file_url?: string | null
           id?: string
           metadata?: Json | null
+          mime_type?: string | null
+          original_filename?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_bytes?: number | null
           status?: string | null
+          superseded_by?: string | null
           title: string
           type?: string
           updated_at?: string
           user_id: string
+          vendor_name?: string | null
         }
         Update: {
+          amount?: number | null
           category?: string | null
           client_id?: string | null
           content?: string | null
+          content_sha256?: string | null
           created_at?: string
+          document_date?: string | null
+          duplicate_status?: string
+          engagement_id?: string | null
+          entity_id?: string | null
+          extraction_confidence?: number | null
+          extraction_status?: string
           file_url?: string | null
           id?: string
           metadata?: Json | null
+          mime_type?: string | null
+          original_filename?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          size_bytes?: number | null
           status?: string | null
+          superseded_by?: string | null
           title?: string
           type?: string
           updated_at?: string
           user_id?: string
+          vendor_name?: string | null
         }
         Relationships: [
           {
@@ -233,11 +373,103 @@ export type Database = {
             referencedRelation: "clients"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "documents_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duplicate_candidates: {
+        Row: {
+          candidate_document_id: string
+          created_at: string
+          engagement_id: string | null
+          id: string
+          match_type: string
+          primary_document_id: string
+          reasons: Json
+          resolution_reason: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          score: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          candidate_document_id: string
+          created_at?: string
+          engagement_id?: string | null
+          id?: string
+          match_type: string
+          primary_document_id: string
+          reasons?: Json
+          resolution_reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          score: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          candidate_document_id?: string
+          created_at?: string
+          engagement_id?: string | null
+          id?: string
+          match_type?: string
+          primary_document_id?: string
+          reasons?: Json
+          resolution_reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          score?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duplicate_candidates_candidate_document_id_fkey"
+            columns: ["candidate_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duplicate_candidates_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duplicate_candidates_primary_document_id_fkey"
+            columns: ["primary_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
         ]
       }
       filings: {
         Row: {
           created_at: string
+          engagement_id: string | null
           file_url: string | null
           form_type: string
           id: string
@@ -250,6 +482,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          engagement_id?: string | null
           file_url?: string | null
           form_type: string
           id?: string
@@ -262,6 +495,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          engagement_id?: string | null
           file_url?: string | null
           form_type?: string
           id?: string
@@ -272,43 +506,222 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "filings_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fixed_assets: {
+        Row: {
+          asset_class: string
+          bonus_depreciation_elected: boolean
+          book_life_years: number | null
+          book_method: string
+          business_use_percentage: number
+          convention: string | null
+          cost: number
+          created_at: string
+          current_depreciation: number
+          description: string
+          engagement_id: string
+          entity_id: string
+          id: string
+          notes: string | null
+          placed_in_service_date: string
+          prior_depreciation: number
+          recovery_period_years: number | null
+          section_179_elected: number
+          source_document_id: string | null
+          source_entry_id: string | null
+          status: string
+          tax_method: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asset_class?: string
+          bonus_depreciation_elected?: boolean
+          book_life_years?: number | null
+          book_method?: string
+          business_use_percentage?: number
+          convention?: string | null
+          cost: number
+          created_at?: string
+          current_depreciation?: number
+          description: string
+          engagement_id: string
+          entity_id: string
+          id?: string
+          notes?: string | null
+          placed_in_service_date: string
+          prior_depreciation?: number
+          recovery_period_years?: number | null
+          section_179_elected?: number
+          source_document_id?: string | null
+          source_entry_id?: string | null
+          status?: string
+          tax_method?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asset_class?: string
+          bonus_depreciation_elected?: boolean
+          book_life_years?: number | null
+          book_method?: string
+          business_use_percentage?: number
+          convention?: string | null
+          cost?: number
+          created_at?: string
+          current_depreciation?: number
+          description?: string
+          engagement_id?: string
+          entity_id?: string
+          id?: string
+          notes?: string | null
+          placed_in_service_date?: string
+          prior_depreciation?: number
+          recovery_period_years?: number | null
+          section_179_elected?: number
+          source_document_id?: string | null
+          source_entry_id?: string | null
+          status?: string
+          tax_method?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fixed_assets_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fixed_assets_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fixed_assets_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fixed_assets_source_entry_id_fkey"
+            columns: ["source_entry_id"]
+            isOneToOne: false
+            referencedRelation: "income_expenses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       income_expenses: {
         Row: {
           amount: number
+          business_use_percentage: number
           category: string
           created_at: string
+          created_source: string
+          currency: string
           description: string | null
           document_url: string | null
+          engagement_id: string | null
+          entity_id: string | null
+          entry_kind: string
           id: string
+          review_reason: string | null
+          review_status: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_document_id: string | null
           tax_year: number | null
+          transaction_date: string | null
           type: string
           user_id: string
+          vendor_name: string | null
         }
         Insert: {
           amount: number
+          business_use_percentage?: number
           category: string
           created_at?: string
+          created_source?: string
+          currency?: string
           description?: string | null
           document_url?: string | null
+          engagement_id?: string | null
+          entity_id?: string | null
+          entry_kind?: string
           id?: string
+          review_reason?: string | null
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_document_id?: string | null
           tax_year?: number | null
+          transaction_date?: string | null
           type: string
           user_id: string
+          vendor_name?: string | null
         }
         Update: {
           amount?: number
+          business_use_percentage?: number
           category?: string
           created_at?: string
+          created_source?: string
+          currency?: string
           description?: string | null
           document_url?: string | null
+          engagement_id?: string | null
+          entity_id?: string | null
+          entry_kind?: string
           id?: string
+          review_reason?: string | null
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_document_id?: string | null
           tax_year?: number | null
+          transaction_date?: string | null
           type?: string
           user_id?: string
+          vendor_name?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "income_expenses_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "income_expenses_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "income_expenses_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -460,41 +873,50 @@ export type Database = {
       signatures: {
         Row: {
           consent_text: string | null
+          consent_version: string | null
           created_at: string
           document_id: string | null
           email: string | null
           filing_id: string
+          filing_snapshot_hash: string | null
           id: string
           ip_address: string | null
           signature_data: string | null
           signed_at: string | null
           typed_name: string | null
+          user_agent: string | null
           user_id: string
         }
         Insert: {
           consent_text?: string | null
+          consent_version?: string | null
           created_at?: string
           document_id?: string | null
           email?: string | null
           filing_id: string
+          filing_snapshot_hash?: string | null
           id?: string
           ip_address?: string | null
           signature_data?: string | null
           signed_at?: string | null
           typed_name?: string | null
+          user_agent?: string | null
           user_id: string
         }
         Update: {
           consent_text?: string | null
+          consent_version?: string | null
           created_at?: string
           document_id?: string | null
           email?: string | null
           filing_id?: string
+          filing_snapshot_hash?: string | null
           id?: string
           ip_address?: string | null
           signature_data?: string | null
           signed_at?: string | null
           typed_name?: string | null
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: [
@@ -510,6 +932,124 @@ export type Database = {
             columns: ["filing_id"]
             isOneToOne: false
             referencedRelation: "filings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_engagements: {
+        Row: {
+          assigned_preparer: string | null
+          assigned_reviewer: string | null
+          created_at: string
+          current_step: string
+          due_date: string | null
+          entity_id: string
+          final_package_hash: string | null
+          id: string
+          locked_at: string | null
+          materiality_threshold: number
+          progress: number
+          scope: string[]
+          tax_year: number
+          updated_at: string
+          user_id: string
+          workflow_status: string
+        }
+        Insert: {
+          assigned_preparer?: string | null
+          assigned_reviewer?: string | null
+          created_at?: string
+          current_step?: string
+          due_date?: string | null
+          entity_id: string
+          final_package_hash?: string | null
+          id?: string
+          locked_at?: string | null
+          materiality_threshold?: number
+          progress?: number
+          scope?: string[]
+          tax_year: number
+          updated_at?: string
+          user_id: string
+          workflow_status?: string
+        }
+        Update: {
+          assigned_preparer?: string | null
+          assigned_reviewer?: string | null
+          created_at?: string
+          current_step?: string
+          due_date?: string | null
+          entity_id?: string
+          final_package_hash?: string | null
+          id?: string
+          locked_at?: string | null
+          materiality_threshold?: number
+          progress?: number
+          scope?: string[]
+          tax_year?: number
+          updated_at?: string
+          user_id?: string
+          workflow_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_engagements_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_entities: {
+        Row: {
+          accounting_method: string
+          base_currency: string
+          client_id: string | null
+          created_at: string
+          entity_type: string
+          id: string
+          legal_name: string
+          owner_user_id: string
+          status: string
+          tax_home_state: string | null
+          tin_last4: string | null
+          updated_at: string
+        }
+        Insert: {
+          accounting_method?: string
+          base_currency?: string
+          client_id?: string | null
+          created_at?: string
+          entity_type: string
+          id?: string
+          legal_name: string
+          owner_user_id: string
+          status?: string
+          tax_home_state?: string | null
+          tin_last4?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accounting_method?: string
+          base_currency?: string
+          client_id?: string | null
+          created_at?: string
+          entity_type?: string
+          id?: string
+          legal_name?: string
+          owner_user_id?: string
+          status?: string
+          tax_home_state?: string | null
+          tin_last4?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_entities_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
         ]
@@ -555,6 +1095,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      answer_clarification_question: {
+        Args: {
+          p_answer: string
+          p_evidence_document_id?: string
+          p_question_id: string
+        }
+        Returns: undefined
+      }
       check_contact_rate_limit: {
         Args: { sender_email: string }
         Returns: boolean
@@ -565,6 +1113,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      is_tax_staff: { Args: { _user_id: string }; Returns: boolean }
+      resolve_duplicate_candidate: {
+        Args: {
+          p_candidate_id: string
+          p_reason?: string
+          p_resolution: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
