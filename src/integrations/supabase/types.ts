@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage_events: {
+        Row: {
+          created_at: string
+          id: string
+          input_bytes: number
+          operation: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          input_bytes?: number
+          operation: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          input_bytes?: number
+          operation?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -46,6 +73,260 @@ export type Database = {
           resource_type?: string
         }
         Relationships: []
+      }
+      bank_accounts: {
+        Row: {
+          account_subtype: string | null
+          account_type: string | null
+          active: boolean
+          connection_id: string
+          created_at: string
+          currency: string
+          entity_id: string
+          id: string
+          mask: string | null
+          name: string
+          official_name: string | null
+          provider_account_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_subtype?: string | null
+          account_type?: string | null
+          active?: boolean
+          connection_id: string
+          created_at?: string
+          currency?: string
+          entity_id: string
+          id?: string
+          mask?: string | null
+          name: string
+          official_name?: string | null
+          provider_account_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_subtype?: string | null
+          account_type?: string | null
+          active?: boolean
+          connection_id?: string
+          created_at?: string
+          currency?: string
+          entity_id?: string
+          id?: string
+          mask?: string | null
+          name?: string
+          official_name?: string | null
+          provider_account_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "bank_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_accounts_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_connections: {
+        Row: {
+          consent_expires_at: string | null
+          created_at: string
+          entity_id: string
+          id: string
+          institution_name: string | null
+          last_synced_at: string | null
+          provider: string
+          provider_item_reference: string
+          secret_reference: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consent_expires_at?: string | null
+          created_at?: string
+          entity_id: string
+          id?: string
+          institution_name?: string | null
+          last_synced_at?: string | null
+          provider: string
+          provider_item_reference: string
+          secret_reference: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consent_expires_at?: string | null
+          created_at?: string
+          entity_id?: string
+          id?: string
+          institution_name?: string | null
+          last_synced_at?: string | null
+          provider?: string
+          provider_item_reference?: string
+          secret_reference?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_connections_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_transactions: {
+        Row: {
+          account_id: string
+          amount: number
+          authorized_date: string | null
+          created_at: string
+          description: string
+          direction: string
+          engagement_id: string | null
+          id: string
+          matched_income_expense_id: string | null
+          merchant_name: string | null
+          normalized_metadata: Json
+          pending: boolean
+          provider_transaction_id: string
+          review_status: string
+          suggested_category: string | null
+          transaction_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          authorized_date?: string | null
+          created_at?: string
+          description: string
+          direction: string
+          engagement_id?: string | null
+          id?: string
+          matched_income_expense_id?: string | null
+          merchant_name?: string | null
+          normalized_metadata?: Json
+          pending?: boolean
+          provider_transaction_id: string
+          review_status?: string
+          suggested_category?: string | null
+          transaction_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          authorized_date?: string | null
+          created_at?: string
+          description?: string
+          direction?: string
+          engagement_id?: string | null
+          id?: string
+          matched_income_expense_id?: string | null
+          merchant_name?: string | null
+          normalized_metadata?: Json
+          pending?: boolean
+          provider_transaction_id?: string
+          review_status?: string
+          suggested_category?: string | null
+          transaction_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_matched_income_expense_id_fkey"
+            columns: ["matched_income_expense_id"]
+            isOneToOne: false
+            referencedRelation: "income_expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chart_accounts: {
+        Row: {
+          account_type: string
+          active: boolean
+          code: string
+          created_at: string
+          entity_id: string
+          id: string
+          name: string
+          normal_balance: string
+          system_account: boolean
+          tax_line_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_type: string
+          active?: boolean
+          code: string
+          created_at?: string
+          entity_id: string
+          id?: string
+          name: string
+          normal_balance: string
+          system_account?: boolean
+          tax_line_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_type?: string
+          active?: boolean
+          code?: string
+          created_at?: string
+          entity_id?: string
+          id?: string
+          name?: string
+          normal_balance?: string
+          system_account?: boolean
+          tax_line_code?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chart_accounts_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       clarification_questions: {
         Row: {
@@ -723,6 +1004,121 @@ export type Database = {
           },
         ]
       }
+      journal_entries: {
+        Row: {
+          created_at: string
+          description: string
+          engagement_id: string
+          entity_id: string
+          entry_date: string
+          id: string
+          posted_at: string | null
+          posted_by: string | null
+          reversal_of: string | null
+          source_id: string | null
+          source_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          engagement_id: string
+          entity_id: string
+          entry_date: string
+          id?: string
+          posted_at?: string | null
+          posted_by?: string | null
+          reversal_of?: string | null
+          source_id?: string | null
+          source_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          engagement_id?: string
+          entity_id?: string
+          entry_date?: string
+          id?: string
+          posted_at?: string | null
+          posted_by?: string | null
+          reversal_of?: string | null
+          source_id?: string | null
+          source_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_entries_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_entries_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "tax_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_entries_reversal_of_fkey"
+            columns: ["reversal_of"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_lines: {
+        Row: {
+          account_id: string
+          created_at: string
+          credit: number
+          debit: number
+          description: string | null
+          id: string
+          journal_entry_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string | null
+          id?: string
+          journal_entry_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string | null
+          id?: string
+          journal_entry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_lines_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "chart_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_lines_journal_entry_id_fkey"
+            columns: ["journal_entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           attachment_name: string | null
@@ -1090,11 +1486,60 @@ export type Database = {
         }
         Relationships: []
       }
+      workflow_events: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          engagement_id: string
+          from_status: string | null
+          id: string
+          metadata: Json
+          reason: string | null
+          to_status: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          engagement_id: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json
+          reason?: string | null
+          to_status: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          engagement_id?: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json
+          reason?: string | null
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_events_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "tax_engagements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      advance_tax_engagement: {
+        Args: {
+          p_engagement_id: string
+          p_reason?: string
+          p_target_status: string
+        }
+        Returns: undefined
+      }
       answer_clarification_question: {
         Args: {
           p_answer: string
