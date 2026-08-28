@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/components/Logo";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { useTaxWorkspace } from "@/hooks/useTaxWorkspace";
+import { filingTaxYear } from "@/integrations/supabase/taxcenda";
 import {
   Select,
   SelectContent,
@@ -26,6 +28,7 @@ interface OnboardingQuestionnaireProps {
 const OnboardingQuestionnaire = ({ onComplete }: OnboardingQuestionnaireProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { initializeWorkspace } = useTaxWorkspace();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
 
@@ -35,6 +38,11 @@ const OnboardingQuestionnaire = ({ onComplete }: OnboardingQuestionnaireProps) =
   const [selectedDeductions, setSelectedDeductions] = useState<string[]>([]);
   const [occupation, setOccupation] = useState("");
   const [phone, setPhone] = useState("");
+  const [legalName, setLegalName] = useState("");
+  const [entityType, setEntityType] = useState("individual");
+  const [accountingMethod, setAccountingMethod] = useState("cash");
+  const [taxHomeState, setTaxHomeState] = useState("");
+  const [taxYear, setTaxYear] = useState(String(filingTaxYear()));
 
   const toggleItem = (item: string, list: string[], setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter((i) => i !== item) : [...list, item]);
@@ -67,6 +75,17 @@ const OnboardingQuestionnaire = ({ onComplete }: OnboardingQuestionnaireProps) =
     if (clientError || profileError) {
       toast({ title: "Error", description: (clientError || profileError)?.message, variant: "destructive" });
     } else {
+      const workspaceReady = await initializeWorkspace({
+        legalName,
+        entityType,
+        accountingMethod,
+        taxHomeState,
+        taxYear: Number(taxYear),
+      });
+      if (!workspaceReady) {
+        setSaving(false);
+        return;
+      }
       toast({ title: "Welcome!", description: "Your profile is set up. Let's get started!" });
       onComplete();
     }
@@ -95,6 +114,49 @@ const OnboardingQuestionnaire = ({ onComplete }: OnboardingQuestionnaireProps) =
       <div>
         <Label>Occupation</Label>
         <Input className="mt-1.5" value={occupation} onChange={(e) => setOccupation(e.target.value)} placeholder="e.g. Software Engineer" />
+      </div>
+      <div>
+        <Label>Taxpayer or business name</Label>
+        <Input className="mt-1.5" value={legalName} onChange={(e) => setLegalName(e.target.value)} placeholder="Your legal name or registered business name" />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <Label>Entity type</Label>
+          <Select value={entityType} onValueChange={setEntityType}>
+            <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="individual">Individual</SelectItem>
+              <SelectItem value="sole_proprietor">Sole proprietor</SelectItem>
+              <SelectItem value="single_member_llc">Single-member LLC</SelectItem>
+              <SelectItem value="partnership">Partnership</SelectItem>
+              <SelectItem value="s_corporation">S corporation</SelectItem>
+              <SelectItem value="c_corporation">C corporation</SelectItem>
+              <SelectItem value="trust">Trust or estate</SelectItem>
+              <SelectItem value="exempt_organization">Exempt organization</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Tax year</Label>
+          <Input className="mt-1.5" type="number" min="2000" max="2100" value={taxYear} onChange={(e) => setTaxYear(e.target.value)} />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <Label>Accounting method</Label>
+          <Select value={accountingMethod} onValueChange={setAccountingMethod}>
+            <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cash">Cash</SelectItem>
+              <SelectItem value="accrual">Accrual</SelectItem>
+              <SelectItem value="hybrid">Hybrid / unsure</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Tax home state</Label>
+          <Input className="mt-1.5 uppercase" maxLength={2} value={taxHomeState} onChange={(e) => setTaxHomeState(e.target.value.toUpperCase())} placeholder="e.g. FL" />
+        </div>
       </div>
       <div>
         <Label>Phone Number</Label>

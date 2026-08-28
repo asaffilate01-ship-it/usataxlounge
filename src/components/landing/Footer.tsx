@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Logo from "@/components/Logo";
 import { useLanguage } from "@/contexts/LanguageContext";
 import CookieSettingsLink from "@/components/CookieSettingsLink";
-import { Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Twitter, Youtube, Mail, MapPin } from "lucide-react";
 
 const Footer = () => {
   const { t, lang } = useLanguage();
@@ -76,10 +76,6 @@ const Footer = () => {
             <h4 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider mb-4">{t("footer.contactTitle")}</h4>
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5">
-                <Phone className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <a href="tel:+13055550190" className="text-sm text-muted-foreground hover:text-accent transition-colors">(305) 555-0190</a>
-              </li>
-              <li className="flex items-start gap-2.5">
                 <Mail className="h-4 w-4 text-accent shrink-0 mt-0.5" />
                 <a href="#contact" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("footer.enquiryLink")}</a>
               </li>
@@ -96,7 +92,7 @@ const Footer = () => {
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} TaxNuvia. All rights reserved. TaxNuvia is a trading name of iTechLounge LLC.
+              © {new Date().getFullYear()} TaxCenda. All rights reserved. TaxCenda is a trading name of iTechLounge LLC.
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{t("footer.privacy")}</Link>

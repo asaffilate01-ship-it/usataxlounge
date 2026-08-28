@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { isStaffRole, useAuth } from "@/contexts/AuthContext";
 import MFAEnroll from "@/components/auth/MFAEnroll";
 import MFAChallenge from "@/components/auth/MFAChallenge";
 
@@ -23,6 +23,14 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     return <Navigate to="/auth" replace />;
   }
 
+  if (!userRole) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
   // MFA enforcement
   if (mfaStatus === "loading") {
     return (
@@ -41,11 +49,11 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   }
 
   // Admin can access client routes too
-  if (requiredRole === "admin" && userRole !== "admin") {
+  if (requiredRole === "admin" && !isStaffRole(userRole)) {
     return <Navigate to="/client" replace />;
   }
 
-  if (requiredRole === "client" && userRole !== "client" && userRole !== "admin") {
+  if (requiredRole === "client" && userRole !== "client" && !isStaffRole(userRole)) {
     return <Navigate to="/admin" replace />;
   }
 

@@ -25,6 +25,7 @@ import {
   File,
   Menu,
   X,
+  ListChecks,
 } from "lucide-react";
 import SecureAttachment from "@/components/SecureAttachment";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,7 @@ import MFASettings from "@/components/client/MFASettings";
 import GDPRDataRights from "@/components/client/GDPRDataRights";
 import ReceiptScanner from "@/components/client/ReceiptScanner";
 import DashboardCharts from "@/components/client/DashboardCharts";
+import TaxWorkspace from "@/components/client/TaxWorkspace";
 import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
 import {
   Dialog,
@@ -136,7 +138,16 @@ const ClientDashboard = () => {
   }, [user]);
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [newEntry, setNewEntry] = useState({ type: "income" as "income" | "expense", category: "", description: "", amount: "" });
+  const [newEntry, setNewEntry] = useState({
+    type: "income" as "income" | "expense",
+    entryKind: "gross_income",
+    category: "",
+    vendorName: "",
+    description: "",
+    amount: "",
+    transactionDate: new Date().toISOString().slice(0, 10),
+    businessUsePercentage: "100",
+  });
 
   // Real-time messaging
   const [adminId, setAdminId] = useState<string | null>(null);
@@ -169,13 +180,28 @@ const ClientDashboard = () => {
 
   const handleAddEntry = async () => {
     if (!newEntry.category || !newEntry.amount) return;
-    await addItem({
+    const saved = await addItem({
       type: newEntry.type,
       category: newEntry.category,
       description: newEntry.description,
       amount: parseFloat(newEntry.amount),
+      entryKind: newEntry.entryKind,
+      transactionDate: newEntry.transactionDate,
+      vendorName: newEntry.vendorName,
+      businessUsePercentage: Number(newEntry.businessUsePercentage),
+      createdSource: "manual",
     });
-    setNewEntry({ type: "income", category: "", description: "", amount: "" });
+    if (!saved) return;
+    setNewEntry({
+      type: "income",
+      entryKind: "gross_income",
+      category: "",
+      vendorName: "",
+      description: "",
+      amount: "",
+      transactionDate: new Date().toISOString().slice(0, 10),
+      businessUsePercentage: "100",
+    });
     setAddDialogOpen(false);
   };
 
@@ -217,6 +243,7 @@ const ClientDashboard = () => {
 
   const navItems = [
     { id: "overview", label: "Overview", icon: Home },
+    { id: "workspace", label: "Tax Workspace", icon: ListChecks },
     { id: "income", label: "Income & Expenses", icon: DollarSign },
     { id: "documents", label: "Documents", icon: FolderOpen },
     { id: "filings", label: "My Filings", icon: FileText },
@@ -410,15 +437,16 @@ const ClientDashboard = () => {
             </div>
           )}
 
+          {/* Tax workspace */}
+          {activeTab === "workspace" && <TaxWorkspace />}
+
           {/* Income & Expenses */}
           {activeTab === "income" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="font-display text-xl font-bold text-foreground">Income & Expenses</h2>
                 <div className="flex gap-2 flex-wrap">
-                  <ReceiptScanner onExtracted={(data) => {
-                    addItem(data);
-                  }} />
+                  <ReceiptScanner onExtracted={(data) => addItem(data)} />
                   <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>
@@ -428,12 +456,12 @@ const ClientDashboard = () => {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Add Income/Expense Entry</DialogTitle>
+                        <DialogTitle>Add a financial record</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4 pt-2">
                         <div>
                           <Label>Type</Label>
-                          <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense" })}>
+                          <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense", entryKind: v === "income" ? "gross_income" : "operating_expense" })}>
                             <SelectTrigger className="mt-1.5">
                               <SelectValue />
                             </SelectTrigger>
@@ -444,8 +472,34 @@ const ClientDashboard = () => {
                           </Select>
                         </div>
                         <div>
+                          <Label>Accounting treatment</Label>
+                          <Select value={newEntry.entryKind} onValueChange={(value) => setNewEntry({ ...newEntry, entryKind: value })}>
+                            <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="gross_income">Gross income</SelectItem>
+                              <SelectItem value="sales">Sales revenue</SelectItem>
+                              <SelectItem value="salary_wages">Salary / wages</SelectItem>
+                              <SelectItem value="interest_income">Interest income</SelectItem>
+                              <SelectItem value="rental_income">Rental income</SelectItem>
+                              <SelectItem value="sundry_income">Sundry income</SelectItem>
+                              <SelectItem value="operating_expense">Operating expense</SelectItem>
+                              <SelectItem value="cost_of_goods">Cost of goods sold</SelectItem>
+                              <SelectItem value="capital_asset">Capital asset</SelectItem>
+                              <SelectItem value="owner_contribution">Owner contribution</SelectItem>
+                              <SelectItem value="owner_draw">Owner draw</SelectItem>
+                              <SelectItem value="loan_proceeds">Loan proceeds</SelectItem>
+                              <SelectItem value="loan_repayment">Loan repayment</SelectItem>
+                              <SelectItem value="other">Other / reviewer to classify</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
                           <Label>Category</Label>
-                          <Input className="mt-1.5" placeholder="e.g. W-2 Wages, Home Office" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
+                          <Input className="mt-1.5" placeholder="e.g. Consulting revenue, Software, Equipment" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
+                        </div>
+                        <div>
+                          <Label>Vendor, customer or payer</Label>
+                          <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.vendorName} onChange={(e) => setNewEntry({ ...newEntry, vendorName: e.target.value })} />
                         </div>
                         <div>
                           <Label>Description (optional)</Label>
@@ -455,7 +509,17 @@ const ClientDashboard = () => {
                           <Label>Amount ($)</Label>
                           <Input className="mt-1.5" type="number" min="0" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
                         </div>
-                        <Button onClick={handleAddEntry} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label>Transaction date</Label>
+                            <Input className="mt-1.5" type="date" value={newEntry.transactionDate} onChange={(e) => setNewEntry({ ...newEntry, transactionDate: e.target.value })} />
+                          </div>
+                          <div>
+                            <Label>Business use (%)</Label>
+                            <Input className="mt-1.5" type="number" min="0" max="100" step="0.01" value={newEntry.businessUsePercentage} onChange={(e) => setNewEntry({ ...newEntry, businessUsePercentage: e.target.value })} />
+                          </div>
+                        </div>
+                        <Button onClick={handleAddEntry} disabled={!newEntry.category.trim() || Number(newEntry.amount) <= 0 || !newEntry.transactionDate} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
                           Add Entry
                         </Button>
                       </div>
@@ -481,7 +545,9 @@ const ClientDashboard = () => {
                       <tr className="border-b border-border bg-muted/50">
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Description</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Treatment</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Vendor / description</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Date</th>
                         <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Amount</th>
                         <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
                       </tr>
@@ -495,7 +561,9 @@ const ClientDashboard = () => {
                               {item.type === "income" ? "Income" : "Expense"}
                             </Badge>
                           </td>
-                          <td className="px-5 py-3 text-sm text-muted-foreground">{item.description || "—"}</td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground capitalize">{item.entry_kind.replaceAll("_", " ")}</td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground"><span className="block text-foreground">{item.vendor_name || "—"}</span>{item.description || ""}</td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground">{item.transaction_date ? new Date(`${item.transaction_date}T00:00:00`).toLocaleDateString() : "—"}</td>
                           <td className="px-5 py-3 text-sm font-semibold text-foreground text-right">
                             ${Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </td>

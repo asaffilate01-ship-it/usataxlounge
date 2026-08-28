@@ -29,7 +29,7 @@ export const blogPosts = [
 <h3>Tax Bracket Adjustments</h3>
 <p>All seven tax brackets have been adjusted for inflation. The top rate of 37% now applies to income over $609,350 for single filers and $731,200 for married couples filing jointly.</p>
 <h2>What This Means for You</h2>
-<p>These inflation adjustments mean that more of your income may fall into lower brackets, potentially reducing your overall tax liability. Contact our Enrolled Agents at TaxNuvia to develop a personalized strategy for the 2025 filing season.</p>`,
+<p>These inflation adjustments mean that more of your income may fall into lower brackets, potentially reducing your overall tax liability. Contact our Enrolled Agents at TaxCenda to develop a personalized strategy for the 2025 filing season.</p>`,
       es: `<h2>Fechas Límite Clave para 2025</h2>
 <p>La temporada de impuestos 2025 trae varios cambios importantes que todo contribuyente debe conocer. Ya sea que presente declaración individual, sea propietario de una pequeña empresa o sea un expatriado estadounidense, comprender estas actualizaciones puede ayudarle a maximizar su reembolso.</p>
 <h3>Fechas Importantes</h3>
@@ -40,7 +40,7 @@ export const blogPosts = [
 <h3>Deducciones Estándar Actualizadas</h3>
 <p>Para el año fiscal 2024, la deducción estándar aumentó a <strong>$14,600</strong> para solteros, <strong>$29,200</strong> para casados y <strong>$21,900</strong> para jefes de hogar.</p>
 <h2>Qué Significa Para Usted</h2>
-<p>Estos ajustes por inflación significan que más de sus ingresos pueden caer en tramos más bajos. Contacte a nuestros Agentes Inscritos en TaxNuvia para una estrategia personalizada.</p>`,
+<p>Estos ajustes por inflación significan que más de sus ingresos pueden caer en tramos más bajos. Contacte a nuestros Agentes Inscritos en TaxCenda para una estrategia personalizada.</p>`,
     },
   },
   {
@@ -64,7 +64,7 @@ export const blogPosts = [
 <p>The FBAR is due <strong>April 15</strong>, with an automatic extension to <strong>October 15</strong>. No separate extension form is needed.</p>
 <h3>Penalties for Non-Compliance</h3>
 <p>Penalties for willful failure to file can reach up to <strong>$129,210</strong> per violation or 50% of the account balance, whichever is greater.</p>
-<h2>How TaxNuvia Can Help</h2>
+<h2>How TaxCenda Can Help</h2>
 <p>Our Enrolled Agents specialize in expat tax compliance. We'll ensure your FBAR is filed accurately and on time.</p>`,
       es: `<h2>¿Qué es el FBAR?</h2>
 <p>El Reporte de Cuentas Bancarias y Financieras Extranjeras (FBAR), oficialmente conocido como FinCEN Formulario 114, es una presentación obligatoria para personas estadounidenses con cuentas financieras extranjeras con un valor agregado superior a <strong>$10,000</strong>.</p>
@@ -74,7 +74,7 @@ export const blogPosts = [
 <p>El FBAR vence el <strong>15 de abril</strong>, con extensión automática hasta el <strong>15 de octubre</strong>.</p>
 <h3>Penalidades</h3>
 <p>Las penalidades por incumplimiento intencional pueden alcanzar hasta <strong>$129,210</strong> por violación o el 50% del saldo de la cuenta.</p>
-<h2>Cómo TaxNuvia Puede Ayudar</h2>
+<h2>Cómo TaxCenda Puede Ayudar</h2>
 <p>Nuestros Agentes Inscritos se especializan en cumplimiento fiscal para expatriados.</p>`,
     },
   },
@@ -100,7 +100,7 @@ export const blogPosts = [
 <h3>Example Savings</h3>
 <p>If your business earns $120,000 net profit: as an LLC, you'd pay approximately <strong>$16,956</strong> in self-employment taxes. As an S-Corp with a $60,000 salary, taxes would be approximately <strong>$9,180</strong> — a savings of nearly <strong>$7,776</strong>.</p>
 <h2>Which Is Right for You?</h2>
-<p>Contact our Enrolled Agents at TaxNuvia to analyze your specific situation.</p>`,
+<p>Contact our Enrolled Agents at TaxCenda to analyze your specific situation.</p>`,
       es: `<h2>Entendiendo las Estructuras Empresariales</h2>
 <p>Elegir la estructura correcta es una de las decisiones fiscales más impactantes. Las dos más comunes son <strong>LLC</strong> y <strong>S-Corporation</strong>.</p>
 <h3>Tratamiento Fiscal de LLC</h3>
@@ -110,7 +110,7 @@ export const blogPosts = [
 <h3>Ejemplo de Ahorro</h3>
 <p>Si su negocio gana $120,000: como LLC pagaría <strong>$16,956</strong>. Como S-Corp con salario de $60,000, los impuestos serían <strong>$9,180</strong> — un ahorro de <strong>$7,776</strong>.</p>
 <h2>¿Cuál Es Mejor Para Usted?</h2>
-<p>Contacte a nuestros Agentes Inscritos en TaxNuvia para analizar su situación.</p>`,
+<p>Contacte a nuestros Agentes Inscritos en TaxCenda para analizar su situación.</p>`,
     },
   },
   {
@@ -139,7 +139,7 @@ export const blogPosts = [
 <h3>5. Charitable Mileage</h3>
 <p>Miles driven for charitable purposes can be deducted at 14 cents per mile.</p>
 <h2>Don't Miss Out</h2>
-<p>Our Enrolled Agents at TaxNuvia review every possible deduction to maximize your refund.</p>`,
+<p>Our Enrolled Agents at TaxCenda review every possible deduction to maximize your refund.</p>`,
       es: `<h2>Deducciones Fiscales Comúnmente Olvidadas</h2>
 <p>Cada año, millones de contribuyentes dejan dinero sobre la mesa. Estas son las 15 deducciones principales.</p>
 <h3>1. Deducción de Oficina en Casa</h3>
@@ -174,7 +174,7 @@ export const blogPosts = [
 <h3>Your Rights During an Audit</h3>
 <p>You have the right to professional representation. As Enrolled Agents, we have unlimited practice rights before the IRS.</p>
 <h2>How We Help</h2>
-<p>At TaxNuvia, our Enrolled Agents handle the entire audit process — from responding to the initial notice to representing you in meetings with the IRS.</p>`,
+<p>At TaxCenda, our Enrolled Agents handle the entire audit process — from responding to the initial notice to representing you in meetings with the IRS.</p>`,
       es: `<h2>Entendiendo las Auditorías del IRS</h2>
 <p>Una auditoría del IRS es un examen de su declaración para verificar que los ingresos y deducciones se reporten con precisión.</p>
 <h3>Causas Comunes de Auditoría</h3>
@@ -183,7 +183,7 @@ export const blogPosts = [
 <h3>Sus Derechos Durante una Auditoría</h3>
 <p>Tiene derecho a representación profesional. Como Agentes Inscritos, tenemos derechos ilimitados de práctica ante el IRS.</p>
 <h2>Cómo Ayudamos</h2>
-<p>En TaxNuvia, nuestros Agentes Inscritos manejan todo el proceso de auditoría.</p>`,
+<p>En TaxCenda, nuestros Agentes Inscritos manejan todo el proceso de auditoría.</p>`,
     },
   },
   {
@@ -208,7 +208,7 @@ export const blogPosts = [
 <h3>Tax-Loss Harvesting</h3>
 <p>Selling investments at a loss to offset capital gains can reduce your tax bill. You can deduct up to <strong>$3,000</strong> in net capital losses against ordinary income.</p>
 <h2>Get Personalized Advice</h2>
-<p>Every taxpayer's situation is unique. Our Enrolled Agents at TaxNuvia can create a customized retirement tax strategy.</p>`,
+<p>Every taxpayer's situation is unique. Our Enrolled Agents at TaxCenda can create a customized retirement tax strategy.</p>`,
       es: `<h2>Planificación de Jubilación con Eficiencia Fiscal</h2>
 <p>La planificación de jubilación no se trata solo de ahorrar dinero — se trata de ahorrar de la manera más eficiente fiscalmente posible.</p>
 <h3>Maximice Contribuciones al 401(k)</h3>
@@ -245,7 +245,7 @@ export const blogPosts = [
 <h3>Penalties for Underpayment</h3>
 <p>The IRS charges a penalty based on the federal short-term interest rate plus 3 percentage points. For 2025, this is approximately <strong>8%</strong> annually on the underpaid amount.</p>
 <h2>Let Us Handle It</h2>
-<p>TaxNuvia's Enrolled Agents can calculate your quarterly estimates, set up payment reminders, and ensure you never miss a deadline.</p>`,
+<p>TaxCenda's Enrolled Agents can calculate your quarterly estimates, set up payment reminders, and ensure you never miss a deadline.</p>`,
       es: `<h2>¿Quién Necesita Pagar Impuestos Trimestrales?</h2>
 <p>Si espera deber $1,000 o más en impuestos durante el año, el IRS requiere que realice pagos estimados trimestralmente. Esto aplica comúnmente a freelancers, contratistas independientes y propietarios de pequeñas empresas.</p>
 <h3>Fechas de Vencimiento 2025</h3>
@@ -258,7 +258,7 @@ export const blogPosts = [
 <h3>Penalidades por Pago Insuficiente</h3>
 <p>El IRS cobra una penalidad basada en la tasa de interés federal a corto plazo más 3 puntos porcentuales, aproximadamente <strong>8%</strong> anual.</p>
 <h2>Déjenos Manejarlo</h2>
-<p>Los Agentes Inscritos de TaxNuvia pueden calcular sus estimados trimestrales y asegurar que nunca pierda una fecha límite.</p>`,
+<p>Los Agentes Inscritos de TaxCenda pueden calcular sus estimados trimestrales y asegurar que nunca pierda una fecha límite.</p>`,
     },
   },
   {
@@ -286,7 +286,7 @@ export const blogPosts = [
 <h3>Record Keeping Tips</h3>
 <p>Keep detailed records of every transaction including the date, amount, fair market value, and purpose. Use crypto tax software or provide your records to our team.</p>
 <h2>Get Expert Help</h2>
-<p>Crypto tax reporting is complex and mistakes can trigger audits. Our Enrolled Agents at TaxNuvia stay current with evolving crypto regulations.</p>`,
+<p>Crypto tax reporting is complex and mistakes can trigger audits. Our Enrolled Agents at TaxCenda stay current with evolving crypto regulations.</p>`,
       es: `<h2>El IRS y las Criptomonedas</h2>
 <p>El IRS trata las criptomonedas como <strong>propiedad</strong>, no como moneda. Esto significa que cada venta, intercambio o transacción es un evento imponible. A partir de 2025, los exchanges de cripto deben emitir el <strong>Formulario 1099-DA</strong>.</p>
 <h3>¿Qué Es Imponible?</h3>
@@ -356,8 +356,8 @@ export const blogPosts = [
 <h3>How to Apply</h3>
 <p>Complete <strong>Form W-7</strong> and submit it with your federal tax return and proof of identity. You can apply by mail, through an IRS-authorized Certifying Acceptance Agent (CAA), or at an IRS Taxpayer Assistance Center.</p>
 <h3>Processing Time</h3>
-<p>ITIN applications typically take <strong>7-11 weeks</strong> to process. As an authorized CAA, TaxNuvia can certify your documents so you don't need to mail originals.</p>
-<h2>TaxNuvia Is a Certifying Acceptance Agent</h2>
+<p>ITIN applications typically take <strong>7-11 weeks</strong> to process. As an authorized CAA, TaxCenda can certify your documents so you don't need to mail originals.</p>
+<h2>TaxCenda Is a Certifying Acceptance Agent</h2>
 <p>We can process your ITIN application in-office, verify your identity documents, and file your return simultaneously — making the process fast and hassle-free.</p>`,
       es: `<h2>¿Qué Es un ITIN?</h2>
 <p>Un Número de Identificación Personal del Contribuyente (ITIN) es un número de procesamiento fiscal emitido por el IRS para personas que necesitan un número de identificación fiscal pero no son elegibles para un Número de Seguro Social (SSN).</p>
@@ -366,8 +366,8 @@ export const blogPosts = [
 <h3>Cómo Solicitar</h3>
 <p>Complete el <strong>Formulario W-7</strong> y envíelo con su declaración federal y prueba de identidad. Puede aplicar por correo, a través de un Agente de Aceptación Certificador (CAA), o en un Centro de Asistencia al Contribuyente del IRS.</p>
 <h3>Tiempo de Procesamiento</h3>
-<p>Las solicitudes de ITIN generalmente toman <strong>7-11 semanas</strong>. Como CAA autorizado, TaxNuvia puede certificar sus documentos para que no necesite enviar originales.</p>
-<h2>TaxNuvia Es un Agente de Aceptación Certificador</h2>
+<p>Las solicitudes de ITIN generalmente toman <strong>7-11 semanas</strong>. Como CAA autorizado, TaxCenda puede certificar sus documentos para que no necesite enviar originales.</p>
+<h2>TaxCenda Es un Agente de Aceptación Certificador</h2>
 <p>Podemos procesar su solicitud de ITIN en la oficina, verificar sus documentos de identidad y presentar su declaración simultáneamente.</p>`,
     },
   },

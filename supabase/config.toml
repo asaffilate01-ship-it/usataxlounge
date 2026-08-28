@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.create-payment]
 verify_jwt = false
+
+[functions.extract-receipt]
+verify_jwt = false
+
+[functions.sign-filing-authorization]
+verify_jwt = false

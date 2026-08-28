@@ -28,6 +28,7 @@ import {
   Menu,
   X,
   Loader2,
+  ListChecks,
 } from "lucide-react";
 import SecureAttachment from "@/components/SecureAttachment";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ import ClientDetailsSheet from "@/components/admin/ClientDetailsSheet";
 import ContractTemplateEditor from "@/components/admin/ContractTemplateEditor";
 import ESignatureSection from "@/components/admin/ESignatureSection";
 import DocumentsSection from "@/components/admin/DocumentsSection";
+import TaxReviewQueue from "@/components/admin/TaxReviewQueue";
 import { useMessages } from "@/hooks/useMessages";
 import { useFilings } from "@/hooks/useFilings";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -182,6 +184,7 @@ const AdminDashboard = () => {
   const navItems = [
     { id: "overview", label: "Dashboard", icon: Home },
     { id: "clients", label: "Clients", icon: Users },
+    { id: "review", label: "Tax Review", icon: ListChecks },
     { id: "filings", label: "Filings & IRS", icon: FileText },
     { id: "contracts", label: "Contracts", icon: FileSignature },
     { id: "esign", label: "E-Signatures", icon: PenLine },
@@ -486,6 +489,8 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {activeTab === "review" && <TaxReviewQueue />}
+
           {/* Filings & IRS */}
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
@@ -746,22 +751,18 @@ const AdminDashboard = () => {
           {activeTab === "settings" && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="font-display text-xl font-bold text-foreground">Settings</h2>
-              <div className="rounded-2xl border border-border bg-card shadow-elegant p-6 max-w-lg">
-                <h3 className="font-display text-lg font-semibold text-foreground mb-4">IRS API Configuration</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-foreground block mb-1.5">API Endpoint</label>
-                    <Input defaultValue="https://api.irs.gov/v2/efile" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground block mb-1.5">EFIN</label>
-                    <Input defaultValue="••••••" type="password" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground block mb-1.5">API Key</label>
-                    <Input defaultValue="••••••••••••" type="password" />
-                  </div>
-                  <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">Save Configuration</Button>
+              <div className="rounded-2xl border border-border bg-card shadow-elegant p-6 max-w-2xl">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-display text-lg font-semibold text-foreground">Filing integration controls</h3>
+                  <Badge className="bg-warning/10 text-warning">Not configured</Badge>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  TaxCenda does not transmit returns directly to the IRS until an approved e-file provider or MeF channel is configured securely on the server.
+                </p>
+                <div className="mt-5 space-y-3 text-sm">
+                  {["Provider credentials stored outside the browser", "EFIN and preparer authorization verified", "Final package hash and client authorization recorded", "Professional release and transmission acknowledgement enabled"].map((requirement) => (
+                    <div key={requirement} className="flex items-center gap-2 text-muted-foreground"><AlertCircle className="h-4 w-4 text-warning" /> {requirement}</div>
+                  ))}
                 </div>
               </div>
             </div>
