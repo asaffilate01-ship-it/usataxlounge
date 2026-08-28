@@ -72,7 +72,7 @@ const ContactSection = () => {
     }
   };
 
-  const contactInfo = [
+  const contactInfo: { icon: typeof MapPin; label: string; href?: string }[] = [
     { icon: MapPin, label: t("contact.address") },
     { icon: Clock, label: t("contact.hours") },
   ];
