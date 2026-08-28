@@ -109,19 +109,20 @@
         background: linear-gradient(160deg, #ffffff 0%, #f3f6fa 60%, #e8f5f2 100%);
       }
       #app-splash .splash-mark {
-        width: 64px;
-        height: 64px;
-        border-radius: 18px;
+        width: 76px;
+        height: 76px;
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 24px;
-        letter-spacing: 0.5px;
-        color: #fff;
-        background: linear-gradient(135deg, #17b3a0 0%, #1e63d0 100%);
-        box-shadow: 0 14px 34px -12px rgba(23, 179, 160, 0.65);
+        background: #ffffff;
+        box-shadow: 0 14px 34px -12px rgba(23, 179, 160, 0.55), 0 0 0 1px rgba(22, 32, 58, 0.08);
         animation: splash-float 1.8s ease-in-out infinite;
+      }
+      #app-splash .splash-mark img {
+        width: 62px;
+        height: 62px;
+        object-fit: contain;
       }
       #app-splash .splash-word {
         font-size: 20px;
@@ -165,10 +166,10 @@
       }
     </style>
     <div id="app-splash">
-      <div class="splash-mark">TN</div>
+      <div class="splash-mark"><img src="/pwa-icon-192.png" alt="TaxCenda" width="62" height="62"></div>
       <div style="text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center">
-        <div class="splash-word">TaxCenda</div>
-        <div class="splash-tag">File clearly. Move forward.</div>
+        <div class="splash-word">Tax<span style="color:#17b3a0">C</span>enda</div>
+        <div class="splash-tag">Filed right. Represented with confidence.</div>
       </div>
       <div class="splash-bar"><span></span></div>
     </div>
