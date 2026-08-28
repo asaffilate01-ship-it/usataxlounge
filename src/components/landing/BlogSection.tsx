@@ -21,7 +21,7 @@ const BlogSection = () => {
           <span className="text-sm font-semibold tracking-wider uppercase text-accent">
             {t("blog.label")}
           </span>
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mt-3">
+          <h2 className="text-2xl md:text-4xl font-display font-bold text-foreground mt-3">
             {t("blog.title")}
           </h2>
         </motion.div>

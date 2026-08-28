@@ -47,7 +47,7 @@ const WhyUsSection = () => {
             <span className="text-sm font-semibold tracking-wider uppercase text-accent">
               {t("whyUs.label")}
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-foreground mt-3 mb-6 md:mb-8">
+            <h2 className="text-2xl sm:text-2xl md:text-4xl font-display font-bold text-foreground mt-3 mb-6 md:mb-8">
               {t("whyUs.title")}
             </h2>
             <div className="space-y-5">
