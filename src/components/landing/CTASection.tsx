@@ -18,7 +18,7 @@ const CTASection = () => {
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto"
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
+          <h2 className="text-2xl md:text-4xl font-display font-bold text-white mb-6">
             {t("cta.title1")}{" "}
             <span className="text-gradient-accent">{t("cta.title2")}</span>
           </h2>

@@ -84,7 +84,7 @@ const Promo = () => {
                 <Sparkles className="h-3.5 w-3.5" aria-hidden />
                 {t("promo.badge")}
               </span>
-              <h1 className="mt-6 text-4xl md:text-6xl font-bold leading-[1.05]">
+              <h1 className="mt-6 text-3xl md:text-5xl font-bold leading-[1.08]">
                 {t("promo.hero.title1")}
                 <br />
                 <span className="text-accent">{t("promo.hero.title2")}</span>
@@ -153,7 +153,7 @@ const Promo = () => {
             <p className="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-3">
               {t("promo.features.label")}
             </p>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
               {t("promo.features.title")}
             </h2>
             <p className="text-muted-foreground">{t("promo.features.subtitle")}</p>
@@ -189,7 +189,7 @@ const Promo = () => {
               <p className="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-3">
                 {t("promo.app.label")}
               </p>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
                 {t("promo.app.title")}
               </h2>
               <p className="text-muted-foreground mb-8">{t("promo.app.subtitle")}</p>
@@ -230,7 +230,7 @@ const Promo = () => {
             <p className="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-3">
               {t("promo.faq.label")}
             </p>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("promo.faq.title")}</h2>
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground">{t("promo.faq.title")}</h2>
           </div>
           <Accordion type="single" collapsible className="space-y-3">
             {faqs.map((n) => (
@@ -256,7 +256,7 @@ const Promo = () => {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">{t("promo.cta.title")}</h2>
+              <h2 className="text-2xl md:text-4xl font-bold mb-4">{t("promo.cta.title")}</h2>
               <p className="text-white/80">{t("promo.cta.subtitle")}</p>
             </div>
             <div className="flex lg:justify-end">
