@@ -145,7 +145,7 @@ const translations: Record<string, Record<Language, string>> = {
   "whatsapp.label": { en: "Chat with Us", es: "Escríbenos" },
 
   // Footer
-  "footer.copy": { en: "IRS Authorised Enrolled Agents. File clearly. Move forward..", es: "Agentes Inscritos Autorizados por el IRS. Haciendo Impuestos Menos Agotadores." },
+  "footer.copy": { en: "IRS Authorised Enrolled Agents. Filed right. Represented with confidence.", es: "Agentes Inscritos Autorizados por el IRS. Haciendo Impuestos Menos Agotadores." },
   "footer.privacy": { en: "Privacy Policy", es: "Política de Privacidad" },
   "footer.terms": { en: "Terms of Service", es: "Términos de Servicio" },
   "footer.sitemap": { en: "Sitemap", es: "Mapa del Sitio" },
