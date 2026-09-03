@@ -26,6 +26,7 @@ import {
   Menu,
   X,
   ListChecks,
+  Workflow,
 } from "lucide-react";
 import SecureAttachment from "@/components/SecureAttachment";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ import GDPRDataRights from "@/components/client/GDPRDataRights";
 import ReceiptScanner from "@/components/client/ReceiptScanner";
 import DashboardCharts from "@/components/client/DashboardCharts";
 import TaxWorkspace from "@/components/client/TaxWorkspace";
+import ClientWorkflowCenter from "@/components/client/ClientWorkflowCenter";
 import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
 import {
   Dialog,
@@ -81,30 +83,47 @@ const formatTimeAgo = (dateStr: string) => {
 const statusIcon = (status: string) => {
   switch (status) {
     case "filed":
-    case "accepted": return <CheckCircle2 className="h-4 w-4 text-success" />;
+    case "accepted":
+      return <CheckCircle2 className="h-4 w-4 text-success" />;
     case "in_review":
     case "submitted":
-    case "pending": return <Clock className="h-4 w-4 text-warning" />;
-    default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
+    case "pending":
+      return <Clock className="h-4 w-4 text-warning" />;
+    default:
+      return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
   }
 };
 
-const MessageTicks = ({ status }: { status: "sending" | "sent" | "delivered" | "read" }) => {
+const MessageTicks = ({
+  status,
+}: {
+  status: "sending" | "sent" | "delivered" | "read";
+}) => {
   if (status === "sending") {
     return <Clock className="h-3 w-3 text-muted-foreground/40 shrink-0" />;
   }
-  const tickClass = status === "read" ? "text-accent" : "text-muted-foreground/60";
+  const tickClass =
+    status === "read" ? "text-accent" : "text-muted-foreground/60";
   if (status === "sent") {
     return (
       <svg viewBox="0 0 16 11" className={`h-3.5 w-4 ${tickClass} shrink-0`}>
-        <path fill="currentColor" d="M11.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L6.044 6.36 3.614 3.98a.457.457 0 0 0-.686 0 .48.48 0 0 0 0 .673l2.74 2.682a.474.474 0 0 0 .686-.017L11.128 1.31a.48.48 0 0 0-.057-.657Z" />
+        <path
+          fill="currentColor"
+          d="M11.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L6.044 6.36 3.614 3.98a.457.457 0 0 0-.686 0 .48.48 0 0 0 0 .673l2.74 2.682a.474.474 0 0 0 .686-.017L11.128 1.31a.48.48 0 0 0-.057-.657Z"
+        />
       </svg>
     );
   }
   return (
     <svg viewBox="0 0 16 11" className={`h-3.5 w-4 ${tickClass} shrink-0`}>
-      <path fill="currentColor" d="M11.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L6.044 6.36 3.614 3.98a.457.457 0 0 0-.686 0 .48.48 0 0 0 0 .673l2.74 2.682a.474.474 0 0 0 .686-.017L11.128 1.31a.48.48 0 0 0-.057-.657Z" />
-      <path fill="currentColor" d="M14.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L9.044 6.36l-.429-.42-.686.673.429.42a.474.474 0 0 0 .686-.017L14.128 1.31a.48.48 0 0 0-.057-.657Z" />
+      <path
+        fill="currentColor"
+        d="M11.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L6.044 6.36 3.614 3.98a.457.457 0 0 0-.686 0 .48.48 0 0 0 0 .673l2.74 2.682a.474.474 0 0 0 .686-.017L11.128 1.31a.48.48 0 0 0-.057-.657Z"
+      />
+      <path
+        fill="currentColor"
+        d="M14.071.653a.457.457 0 0 0-.304-.102.493.493 0 0 0-.381.178L9.044 6.36l-.429-.42-.686.673.429.42a.474.474 0 0 0 .686-.017L14.128 1.31a.48.48 0 0 0-.057-.657Z"
+      />
     </svg>
   );
 };
@@ -112,13 +131,20 @@ const MessageTicks = ({ status }: { status: "sending" | "sent" | "delivered" | "
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [newMessage, setNewMessage] = useState("");
-  const [sendingMessages, setSendingMessages] = useState<Set<string>>(new Set());
+  const [sendingMessages, setSendingMessages] = useState<Set<string>>(
+    new Set(),
+  );
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
+  const {
+    items: incomeExpenses,
+    loading: ieLoading,
+    addItem,
+    deleteItem,
+  } = useIncomeExpenses();
   const { filings, loading: filingsLoading } = useFilings();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
 
@@ -168,8 +194,15 @@ const ClientDashboard = () => {
     findAdmin();
   }, []);
 
-  const { messages, loading: messagesLoading, sendMessage, markConversationRead } = useMessages(adminId || undefined);
-  const unreadMessageCount = messages.filter((m) => !m.read && m.sender_id !== user?.id).length;
+  const {
+    messages,
+    loading: messagesLoading,
+    sendMessage,
+    markConversationRead,
+  } = useMessages(adminId || undefined);
+  const unreadMessageCount = messages.filter(
+    (m) => !m.read && m.sender_id !== user?.id,
+  ).length;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -205,10 +238,15 @@ const ClientDashboard = () => {
     setAddDialogOpen(false);
   };
 
-  const handleSendMessage = async (receiverId: string, content: string, attachment?: { url: string; name: string; type: string }) => {
+  const handleSendMessage = async (
+    receiverId: string,
+    content: string,
+    attachment?: { url: string; name: string; type: string },
+    context?: { type: string; id: string; subject: string },
+  ) => {
     const tempId = `sending-${Date.now()}`;
     setSendingMessages((prev) => new Set(prev).add(tempId));
-    const error = await sendMessage(receiverId, content, attachment);
+    const error = await sendMessage(receiverId, content, attachment, context);
     setSendingMessages((prev) => {
       const next = new Set(prev);
       next.delete(tempId);
@@ -234,26 +272,43 @@ const ClientDashboard = () => {
     );
   }
   if (!onboardingDone) {
-    return <OnboardingQuestionnaire onComplete={() => setOnboardingDone(true)} />;
+    return (
+      <OnboardingQuestionnaire onComplete={() => setOnboardingDone(true)} />
+    );
   }
 
   const initials = profile?.full_name
-    ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    ? profile.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
     : "U";
 
   const navItems = [
     { id: "overview", label: "Overview", icon: Home },
     { id: "workspace", label: "Tax Workspace", icon: ListChecks },
+    { id: "workflow", label: "Organizer & Payments", icon: Workflow },
     { id: "income", label: "Income & Expenses", icon: DollarSign },
     { id: "documents", label: "Documents", icon: FolderOpen },
     { id: "filings", label: "My Filings", icon: FileText },
     { id: "sign", label: "E-Sign & Approve", icon: PenLine },
-    { id: "messages", label: "Messages", icon: MessageSquare, badge: unreadMessageCount > 0 ? unreadMessageCount : undefined },
+    {
+      id: "messages",
+      label: "Messages",
+      icon: MessageSquare,
+      badge: unreadMessageCount > 0 ? unreadMessageCount : undefined,
+    },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
-  const totalIncome = incomeExpenses.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
-  const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
+  const totalIncome = incomeExpenses
+    .filter((i) => i.type === "income")
+    .reduce((s, i) => s + Number(i.amount), 0);
+  const totalExpenses = incomeExpenses
+    .filter((i) => i.type === "expense")
+    .reduce((s, i) => s + Number(i.amount), 0);
 
   const incomeExpenseColumns = [
     { key: "category", label: "Category" },
@@ -280,7 +335,10 @@ const ClientDashboard = () => {
         {navItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => { setActiveTab(item.id); setMobileSidebarOpen(false); }}
+            onClick={() => {
+              setActiveTab(item.id);
+              setMobileSidebarOpen(false);
+            }}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === item.id
                 ? "bg-white/15 text-white shadow-sm"
@@ -305,7 +363,9 @@ const ClientDashboard = () => {
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">{profile?.full_name || "Client"}</p>
+            <p className="text-sm font-medium text-white truncate">
+              {profile?.full_name || "Client"}
+            </p>
             <p className="text-xs text-white/50">Client Portal</p>
           </div>
         </div>
@@ -325,8 +385,14 @@ const ClientDashboard = () => {
       {/* Mobile sidebar overlay */}
       {mobileSidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileSidebarOpen(false)} />
-          <aside className="relative w-64 h-full flex flex-col" style={{ background: "var(--gradient-hero)" }}>
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+          <aside
+            className="relative w-64 h-full flex flex-col"
+            style={{ background: "var(--gradient-hero)" }}
+          >
             <button
               onClick={() => setMobileSidebarOpen(false)}
               className="absolute top-4 right-4 text-white/60 hover:text-white"
@@ -339,8 +405,10 @@ const ClientDashboard = () => {
       )}
 
       {/* Desktop sidebar */}
-      <aside className={`hidden lg:flex ${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex-col shrink-0`}
-        style={{ background: "var(--gradient-hero)" }}>
+      <aside
+        className={`hidden lg:flex ${sidebarOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 flex-col shrink-0`}
+        style={{ background: "var(--gradient-hero)" }}
+      >
         <SidebarContent />
       </aside>
 
@@ -348,14 +416,22 @@ const ClientDashboard = () => {
       <main className="flex-1 flex flex-col min-w-0">
         <header className="h-14 border-b border-border bg-card flex items-center justify-between px-4 sm:px-6 shrink-0">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden text-muted-foreground hover:text-foreground">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="lg:hidden text-muted-foreground hover:text-foreground"
+            >
               <Menu className="h-5 w-5" />
             </button>
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:block text-muted-foreground hover:text-foreground">
-              <ChevronDown className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`} />
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="hidden lg:block text-muted-foreground hover:text-foreground"
+            >
+              <ChevronDown
+                className={`h-5 w-5 transition-transform ${sidebarOpen ? "rotate-90" : "-rotate-90"}`}
+              />
             </button>
             <h1 className="font-display text-lg font-semibold text-foreground">
-              {navItems.find(n => n.id === activeTab)?.label || "Dashboard"}
+              {navItems.find((n) => n.id === activeTab)?.label || "Dashboard"}
             </h1>
           </div>
           <div className="flex items-center gap-2">
@@ -371,59 +447,99 @@ const ClientDashboard = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-muted-foreground">Total Income</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Total Income
+                    </p>
                     <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
                       <TrendingUp className="h-5 w-5 text-success" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "income").length} entries</p>
+                  <p className="text-2xl font-display font-bold text-foreground">
+                    ${totalIncome.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {incomeExpenses.filter((i) => i.type === "income").length}{" "}
+                    entries
+                  </p>
                 </div>
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-muted-foreground">Total Expenses</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Total Expenses
+                    </p>
                     <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
                       <TrendingDown className="h-5 w-5 text-destructive" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalExpenses.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "expense").length} entries</p>
+                  <p className="text-2xl font-display font-bold text-foreground">
+                    ${totalExpenses.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {incomeExpenses.filter((i) => i.type === "expense").length}{" "}
+                    entries
+                  </p>
                 </div>
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-muted-foreground">Net Taxable</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Net Taxable
+                    </p>
                     <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                       <BarChart3 className="h-5 w-5 text-accent" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Current tax year</p>
+                  <p className="text-2xl font-display font-bold text-gradient-accent">
+                    ${(totalIncome - totalExpenses).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Current tax year
+                  </p>
                 </div>
               </div>
 
               <div className="rounded-2xl border border-border bg-card shadow-elegant p-5">
-                <h3 className="font-display text-lg font-semibold text-foreground mb-4">Recent Filings</h3>
+                <h3 className="font-display text-lg font-semibold text-foreground mb-4">
+                  Recent Filings
+                </h3>
                 {filingsLoading ? (
                   <div className="flex items-center justify-center py-10">
                     <Loader2 className="h-6 w-6 animate-spin text-accent" />
                   </div>
                 ) : filings.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4">No filings yet. Your tax filings will appear here.</p>
+                  <p className="text-sm text-muted-foreground py-4">
+                    No filings yet. Your tax filings will appear here.
+                  </p>
                 ) : (
                   <div className="space-y-3">
                     {filings.slice(0, 5).map((f) => (
-                      <div key={f.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                      <div
+                        key={f.id}
+                        className="flex items-center justify-between py-3 border-b border-border last:border-0"
+                      >
                         <div className="flex items-center gap-3">
                           {statusIcon(f.status || "draft")}
                           <div>
-                            <p className="font-medium text-sm text-foreground">{f.form_type} — {f.tax_year}</p>
-                            <p className="text-xs text-muted-foreground">{f.submitted_at ? new Date(f.submitted_at).toLocaleDateString() : "Pending"}</p>
+                            <p className="font-medium text-sm text-foreground">
+                              {f.form_type} — {f.tax_year}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {f.submitted_at
+                                ? new Date(f.submitted_at).toLocaleDateString()
+                                : "Pending"}
+                            </p>
                           </div>
                         </div>
-                        <Badge variant="secondary" className={
-                          f.status === "filed" || f.status === "accepted" ? "bg-success/10 text-success border-success/20" :
-                          f.status === "in_review" || f.status === "submitted" ? "bg-warning/10 text-warning border-warning/20" : ""
-                        }>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            f.status === "filed" || f.status === "accepted"
+                              ? "bg-success/10 text-success border-success/20"
+                              : f.status === "in_review" ||
+                                  f.status === "submitted"
+                                ? "bg-warning/10 text-warning border-warning/20"
+                                : ""
+                          }
+                        >
                           {f.status || "draft"}
                         </Badge>
                       </div>
@@ -433,21 +549,44 @@ const ClientDashboard = () => {
               </div>
 
               {/* Charts */}
-              <DashboardCharts incomeExpenses={incomeExpenses} filings={filings} />
+              <DashboardCharts
+                incomeExpenses={incomeExpenses}
+                filings={filings}
+              />
             </div>
           )}
 
           {/* Tax workspace */}
           {activeTab === "workspace" && <TaxWorkspace />}
 
+          {/* Organizer, invoices, tax payments, sharing and activity */}
+          {activeTab === "workflow" && (
+            <ClientWorkflowCenter
+              canMessage={!!adminId}
+              onSendContextMessage={(content, context) =>
+                adminId
+                  ? handleSendMessage(adminId, content, undefined, context)
+                  : Promise.resolve(
+                      new Error("No tax professional is assigned."),
+                    )
+              }
+            />
+          )}
+
           {/* Income & Expenses */}
           {activeTab === "income" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between flex-wrap gap-3">
-                <h2 className="font-display text-xl font-bold text-foreground">Income & Expenses</h2>
+                <h2 className="font-display text-xl font-bold text-foreground">
+                  Income & Expenses
+                </h2>
                 <div className="flex gap-2 flex-wrap">
                   <ReceiptScanner onExtracted={(data) => addItem(data)} />
-                  <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
+                  <ExportButtons
+                    data={incomeExpenses}
+                    filename="income-expenses"
+                    columns={incomeExpenseColumns}
+                  />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>
                       <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
@@ -461,7 +600,19 @@ const ClientDashboard = () => {
                       <div className="space-y-4 pt-2">
                         <div>
                           <Label>Type</Label>
-                          <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense", entryKind: v === "income" ? "gross_income" : "operating_expense" })}>
+                          <Select
+                            value={newEntry.type}
+                            onValueChange={(v) =>
+                              setNewEntry({
+                                ...newEntry,
+                                type: v as "income" | "expense",
+                                entryKind:
+                                  v === "income"
+                                    ? "gross_income"
+                                    : "operating_expense",
+                              })
+                            }
+                          >
                             <SelectTrigger className="mt-1.5">
                               <SelectValue />
                             </SelectTrigger>
@@ -473,53 +624,162 @@ const ClientDashboard = () => {
                         </div>
                         <div>
                           <Label>Accounting treatment</Label>
-                          <Select value={newEntry.entryKind} onValueChange={(value) => setNewEntry({ ...newEntry, entryKind: value })}>
-                            <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                          <Select
+                            value={newEntry.entryKind}
+                            onValueChange={(value) =>
+                              setNewEntry({ ...newEntry, entryKind: value })
+                            }
+                          >
+                            <SelectTrigger className="mt-1.5">
+                              <SelectValue />
+                            </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="gross_income">Gross income</SelectItem>
-                              <SelectItem value="sales">Sales revenue</SelectItem>
-                              <SelectItem value="salary_wages">Salary / wages</SelectItem>
-                              <SelectItem value="interest_income">Interest income</SelectItem>
-                              <SelectItem value="rental_income">Rental income</SelectItem>
-                              <SelectItem value="sundry_income">Sundry income</SelectItem>
-                              <SelectItem value="operating_expense">Operating expense</SelectItem>
-                              <SelectItem value="cost_of_goods">Cost of goods sold</SelectItem>
-                              <SelectItem value="capital_asset">Capital asset</SelectItem>
-                              <SelectItem value="owner_contribution">Owner contribution</SelectItem>
-                              <SelectItem value="owner_draw">Owner draw</SelectItem>
-                              <SelectItem value="loan_proceeds">Loan proceeds</SelectItem>
-                              <SelectItem value="loan_repayment">Loan repayment</SelectItem>
-                              <SelectItem value="other">Other / reviewer to classify</SelectItem>
+                              <SelectItem value="gross_income">
+                                Gross income
+                              </SelectItem>
+                              <SelectItem value="sales">
+                                Sales revenue
+                              </SelectItem>
+                              <SelectItem value="salary_wages">
+                                Salary / wages
+                              </SelectItem>
+                              <SelectItem value="interest_income">
+                                Interest income
+                              </SelectItem>
+                              <SelectItem value="rental_income">
+                                Rental income
+                              </SelectItem>
+                              <SelectItem value="sundry_income">
+                                Sundry income
+                              </SelectItem>
+                              <SelectItem value="operating_expense">
+                                Operating expense
+                              </SelectItem>
+                              <SelectItem value="cost_of_goods">
+                                Cost of goods sold
+                              </SelectItem>
+                              <SelectItem value="capital_asset">
+                                Capital asset
+                              </SelectItem>
+                              <SelectItem value="owner_contribution">
+                                Owner contribution
+                              </SelectItem>
+                              <SelectItem value="owner_draw">
+                                Owner draw
+                              </SelectItem>
+                              <SelectItem value="loan_proceeds">
+                                Loan proceeds
+                              </SelectItem>
+                              <SelectItem value="loan_repayment">
+                                Loan repayment
+                              </SelectItem>
+                              <SelectItem value="other">
+                                Other / reviewer to classify
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
                           <Label>Category</Label>
-                          <Input className="mt-1.5" placeholder="e.g. Consulting revenue, Software, Equipment" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
+                          <Input
+                            className="mt-1.5"
+                            placeholder="e.g. Consulting revenue, Software, Equipment"
+                            value={newEntry.category}
+                            onChange={(e) =>
+                              setNewEntry({
+                                ...newEntry,
+                                category: e.target.value,
+                              })
+                            }
+                          />
                         </div>
                         <div>
                           <Label>Vendor, customer or payer</Label>
-                          <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.vendorName} onChange={(e) => setNewEntry({ ...newEntry, vendorName: e.target.value })} />
+                          <Input
+                            className="mt-1.5"
+                            placeholder="e.g. Acme Corp"
+                            value={newEntry.vendorName}
+                            onChange={(e) =>
+                              setNewEntry({
+                                ...newEntry,
+                                vendorName: e.target.value,
+                              })
+                            }
+                          />
                         </div>
                         <div>
                           <Label>Description (optional)</Label>
-                          <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.description} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })} />
+                          <Input
+                            className="mt-1.5"
+                            placeholder="e.g. Acme Corp"
+                            value={newEntry.description}
+                            onChange={(e) =>
+                              setNewEntry({
+                                ...newEntry,
+                                description: e.target.value,
+                              })
+                            }
+                          />
                         </div>
                         <div>
                           <Label>Amount ($)</Label>
-                          <Input className="mt-1.5" type="number" min="0" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
+                          <Input
+                            className="mt-1.5"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            value={newEntry.amount}
+                            onChange={(e) =>
+                              setNewEntry({
+                                ...newEntry,
+                                amount: e.target.value,
+                              })
+                            }
+                          />
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <Label>Transaction date</Label>
-                            <Input className="mt-1.5" type="date" value={newEntry.transactionDate} onChange={(e) => setNewEntry({ ...newEntry, transactionDate: e.target.value })} />
+                            <Input
+                              className="mt-1.5"
+                              type="date"
+                              value={newEntry.transactionDate}
+                              onChange={(e) =>
+                                setNewEntry({
+                                  ...newEntry,
+                                  transactionDate: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                           <div>
                             <Label>Business use (%)</Label>
-                            <Input className="mt-1.5" type="number" min="0" max="100" step="0.01" value={newEntry.businessUsePercentage} onChange={(e) => setNewEntry({ ...newEntry, businessUsePercentage: e.target.value })} />
+                            <Input
+                              className="mt-1.5"
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="0.01"
+                              value={newEntry.businessUsePercentage}
+                              onChange={(e) =>
+                                setNewEntry({
+                                  ...newEntry,
+                                  businessUsePercentage: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
-                        <Button onClick={handleAddEntry} disabled={!newEntry.category.trim() || Number(newEntry.amount) <= 0 || !newEntry.transactionDate} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                        <Button
+                          onClick={handleAddEntry}
+                          disabled={
+                            !newEntry.category.trim() ||
+                            Number(newEntry.amount) <= 0 ||
+                            !newEntry.transactionDate
+                          }
+                          className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark"
+                        >
                           Add Entry
                         </Button>
                       </div>
@@ -536,39 +796,89 @@ const ClientDashboard = () => {
                 <div className="text-center py-20 text-muted-foreground">
                   <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-30" />
                   <p className="font-display text-lg">No entries yet</p>
-                  <p className="text-sm mt-1">Click "Add Entry" to start tracking your income and expenses.</p>
+                  <p className="text-sm mt-1">
+                    Click "Add Entry" to start tracking your income and
+                    expenses.
+                  </p>
                 </div>
               ) : (
                 <div className="rounded-2xl border border-border bg-card shadow-elegant overflow-x-auto">
                   <table className="w-full min-w-[600px]">
                     <thead>
                       <tr className="border-b border-border bg-muted/50">
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Category</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Type</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Treatment</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Vendor / description</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Date</th>
-                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Amount</th>
-                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Category
+                        </th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Type
+                        </th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Treatment
+                        </th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Vendor / description
+                        </th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Date
+                        </th>
+                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Amount
+                        </th>
+                        <th className="text-right text-xs font-semibold text-muted-foreground px-5 py-3">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {incomeExpenses.map((item) => (
-                        <tr key={item.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                          <td className="px-5 py-3 text-sm font-medium text-foreground">{item.category}</td>
+                        <tr
+                          key={item.id}
+                          className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
+                        >
+                          <td className="px-5 py-3 text-sm font-medium text-foreground">
+                            {item.category}
+                          </td>
                           <td className="px-5 py-3">
-                            <Badge variant="secondary" className={item.type === "income" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}>
+                            <Badge
+                              variant="secondary"
+                              className={
+                                item.type === "income"
+                                  ? "bg-success/10 text-success"
+                                  : "bg-destructive/10 text-destructive"
+                              }
+                            >
                               {item.type === "income" ? "Income" : "Expense"}
                             </Badge>
                           </td>
-                          <td className="px-5 py-3 text-sm text-muted-foreground capitalize">{item.entry_kind.replace(/_/g, " ")}</td>
-                          <td className="px-5 py-3 text-sm text-muted-foreground"><span className="block text-foreground">{item.vendor_name || "—"}</span>{item.description || ""}</td>
-                          <td className="px-5 py-3 text-sm text-muted-foreground">{item.transaction_date ? new Date(`${item.transaction_date}T00:00:00`).toLocaleDateString() : "—"}</td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground capitalize">
+                            {item.entry_kind.replace(/_/g, " ")}
+                          </td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground">
+                            <span className="block text-foreground">
+                              {item.vendor_name || "—"}
+                            </span>
+                            {item.description || ""}
+                          </td>
+                          <td className="px-5 py-3 text-sm text-muted-foreground">
+                            {item.transaction_date
+                              ? new Date(
+                                  `${item.transaction_date}T00:00:00`,
+                                ).toLocaleDateString()
+                              : "—"}
+                          </td>
                           <td className="px-5 py-3 text-sm font-semibold text-foreground text-right">
-                            ${Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            $
+                            {Number(item.amount).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                            })}
                           </td>
                           <td className="px-5 py-3 text-right">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => deleteItem(item.id)}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => deleteItem(item.id)}
+                            >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </td>
@@ -582,16 +892,35 @@ const ClientDashboard = () => {
               {incomeExpenses.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 rounded-xl border border-success/20 bg-success/5">
-                    <p className="text-xs text-muted-foreground">Total Income</p>
-                    <p className="text-lg font-semibold text-success">${totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Total Income
+                    </p>
+                    <p className="text-lg font-semibold text-success">
+                      $
+                      {totalIncome.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </p>
                   </div>
                   <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5">
-                    <p className="text-xs text-muted-foreground">Total Expenses</p>
-                    <p className="text-lg font-semibold text-destructive">${totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Total Expenses
+                    </p>
+                    <p className="text-lg font-semibold text-destructive">
+                      $
+                      {totalExpenses.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </p>
                   </div>
                   <div className="p-4 rounded-xl border border-accent/20 bg-accent/5">
                     <p className="text-xs text-muted-foreground">Net</p>
-                    <p className="text-lg font-semibold text-foreground">${(totalIncome - totalExpenses).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                    <p className="text-lg font-semibold text-foreground">
+                      $
+                      {(totalIncome - totalExpenses).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </p>
                   </div>
                 </div>
               )}
@@ -605,9 +934,15 @@ const ClientDashboard = () => {
           {activeTab === "filings" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between flex-wrap gap-3">
-                <h2 className="font-display text-xl font-bold text-foreground">My Filings</h2>
+                <h2 className="font-display text-xl font-bold text-foreground">
+                  My Filings
+                </h2>
                 {filings.length > 0 && (
-                  <ExportButtons data={filings} filename="my-filings" columns={filingColumns} />
+                  <ExportButtons
+                    data={filings}
+                    filename="my-filings"
+                    columns={filingColumns}
+                  />
                 )}
               </div>
               {filingsLoading ? (
@@ -618,35 +953,58 @@ const ClientDashboard = () => {
                 <div className="text-center py-20 text-muted-foreground">
                   <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
                   <p className="font-display text-lg">No filings yet</p>
-                  <p className="text-sm mt-1">Your tax filings will appear here once submitted.</p>
+                  <p className="text-sm mt-1">
+                    Your tax filings will appear here once submitted.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {filings.map((f) => (
-                    <div key={f.id} className="p-5 rounded-2xl border border-border bg-card shadow-elegant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div
+                      key={f.id}
+                      className="p-5 rounded-2xl border border-border bg-card shadow-elegant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                    >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                           <FileText className="h-5 w-5 text-accent" />
                         </div>
                         <div>
-                          <p className="font-medium text-foreground">{f.form_type} — Tax Year {f.tax_year}</p>
+                          <p className="font-medium text-foreground">
+                            {f.form_type} — Tax Year {f.tax_year}
+                          </p>
                           <p className="text-sm text-muted-foreground">
-                            {f.submitted_at ? `Filed: ${new Date(f.submitted_at).toLocaleDateString()}` : "Pending"}
-                            {f.irs_confirmation ? ` • IRS: ${f.irs_confirmation}` : ""}
+                            {f.submitted_at
+                              ? `Filed: ${new Date(f.submitted_at).toLocaleDateString()}`
+                              : "Pending"}
+                            {f.irs_confirmation
+                              ? ` • IRS: ${f.irs_confirmation}`
+                              : ""}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Badge variant="secondary" className={
-                          f.status === "filed" || f.status === "accepted" ? "bg-success/10 text-success border-success/20" :
-                          f.status === "rejected" ? "bg-destructive/10 text-destructive border-destructive/20" :
-                          f.status === "in_review" || f.status === "submitted" ? "bg-warning/10 text-warning border-warning/20" : ""
-                        }>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            f.status === "filed" || f.status === "accepted"
+                              ? "bg-success/10 text-success border-success/20"
+                              : f.status === "rejected"
+                                ? "bg-destructive/10 text-destructive border-destructive/20"
+                                : f.status === "in_review" ||
+                                    f.status === "submitted"
+                                  ? "bg-warning/10 text-warning border-warning/20"
+                                  : ""
+                          }
+                        >
                           {statusIcon(f.status || "draft")}
                           <span className="ml-1">{f.status || "draft"}</span>
                         </Badge>
                         {f.file_url && (
-                          <Button variant="outline" size="sm" onClick={() => window.open(f.file_url!, "_blank")}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(f.file_url!, "_blank")}
+                          >
                             <Download className="h-4 w-4 mr-1" /> Download
                           </Button>
                         )}
@@ -665,15 +1023,24 @@ const ClientDashboard = () => {
           {activeTab === "messages" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center gap-3">
-                <h2 className="font-display text-xl font-bold text-foreground">Messages</h2>
+                <h2 className="font-display text-xl font-bold text-foreground">
+                  Messages
+                </h2>
                 {adminId && (
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${checkOnline(adminId) ? "bg-success animate-pulse" : "bg-muted-foreground/40"}`} />
-                    <span className="text-xs text-muted-foreground">{checkOnline(adminId) ? "Online" : "Offline"}</span>
+                    <span
+                      className={`w-2 h-2 rounded-full ${checkOnline(adminId) ? "bg-success animate-pulse" : "bg-muted-foreground/40"}`}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      {checkOnline(adminId) ? "Online" : "Offline"}
+                    </span>
                   </div>
                 )}
               </div>
-              <div className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col" style={{ height: "calc(100vh - 200px)" }}>
+              <div
+                className="rounded-2xl border border-border bg-card shadow-elegant flex flex-col"
+                style={{ height: "calc(100vh - 200px)" }}
+              >
                 <div className="flex-1 p-5 overflow-auto space-y-4">
                   {messagesLoading ? (
                     <div className="flex items-center justify-center py-20">
@@ -683,25 +1050,48 @@ const ClientDashboard = () => {
                     <div className="text-center py-20 text-muted-foreground">
                       <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-30" />
                       <p className="font-display text-lg">No messages yet</p>
-                      <p className="text-sm mt-1">Send a message to your tax agent.</p>
+                      <p className="text-sm mt-1">
+                        Send a message to your tax agent.
+                      </p>
                     </div>
                   ) : (
                     messages.map((msg) => {
                       const isMe = msg.sender_id === user?.id;
                       const timeAgo = formatTimeAgo(msg.created_at);
-                      const status: "sending" | "sent" | "delivered" | "read" = msg.read ? "read" : "delivered";
+                      const status: "sending" | "sent" | "delivered" | "read" =
+                        msg.read ? "read" : "delivered";
                       return (
-                        <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                          <div className={`max-w-[85%] sm:max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}>
-                            <p className="text-xs font-semibold text-muted-foreground mb-1">{isMe ? "You" : "Tax Agent"}</p>
+                        <div
+                          key={msg.id}
+                          className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+                        >
+                          <div
+                            className={`max-w-[85%] sm:max-w-md px-4 py-3 rounded-2xl ${isMe ? "bg-accent/10 text-foreground" : "bg-muted text-foreground"}`}
+                          >
+                            <p className="text-xs font-semibold text-muted-foreground mb-1">
+                              {isMe ? "You" : "Tax Agent"}
+                            </p>
+                            {msg.thread_subject && (
+                              <p className="mb-2 rounded-md bg-background/60 px-2 py-1 text-xs font-medium text-accent">
+                                Regarding: {msg.thread_subject}
+                              </p>
+                            )}
                             {msg.attachment_url && (
                               <div className="mb-2">
-                                <SecureAttachment url={msg.attachment_url} name={msg.attachment_name} type={msg.attachment_type} />
+                                <SecureAttachment
+                                  url={msg.attachment_url}
+                                  name={msg.attachment_name}
+                                  type={msg.attachment_type}
+                                />
                               </div>
                             )}
-                            {msg.content && !msg.content.startsWith("📎 ") && <p className="text-sm">{msg.content}</p>}
+                            {msg.content && !msg.content.startsWith("📎 ") && (
+                              <p className="text-sm">{msg.content}</p>
+                            )}
                             <div className="flex items-center justify-end gap-1 mt-1">
-                              <span className="text-[10px] text-muted-foreground/60">{timeAgo}</span>
+                              <span className="text-[10px] text-muted-foreground/60">
+                                {timeAgo}
+                              </span>
                               {isMe && <MessageTicks status={status} />}
                             </div>
                           </div>
@@ -721,13 +1111,23 @@ const ClientDashboard = () => {
                         const file = e.target.files?.[0];
                         if (!file || !adminId || !user) return;
                         const filePath = `${user.id}/${Date.now()}_${file.name}`;
-                        const { data, error } = await supabase.storage.from("message-attachments").upload(filePath, file);
+                        const { data, error } = await supabase.storage
+                          .from("message-attachments")
+                          .upload(filePath, file);
                         if (error) {
-                          toast({ title: "Upload Error", description: error.message, variant: "destructive" });
+                          toast({
+                            title: "Upload Error",
+                            description: error.message,
+                            variant: "destructive",
+                          });
                           return;
                         }
 
-                        handleSendMessage(adminId, newMessage, { url: data.path, name: file.name, type: file.type });
+                        handleSendMessage(adminId, newMessage, {
+                          url: data.path,
+                          name: file.name,
+                          type: file.type,
+                        });
                         setNewMessage("");
                         e.target.value = "";
                       }}
@@ -769,7 +1169,9 @@ const ClientDashboard = () => {
           {/* Settings */}
           {activeTab === "settings" && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="font-display text-xl font-bold text-foreground">Settings</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">
+                Settings
+              </h2>
               <ProfileSettings />
               <MFASettings />
               <GDPRDataRights />

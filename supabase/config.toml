@@ -9,6 +9,18 @@ verify_jwt = false
 [functions.create-payment]
 verify_jwt = false
 
+[functions.create-invoice-payment]
+verify_jwt = false
+
+[functions.send-household-invite]
+verify_jwt = false
+
+[functions.process-organizer-reminders]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
 [functions.extract-receipt]
 verify_jwt = false
 

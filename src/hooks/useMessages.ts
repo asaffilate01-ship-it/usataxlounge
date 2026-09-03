@@ -12,6 +12,9 @@ export interface Message {
   attachment_url?: string | null;
   attachment_name?: string | null;
   attachment_type?: string | null;
+  context_type?: string | null;
+  context_id?: string | null;
+  thread_subject?: string | null;
 }
 
 export const useMessages = (otherUserId?: string) => {
@@ -30,7 +33,7 @@ export const useMessages = (otherUserId?: string) => {
 
     if (otherUserId) {
       query = query.or(
-        `and(sender_id.eq.${user.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${user.id})`
+        `and(sender_id.eq.${user.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${user.id})`,
       );
     }
 
@@ -61,18 +64,21 @@ export const useMessages = (otherUserId?: string) => {
           // Only add if relevant to this conversation
           if (otherUserId) {
             const isRelevant =
-              (newMsg.sender_id === user.id && newMsg.receiver_id === otherUserId) ||
-              (newMsg.sender_id === otherUserId && newMsg.receiver_id === user.id);
+              (newMsg.sender_id === user.id &&
+                newMsg.receiver_id === otherUserId) ||
+              (newMsg.sender_id === otherUserId &&
+                newMsg.receiver_id === user.id);
             if (!isRelevant) return;
           } else {
-            const isRelevant = newMsg.sender_id === user.id || newMsg.receiver_id === user.id;
+            const isRelevant =
+              newMsg.sender_id === user.id || newMsg.receiver_id === user.id;
             if (!isRelevant) return;
           }
           setMessages((prev) => {
             if (prev.find((m) => m.id === newMsg.id)) return prev;
             return [...prev, newMsg];
           });
-        }
+        },
       )
       .on(
         "postgres_changes",
@@ -84,9 +90,9 @@ export const useMessages = (otherUserId?: string) => {
         (payload) => {
           const updated = payload.new as Message;
           setMessages((prev) =>
-            prev.map((m) => (m.id === updated.id ? updated : m))
+            prev.map((m) => (m.id === updated.id ? updated : m)),
           );
-        }
+        },
       )
       .subscribe();
 
@@ -95,17 +101,27 @@ export const useMessages = (otherUserId?: string) => {
     };
   }, [user, otherUserId]);
 
-  const sendMessage = async (receiverId: string, content: string, attachment?: { url: string; name: string; type: string }) => {
+  const sendMessage = async (
+    receiverId: string,
+    content: string,
+    attachment?: { url: string; name: string; type: string },
+    context?: { type: string; id: string; subject: string },
+  ) => {
     if (!user || (!content.trim() && !attachment)) return;
-    const insertData: any = {
+    const insertData: Record<string, string> = {
       sender_id: user.id,
       receiver_id: receiverId,
-      content: content.trim() || (attachment ? `📎 ${attachment.name}` : ''),
+      content: content.trim() || (attachment ? `📎 ${attachment.name}` : ""),
     };
     if (attachment) {
       insertData.attachment_url = attachment.url;
       insertData.attachment_name = attachment.name;
       insertData.attachment_type = attachment.type;
+    }
+    if (context) {
+      insertData.context_type = context.type;
+      insertData.context_id = context.id;
+      insertData.thread_subject = context.subject;
     }
     const { error } = await supabase.from("messages").insert(insertData);
     return error;
@@ -125,5 +141,12 @@ export const useMessages = (otherUserId?: string) => {
       .eq("read", false);
   };
 
-  return { messages, loading, sendMessage, markAsRead, markConversationRead, refetch: fetchMessages };
+  return {
+    messages,
+    loading,
+    sendMessage,
+    markAsRead,
+    markConversationRead,
+    refetch: fetchMessages,
+  };
 };
