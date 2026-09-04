@@ -27,15 +27,15 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20 md:h-28">
-          <Logo size="2xl" variant={scrolled ? "auto" : "light"} to="/home" />
+          <Logo size="2xl" variant={scrolled ? "auto" : "light"} to="/" />
 
           <div className="hidden md:flex items-center gap-8">
             {[
-              { href: "#services", label: t("nav.services") },
-              { href: "#pricing", label: t("nav.pricing") },
-              { href: "#why-us", label: t("nav.whyUs") },
-              { href: "#process", label: t("nav.process") },
-              { href: "#contact", label: t("nav.contact") },
+              { href: "/#services", label: t("nav.services") },
+              { href: "/#pricing", label: t("nav.pricing") },
+              { href: "/#why-us", label: t("nav.whyUs") },
+              { href: "/#process", label: t("nav.process") },
+              { href: "/#contact", label: t("nav.contact") },
             ].map((link) => (
               <a
                 key={link.href}
@@ -74,7 +74,10 @@ const Navbar = () => {
             >
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent">
+            <Button
+              asChild
+              className="bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
+            >
               <Link to="/auth?tab=signup">{t("nav.getStarted")}</Link>
             </Button>
           </div>
@@ -85,25 +88,68 @@ const Navbar = () => {
               className={`${scrolled ? "text-foreground" : "text-white"}`}
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
 
         {isOpen && (
-          <div className={`md:hidden py-4 border-t ${scrolled ? "border-border" : "border-white/10"}`}>
+          <div
+            className={`md:hidden py-4 border-t ${scrolled ? "border-border" : "border-white/10"}`}
+          >
             <div className="flex flex-col gap-3">
-              <a href="#services" className="text-sm font-medium text-muted-foreground py-2">{t("nav.services")}</a>
-              <a href="#pricing" className="text-sm font-medium text-muted-foreground py-2">{t("nav.pricing")}</a>
-              <a href="#why-us" className="text-sm font-medium text-muted-foreground py-2">{t("nav.whyUs")}</a>
-              <a href="#process" className="text-sm font-medium text-muted-foreground py-2">{t("nav.process")}</a>
-              <Link to="/blog" className="text-sm font-medium text-muted-foreground py-2">{t("nav.blog")}</Link>
-              <a href="#contact" className="text-sm font-medium text-muted-foreground py-2">{t("nav.contact")}</a>
+              <a
+                href="/#services"
+                className="text-sm font-medium text-muted-foreground py-2"
+              >
+                {t("nav.services")}
+              </a>
+              <a
+                href="/#pricing"
+                className="text-sm font-medium text-muted-foreground py-2"
+              >
+                {t("nav.pricing")}
+              </a>
+              <a
+                href="/#why-us"
+                className="text-sm font-medium text-muted-foreground py-2"
+              >
+                {t("nav.whyUs")}
+              </a>
+              <a
+                href="/#process"
+                className="text-sm font-medium text-muted-foreground py-2"
+              >
+                {t("nav.process")}
+              </a>
+              <Link
+                to="/blog"
+                className="text-sm font-medium text-muted-foreground py-2"
+              >
+                {t("nav.blog")}
+              </Link>
+              <a
+                href="/#contact"
+                className="text-sm font-medium text-muted-foreground py-2"
+              >
+                {t("nav.contact")}
+              </a>
               <div className="flex gap-3 pt-2">
-                <Button variant="outline" asChild className="flex-1 border-primary/30">
+                <Button
+                  variant="outline"
+                  asChild
+                  className="flex-1 border-primary/30"
+                >
                   <Link to="/auth">{t("nav.signIn")}</Link>
                 </Button>
-                <Button asChild className="flex-1 bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                <Button
+                  asChild
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-brand-green-dark"
+                >
                   <Link to="/auth?tab=signup">{t("nav.getStarted")}</Link>
                 </Button>
               </div>

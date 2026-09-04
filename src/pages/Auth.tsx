@@ -12,7 +12,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
-  const [isSignUp, setIsSignUp] = useState(searchParams.get("tab") === "signup");
+  const [isSignUp, setIsSignUp] = useState(
+    searchParams.get("tab") === "signup",
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,21 +46,38 @@ const Auth = () => {
           },
         });
         if (error) throw error;
-        toast({ title: t("auth.accountCreated"), description: t("auth.verifyEmail") });
+        toast({
+          title: t("auth.accountCreated"),
+          description: t("auth.verifyEmail"),
+        });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
         if (error) {
           if (error.message === "Email not confirmed") {
-            toast({ title: t("auth.emailNotVerified"), description: t("auth.emailNotVerifiedDesc"), variant: "destructive" });
+            toast({
+              title: t("auth.emailNotVerified"),
+              description: t("auth.emailNotVerifiedDesc"),
+              variant: "destructive",
+            });
           } else {
             throw error;
           }
         } else {
-          toast({ title: t("auth.welcomeBackToast"), description: t("auth.redirecting") });
+          toast({
+            title: t("auth.welcomeBackToast"),
+            description: t("auth.redirecting"),
+          });
         }
       }
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -76,16 +95,21 @@ const Auth = () => {
             {t("hero.title1")}{" "}
             <span className="text-gradient-accent">{t("hero.title2")}</span>
           </h2>
-          <p className="text-white/60 text-lg">
-            {t("auth.portalDesc")}
-          </p>
+          <p className="text-white/60 text-lg">{t("auth.portalDesc")}</p>
         </div>
       </div>
 
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
-        <Button variant="ghost" size="sm" asChild className="absolute top-4 left-4 text-muted-foreground">
-          <Link to="/home"><ArrowLeft className="h-4 w-4 mr-2" /> {t("auth.back")}</Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          asChild
+          className="absolute top-4 left-4 text-muted-foreground"
+        >
+          <Link to="/">
+            <ArrowLeft className="h-4 w-4 mr-2" /> {t("auth.back")}
+          </Link>
         </Button>
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
@@ -142,7 +166,11 @@ const Auth = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -152,17 +180,31 @@ const Auth = () => {
                 type="button"
                 onClick={async () => {
                   if (!email) {
-                    toast({ title: t("auth.enterEmail"), description: t("auth.enterEmailDesc"), variant: "destructive" });
+                    toast({
+                      title: t("auth.enterEmail"),
+                      description: t("auth.enterEmailDesc"),
+                      variant: "destructive",
+                    });
                     return;
                   }
                   try {
-                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                      redirectTo: `${window.location.origin}/reset-password`,
-                    });
+                    const { error } = await supabase.auth.resetPasswordForEmail(
+                      email,
+                      {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      },
+                    );
                     if (error) throw error;
-                    toast({ title: t("auth.checkEmail"), description: t("auth.resetLinkSent") });
+                    toast({
+                      title: t("auth.checkEmail"),
+                      description: t("auth.resetLinkSent"),
+                    });
                   } catch (error: any) {
-                    toast({ title: "Error", description: error.message, variant: "destructive" });
+                    toast({
+                      title: "Error",
+                      description: error.message,
+                      variant: "destructive",
+                    });
                   }
                 }}
                 className="text-sm text-accent hover:text-brand-green-dark transition-colors text-right w-full"
@@ -176,7 +218,11 @@ const Auth = () => {
               disabled={isLoading}
               className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent"
             >
-              {isLoading ? t("auth.pleaseWait") : isSignUp ? t("auth.createAccount") : t("auth.signIn")}
+              {isLoading
+                ? t("auth.pleaseWait")
+                : isSignUp
+                  ? t("auth.createAccount")
+                  : t("auth.signIn")}
             </Button>
           </form>
 
@@ -191,7 +237,6 @@ const Auth = () => {
               {isSignUp ? t("auth.signIn") : t("auth.signUp")}
             </button>
           </div>
-
         </div>
       </div>
     </div>

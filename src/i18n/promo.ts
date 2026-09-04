@@ -1,98 +1,115 @@
 export const promoTranslations: Record<string, { en: string; es: string }> = {
-  "promo.nav.overview": { en: "Overview", es: "Resumen" },
-  "promo.nav.features": { en: "Features", es: "Funciones" },
-  "promo.nav.screens": { en: "Screens", es: "Pantallas" },
-  "promo.nav.app": { en: "Mobile App", es: "App Móvil" },
-  "promo.nav.faq": { en: "FAQ", es: "Preguntas" },
-  "promo.nav.access": { en: "Access", es: "Acceso" },
-
-  "promo.badge": { en: "Private Preview — Invitation Only", es: "Vista Previa Privada — Solo Por Invitación" },
-  "promo.hero.title1": { en: "The guided US tax", es: "La plataforma fiscal" },
-  "promo.hero.title2": { en: "filing platform.", es: "guiada de EE. UU." },
-  "promo.hero.subtitle": {
-    en: "TaxCenda pairs IRS Enrolled Agents with a secure client portal — document vault, AI receipt scanning, encrypted messaging, e-signature and real-time filing status, on web and mobile.",
-    es: "TaxCenda combina Agentes Inscritos del IRS con un portal seguro — bóveda de documentos, escaneo de recibos con IA, mensajería cifrada, firma electrónica y estado de declaración en tiempo real, en web y móvil.",
+  "promo.features.label": {
+    en: "Inside the platform",
+    es: "Dentro de la plataforma",
   },
-  "promo.hero.cta": { en: "Enter Access Code", es: "Introducir Código" },
-  "promo.hero.cta2": { en: "See What's Inside", es: "Ver Qué Incluye" },
-  "promo.hero.note": { en: "Built by IRS Enrolled Agents. Bank-grade security.", es: "Creado por Agentes Inscritos del IRS. Seguridad de nivel bancario." },
-
-  "promo.stats.returns": { en: "Returns Filed", es: "Declaraciones Presentadas" },
-  "promo.stats.saved": { en: "Client Tax Savings", es: "Ahorro Fiscal a Clientes" },
-  "promo.stats.retention": { en: "Client Retention", es: "Retención de Clientes" },
-  "promo.stats.support": { en: "Portal Access", es: "Acceso al Portal" },
-
-  "promo.features.label": { en: "Inside the platform", es: "Dentro de la plataforma" },
-  "promo.features.title": { en: "Everything a filing season needs", es: "Todo lo que exige una temporada fiscal" },
+  "promo.features.title": {
+    en: "Everything a filing season needs",
+    es: "Todo lo que exige una temporada fiscal",
+  },
   "promo.features.subtitle": {
     en: "A complete SaaS workspace for clients and preparers — not a form wizard bolted onto email.",
     es: "Un espacio de trabajo SaaS completo para clientes y preparadores — no un formulario pegado al correo.",
   },
 
   "promo.f1.title": { en: "Client Dashboard", es: "Panel del Cliente" },
-  "promo.f1.desc": { en: "Live filing status, refund tracking, income and expense charts, and every tax year in one place.", es: "Estado de la declaración en vivo, seguimiento del reembolso, gráficos de ingresos y gastos, y cada año fiscal en un solo lugar." },
-  "promo.f2.title": { en: "Secure Document Vault", es: "Bóveda de Documentos Segura" },
-  "promo.f2.desc": { en: "Private storage with signed, expiring links. W-2s, 1099s and statements never sit on a public URL.", es: "Almacenamiento privado con enlaces firmados y temporales. Sus W-2, 1099 y estados nunca quedan en una URL pública." },
-  "promo.f3.title": { en: "AI Receipt Scanning", es: "Escaneo de Recibos con IA" },
-  "promo.f3.desc": { en: "Photograph a receipt or bill and the amount, vendor, date and category are extracted automatically.", es: "Fotografíe un recibo o factura y el importe, proveedor, fecha y categoría se extraen automáticamente." },
-  "promo.f4.title": { en: "IRS-Compliant E-Signature", es: "Firma Electrónica Conforme al IRS" },
-  "promo.f4.desc": { en: "Review the final package and sign the applicable authorization with consent, IP address and timestamp captured for audit.", es: "Revise el paquete final y firme la autorización aplicable; el consentimiento, la dirección IP y la marca de tiempo quedan registrados para auditoría." },
+  "promo.f1.desc": {
+    en: "Live filing status, refund tracking, income and expense charts, and every tax year in one place.",
+    es: "Estado de la declaración en vivo, seguimiento del reembolso, gráficos de ingresos y gastos, y cada año fiscal en un solo lugar.",
+  },
+  "promo.f2.title": {
+    en: "Secure Document Vault",
+    es: "Bóveda de Documentos Segura",
+  },
+  "promo.f2.desc": {
+    en: "Private storage with signed, expiring links. W-2s, 1099s and statements never sit on a public URL.",
+    es: "Almacenamiento privado con enlaces firmados y temporales. Sus W-2, 1099 y estados nunca quedan en una URL pública.",
+  },
+  "promo.f3.title": {
+    en: "AI Receipt Scanning",
+    es: "Escaneo de Recibos con IA",
+  },
+  "promo.f3.desc": {
+    en: "Photograph a receipt or bill and the amount, vendor, date and category are extracted automatically.",
+    es: "Fotografíe un recibo o factura y el importe, proveedor, fecha y categoría se extraen automáticamente.",
+  },
+  "promo.f4.title": {
+    en: "IRS-Compliant E-Signature",
+    es: "Firma Electrónica Conforme al IRS",
+  },
+  "promo.f4.desc": {
+    en: "Review the final package and sign the applicable authorization with consent, IP address and timestamp captured for audit.",
+    es: "Revise el paquete final y firme la autorización aplicable; el consentimiento, la dirección IP y la marca de tiempo quedan registrados para auditoría.",
+  },
   "promo.f5.title": { en: "Encrypted Messaging", es: "Mensajería Cifrada" },
-  "promo.f5.desc": { en: "Real-time chat with your Enrolled Agent, read receipts, presence and file attachments — no email threads.", es: "Chat en tiempo real con su Agente Inscrito, confirmaciones de lectura, presencia y archivos adjuntos — sin cadenas de correo." },
+  "promo.f5.desc": {
+    en: "Real-time chat with your Enrolled Agent, read receipts, presence and file attachments — no email threads.",
+    es: "Chat en tiempo real con su Agente Inscrito, confirmaciones de lectura, presencia y archivos adjuntos — sin cadenas de correo.",
+  },
   "promo.f6.title": { en: "Guided Onboarding", es: "Incorporación Guiada" },
-  "promo.f6.desc": { en: "A smart questionnaire captures filing status, dependents, income sources and deductions in minutes.", es: "Un cuestionario inteligente registra estado civil, dependientes, fuentes de ingreso y deducciones en minutos." },
-  "promo.f7.title": { en: "Enforced MFA & Auto-Logout", es: "MFA Obligatorio y Cierre Automático" },
-  "promo.f7.desc": { en: "TOTP multi-factor authentication, encrypted SSNs and a 15-minute inactivity timeout per IRS Pub 4557.", es: "Autenticación multifactor TOTP, SSN cifrados y cierre por inactividad de 15 minutos según IRS Pub 4557." },
+  "promo.f6.desc": {
+    en: "A smart questionnaire captures filing status, dependents, income sources and deductions in minutes.",
+    es: "Un cuestionario inteligente registra estado civil, dependientes, fuentes de ingreso y deducciones en minutos.",
+  },
+  "promo.f7.title": {
+    en: "Enforced MFA & Auto-Logout",
+    es: "MFA Obligatorio y Cierre Automático",
+  },
+  "promo.f7.desc": {
+    en: "TOTP multi-factor authentication, encrypted SSNs and a 15-minute inactivity timeout per IRS Pub 4557.",
+    es: "Autenticación multifactor TOTP, SSN cifrados y cierre por inactividad de 15 minutos según IRS Pub 4557.",
+  },
   "promo.f8.title": { en: "Admin Practice Console", es: "Consola de la Firma" },
-  "promo.f8.desc": { en: "Client management, contract templates, audit logs, filings pipeline and exports for the whole practice.", es: "Gestión de clientes, plantillas de contratos, registros de auditoría, flujo de declaraciones y exportaciones para toda la firma." },
+  "promo.f8.desc": {
+    en: "Client management, contract templates, audit logs, filings pipeline and exports for the whole practice.",
+    es: "Gestión de clientes, plantillas de contratos, registros de auditoría, flujo de declaraciones y exportaciones para toda la firma.",
+  },
   "promo.f9.title": { en: "Card Payments", es: "Pagos con Tarjeta" },
-  "promo.f9.desc": { en: "Stripe checkout with verified, reconciled payment records against every engagement tier.", es: "Pago con Stripe con registros verificados y conciliados para cada nivel de servicio." },
+  "promo.f9.desc": {
+    en: "Stripe checkout with verified, reconciled payment records against every engagement tier.",
+    es: "Pago con Stripe con registros verificados y conciliados para cada nivel de servicio.",
+  },
 
   "promo.screens.label": { en: "Product tour", es: "Recorrido del producto" },
   "promo.screens.title": { en: "See the platform", es: "Vea la plataforma" },
-  "promo.screens.subtitle": { en: "Screens captured from the live product in the language you selected.", es: "Pantallas capturadas del producto real en el idioma que ha seleccionado." },
+  "promo.screens.subtitle": {
+    en: "Screens captured from the live product in the language you selected.",
+    es: "Pantallas capturadas del producto real en el idioma que ha seleccionado.",
+  },
   "promo.screens.web": { en: "Web", es: "Web" },
   "promo.screens.mobile": { en: "Mobile", es: "Móvil" },
   "promo.shot.hero": { en: "Landing experience", es: "Página principal" },
-  "promo.shot.services": { en: "Service catalogue", es: "Catálogo de servicios" },
+  "promo.shot.services": {
+    en: "Service catalogue",
+    es: "Catálogo de servicios",
+  },
   "promo.shot.pricing": { en: "Trust & process", es: "Confianza y proceso" },
   "promo.shot.mobileHero": { en: "Mobile home", es: "Inicio móvil" },
   "promo.shot.mobileAuth": { en: "Secure sign-in", es: "Acceso seguro" },
 
   "promo.app.label": { en: "Installable app", es: "App instalable" },
-  "promo.app.title": { en: "Native-feeling on every phone", es: "Sensación nativa en cualquier móvil" },
+  "promo.app.title": {
+    en: "Native-feeling on every phone",
+    es: "Sensación nativa en cualquier móvil",
+  },
   "promo.app.subtitle": {
     en: "Install TaxCenda to your home screen and get a full-screen app with bottom navigation, offline shell and instant document capture from the camera.",
     es: "Instale TaxCenda en su pantalla de inicio y obtenga una app a pantalla completa con navegación inferior, funcionamiento offline y captura instantánea de documentos con la cámara.",
   },
-  "promo.app.b1": { en: "Add to home screen on iOS and Android", es: "Añadir a la pantalla de inicio en iOS y Android" },
-  "promo.app.b2": { en: "Bottom tab navigation built for thumbs", es: "Navegación inferior pensada para el pulgar" },
-  "promo.app.b3": { en: "Camera capture straight into your vault", es: "Captura con cámara directa a su bóveda" },
-  "promo.app.b4": { en: "Push-ready notifications for filing milestones", es: "Notificaciones listas para hitos de su declaración" },
-
-  "promo.faq.label": { en: "Questions", es: "Preguntas" },
-  "promo.faq.title": { en: "What TaxCenda offers", es: "Qué ofrece TaxCenda" },
-  "promo.faq.q1": { en: "What exactly is TaxCenda?", es: "¿Qué es exactamente TaxCenda?" },
-  "promo.faq.a1": { en: "A guided US tax filing service delivered through our own SaaS portal. IRS Enrolled Agents prepare, review and e-file your return, while you track everything from a secure dashboard on web or mobile.", es: "Un servicio guiado de declaración de impuestos de EE. UU. entregado a través de nuestro propio portal SaaS. Agentes Inscritos del IRS preparan, revisan y presentan su declaración, mientras usted lo sigue todo desde un panel seguro en web o móvil." },
-  "promo.faq.q2": { en: "Who is it for?", es: "¿Para quién es?" },
-  "promo.faq.a2": { en: "Individuals, self-employed professionals, small businesses and US expats abroad — including 1040, 1040-NR, 1120, FBAR, FATCA and Form 2555 filings.", es: "Individuos, autónomos, pequeñas empresas y expatriados estadounidenses — incluidas declaraciones 1040, 1040-NR, 1120, FBAR, FATCA y Formulario 2555." },
-  "promo.faq.q3": { en: "How is my data protected?", es: "¿Cómo se protegen mis datos?" },
-  "promo.faq.a3": { en: "Row-level database security, encrypted Social Security numbers, private storage with short-lived signed links, enforced TOTP multi-factor authentication and a 15-minute inactivity logout aligned with IRS Publication 4557.", es: "Seguridad a nivel de fila en la base de datos, números de Seguro Social cifrados, almacenamiento privado con enlaces firmados de corta duración, autenticación multifactor TOTP obligatoria y cierre de sesión por 15 minutos de inactividad conforme a la Publicación 4557 del IRS." },
-  "promo.faq.q4": { en: "Is the platform bilingual?", es: "¿La plataforma es bilingüe?" },
-  "promo.faq.a4": { en: "Yes. English is the default, and everything can be switched to Spanish — including this preview and the screenshots above.", es: "Sí. El inglés es el idioma predeterminado y todo puede cambiarse a español — incluida esta vista previa y las capturas anteriores." },
-  "promo.faq.q5": { en: "What does it cost?", es: "¿Cuánto cuesta?" },
-  "promo.faq.a5": { en: "Engagements start at $199 for a straightforward individual return, $399 for expat and multi-source filings, and $499 for business returns — paid securely by card.", es: "Los servicios comienzan en $199 para una declaración individual sencilla, $399 para expatriados y declaraciones con múltiples fuentes, y $499 para empresas — pagados de forma segura con tarjeta." },
-  "promo.faq.q6": { en: "Why do I need an access code?", es: "¿Por qué necesito un código de acceso?" },
-  "promo.faq.a6": { en: "The full site and client portal are in private preview while we onboard our first cohort. Enter the code you were given to unlock the complete experience.", es: "El sitio completo y el portal de clientes están en vista previa privada mientras incorporamos a nuestro primer grupo. Introduzca el código que recibió para desbloquear la experiencia completa." },
-
-  "promo.gate.title": { en: "Private preview", es: "Vista previa privada" },
-  "promo.gate.desc": { en: "Enter your access code to unlock the full TaxCenda site and client portal.", es: "Introduzca su código de acceso para desbloquear el sitio completo y el portal de clientes de TaxCenda." },
-  "promo.gate.placeholder": { en: "Access code", es: "Código de acceso" },
-  "promo.gate.submit": { en: "Unlock", es: "Desbloquear" },
-  "promo.gate.error": { en: "That code isn't recognised. Please check and try again.", es: "Ese código no es válido. Verifíquelo e inténtelo de nuevo." },
-  "promo.gate.locked": { en: "Locked", es: "Bloqueado" },
-
-  "promo.cta.title": { en: "Ready to see the whole thing?", es: "¿Listo para verlo todo?" },
-  "promo.cta.subtitle": { en: "Unlock the full site, pricing, blog and client portal with your access code.", es: "Desbloquee el sitio completo, precios, blog y portal de clientes con su código de acceso." },
-  "promo.footer.legal": { en: "TaxCenda is a trading name of iTechLounge LLC.", es: "TaxCenda es un nombre comercial de iTechLounge LLC." },
+  "promo.app.b1": {
+    en: "Add to home screen on iOS and Android",
+    es: "Añadir a la pantalla de inicio en iOS y Android",
+  },
+  "promo.app.b2": {
+    en: "Bottom tab navigation built for thumbs",
+    es: "Navegación inferior pensada para el pulgar",
+  },
+  "promo.app.b3": {
+    en: "Camera capture straight into your vault",
+    es: "Captura con cámara directa a su bóveda",
+  },
+  "promo.app.b4": {
+    en: "Push-ready notifications for filing milestones",
+    es: "Notificaciones listas para hitos de su declaración",
+  },
 };

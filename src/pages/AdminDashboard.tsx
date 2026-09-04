@@ -210,7 +210,7 @@ const AdminDashboard = () => {
 
   const handleSignOut = useCallback(async () => {
     await signOut();
-    navigate("/home");
+    navigate("/");
   }, [signOut, navigate]);
 
   // 15-minute inactivity timeout (IRS Pub 4557)
