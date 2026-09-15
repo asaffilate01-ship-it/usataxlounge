@@ -1,3 +1,4 @@
+import { PortfolioServices } from "@/components/PortfolioServices";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -351,6 +352,7 @@ const AdminDashboard = () => {
 
         <div className="flex-1 p-4 sm:p-6 overflow-auto">
           {/* Overview */}
+          {activeTab === "overview" && <PortfolioServices source="taxcenda" country="US" />}
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
