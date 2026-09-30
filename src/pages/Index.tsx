@@ -11,6 +11,7 @@ import BlogSection from "@/components/landing/BlogSection";
 import ContactSection from "@/components/landing/ContactSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
+import ScreenshotShowcase from "@/components/promo/ScreenshotShowcase";
 import FloatingButtons from "@/components/FloatingButtons";
 
 const Index = () => {
@@ -19,6 +20,7 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <ServicesSection />
+      <ScreenshotShowcase />
       <TaxFormsSection />
       <PricingSection />
       <WhyUsSection />
