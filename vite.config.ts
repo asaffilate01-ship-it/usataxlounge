@@ -21,7 +21,18 @@ export default defineConfig(({ mode }) => ({
       includeAssets: ["taxcenda-mark.svg", "icons/*.webp"],
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        globPatterns: ["**/*.{js,css,ico,png,svg,woff2}"],
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
+        navigateFallback: null,
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: { cacheName: "pages", networkTimeoutSeconds: 4 },
+          },
+        ],
       },
       manifest: {
         name: "TaxCenda — Client Portal",
