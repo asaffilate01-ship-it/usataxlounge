@@ -114,7 +114,7 @@ const PaymentSuccess = () => {
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to="/home">Back to Home</Link>
+            <Link to="/">Back to Home</Link>
           </Button>
         </div>
       </div>

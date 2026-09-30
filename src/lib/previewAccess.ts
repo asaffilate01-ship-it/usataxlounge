@@ -3,13 +3,8 @@ const KEY = "taxcenda-preview-access";
 /** Promo-only gate. Not a security control — the portal itself is protected by real auth. */
 export const ACCESS_CODES = ["taxcenda2026", "cenda-preview"];
 
-export const hasPreviewAccess = () => {
-  try {
-    return localStorage.getItem(KEY) === "granted";
-  } catch {
-    return false;
-  }
-};
+/** Site is public now — gate disabled. */
+export const hasPreviewAccess = () => true;
 
 export const grantPreviewAccess = () => {
   try {
