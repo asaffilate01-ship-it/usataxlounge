@@ -18,7 +18,6 @@ const NEXT_STATUS: Record<string, string | undefined> = {
   client_review: "signature_complete",
   signature_complete: "approved_to_file",
   approved_to_file: "transmitted",
-  transmitted: "accepted",
   accepted: "completed",
   rejected: "approved_to_file",
 };
@@ -173,6 +172,9 @@ const TaxReviewQueue = () => {
                         <Badge className="bg-success/10 text-success"><CheckCircle2 className="mr-1 h-3 w-3" /> No open evidence blockers</Badge>
                       )}
                     </div>
+                    {item.engagement.workflow_status === "transmitted" && (
+                      <Badge variant="outline">Awaiting provider-verified acceptance or rejection</Badge>
+                    )}
                     {nextStatus && (
                       <Button
                         size="sm"
