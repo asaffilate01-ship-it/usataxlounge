@@ -5,7 +5,7 @@ import TaxFormsSection from "@/components/landing/TaxFormsSection";
 import PricingSection from "@/components/landing/PricingSection";
 import WhyUsSection from "@/components/landing/WhyUsSection";
 import ProcessSection from "@/components/landing/ProcessSection";
-import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import WorkspaceCapabilitiesSection from "@/components/landing/WorkspaceCapabilitiesSection";
 import FAQSection from "@/components/landing/FAQSection";
 import BlogSection from "@/components/landing/BlogSection";
 import ContactSection from "@/components/landing/ContactSection";
@@ -17,7 +17,9 @@ import FloatingButtons from "@/components/FloatingButtons";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:text-foreground focus:shadow-elegant">Skip to main content</a>
       <Navbar />
+      <main id="main-content" tabIndex={-1}>
       <HeroSection />
       <ServicesSection />
       <ScreenshotShowcase />
@@ -25,11 +27,12 @@ const Index = () => {
       <PricingSection />
       <WhyUsSection />
       <ProcessSection />
-      <TestimonialsSection />
+      <WorkspaceCapabilitiesSection />
       <FAQSection />
       <BlogSection />
       <ContactSection />
       <CTASection />
+      </main>
       <Footer />
       <FloatingButtons />
     </div>

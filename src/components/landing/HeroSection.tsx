@@ -115,25 +115,15 @@ const HeroSection = () => {
                 alt="Tax consultant meeting with client"
                 className="relative rounded-2xl shadow-2xl border border-white/10 w-full object-cover max-h-[550px]"
               />
-              {/* Floating stat card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="absolute -bottom-6 -left-6 bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-elegant p-4"
-              >
-                <p className="text-2xl font-display font-bold text-accent">5,000+</p>
-                <p className="text-xs text-muted-foreground">{t("whyUs.s1")}</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1 }}
-                className="absolute -top-4 -right-4 bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-elegant p-4"
-              >
-                <p className="text-2xl font-display font-bold text-accent">98%</p>
-                <p className="text-xs text-muted-foreground">{t("whyUs.s2")}</p>
-              </motion.div>
+              {/* Source-backed assurances instead of unverified marketing statistics. */}
+              <div className="absolute -bottom-5 -left-3 rounded-xl border border-border bg-card/95 px-5 py-4 shadow-elegant backdrop-blur-md sm:-left-6">
+                <p className="text-sm font-semibold text-foreground">{t("hero.proof1.title")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("hero.proof1.desc")}</p>
+              </div>
+              <div className="absolute -top-4 -right-2 rounded-xl border border-border bg-card/95 px-5 py-4 shadow-elegant backdrop-blur-md sm:-right-6">
+                <p className="text-sm font-semibold text-foreground">{t("hero.proof2.title")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("hero.proof2.desc")}</p>
+              </div>
             </div>
           </motion.div>
         </div>

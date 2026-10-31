@@ -21,18 +21,22 @@ const translations: Record<string, Record<Language, string>> = {
   "nav.getStarted": { en: "Get Started", es: "Comenzar" },
 
   // Hero
-  "hero.badge": { en: "IRS Authorised Enrolled Agents", es: "Agentes Inscritos Autorizados por el IRS" },
+  "hero.badge": { en: "US tax preparation with professional review", es: "Preparación de impuestos de EE. UU. con revisión profesional" },
   "hero.title1": { en: "Filed right.", es: "Declarado correctamente." },
   "hero.title2": { en: "Represented with confidence.", es: "Representado con confianza." },
-  "hero.subtitle": {
-    en: "We represent you before the IRS, file all federal and state forms, and maximize your refund — for individuals and businesses alike.",
-    es: "Lo representamos ante el IRS, presentamos todos los formularios federales y estatales, y maximizamos su reembolso — tanto para individuos como para empresas.",
-  },
+  "hero.subtitle": { en: "Organise your US tax records, resolve questions and approve the final package with professional guidance—whether you live in the US or abroad.", es: "Organice sus documentos fiscales de EE. UU., resuelva preguntas y apruebe el paquete final con orientación profesional, viva en EE. UU. o en el extranjero." },
   "hero.highlight1": { en: "IRS Enrolled Agents", es: "Agentes Inscritos del IRS" },
   "hero.highlight2": { en: "Individual & Business Returns", es: "Declaraciones Individuales y Empresariales" },
   "hero.highlight3": { en: "US Expat Tax Filing", es: "Declaraciones para Expatriados" },
-  "hero.cta": { en: "Start Filing Today", es: "Comience a Declarar Hoy" },
+  "hero.cta": { en: "Start your tax workspace", es: "Abra su espacio fiscal" },
   "hero.cta2": { en: "Our Services", es: "Nuestros Servicios" },
+
+  "hero.proof1.title": { en: "Evidence first", es: "Primero, los documentos" },
+  "hero.proof1.desc": { en: "Source-linked financial records", es: "Registros vinculados a su origen" },
+  "hero.proof2.title": { en: "Your approval matters", es: "Su aprobación cuenta" },
+  "hero.proof2.desc": { en: "Review before any filing release", es: "Revisión antes de presentar" },
+  "whyUs.visual.title": { en: "One place for the complete tax trail", es: "Un solo lugar para todo el proceso fiscal" },
+  "whyUs.visual.desc": { en: "Documents · Questions · Review · Approval", es: "Documentos · Preguntas · Revisión · Aprobación" },
 
   // Services
   "services.label": { en: "What We Offer", es: "Lo Que Ofrecemos" },
@@ -68,24 +72,21 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Why Us
   "whyUs.label": { en: "Why TaxCenda", es: "¿Por Qué TaxCenda?" },
-  "whyUs.title": { en: "Trusted by Thousands", es: "La Confianza de Miles" },
-  "whyUs.r1.title": { en: "IRS Enrolled Agents", es: "Agentes Inscritos del IRS" },
-  "whyUs.r1.desc": { en: "Federally licensed tax practitioners with unlimited rights to represent taxpayers before the IRS.", es: "Profesionales fiscales con licencia federal y derechos ilimitados para representar contribuyentes ante el IRS." },
-  "whyUs.r2.title": { en: "20+ Years Experience", es: "20+ Años de Experiencia" },
-  "whyUs.r2.desc": { en: "Decades of expertise navigating complex tax situations for individuals and businesses.", es: "Décadas de experiencia manejando situaciones fiscales complejas para individuos y empresas." },
-  "whyUs.r3.title": { en: "Secure & Compliant", es: "Seguro y Conforme" },
-  "whyUs.r3.desc": { en: "Bank-level encryption protects your financial data. Full IRS e-file authorization.", es: "Cifrado de nivel bancario protege sus datos financieros. Autorización completa para e-file del IRS." },
-  "whyUs.r4.title": { en: "Year-Round Support", es: "Soporte Todo el Año" },
-  "whyUs.r4.desc": { en: "We're available beyond tax season — whenever you need guidance, we're here.", es: "Estamos disponibles más allá de la temporada de impuestos — cuando necesite orientación, aquí estamos." },
+  "whyUs.title": { en: "A clear trail from evidence to approval", es: "Un proceso claro desde los documentos hasta la aprobación" },
+  "whyUs.r1.title": { en: "Professional review", es: "Revisión profesional" },
+  "whyUs.r1.desc": { en: "A preparer and reviewer workflow helps keep professional decisions separate from AI suggestions.", es: "Un proceso de preparador y revisor ayuda a mantener las decisiones profesionales separadas de las sugerencias de IA." },
+  "whyUs.r2.title": { en: "Documents stay connected", es: "Documentos vinculados" },
+  "whyUs.r2.desc": { en: "Receipts, statements and confirmed financial entries remain connected to their original evidence.", es: "Los recibos, extractos y asientos confirmados permanecen vinculados a sus documentos originales." },
+  "whyUs.r3.title": { en: "Controlled workspace access", es: "Acceso controlado al espacio de trabajo" },
+  "whyUs.r3.desc": { en: "Accounts, private document storage and role-based permissions help safeguard sensitive records.", es: "Las cuentas, el almacenamiento privado y los permisos por función ayudan a proteger los documentos confidenciales." },
+  "whyUs.r4.title": { en: "Meaningful status updates", es: "Estados claros y verificables" },
+  "whyUs.r4.desc": { en: "Preparation, client approval, transmission and acceptance are distinct steps. Acceptance requires verified provider evidence.", es: "La preparación, la aprobación del cliente, el envío y la aceptación son pasos distintos. La aceptación requiere confirmación del proveedor." },
   "whyUs.s1": { en: "Returns Filed", es: "Declaraciones Presentadas" },
   "whyUs.s2": { en: "Client Retention", es: "Retención de Clientes" },
   "whyUs.s3": { en: "In Tax Savings", es: "En Ahorros Fiscales" },
   "whyUs.s4": { en: "Years Experience", es: "Años de Experiencia" },
-  "whyUs.global.title": { en: "Representation Across All 50 States & Worldwide", es: "Representación en los 50 Estados y en Todo el Mundo" },
-  "whyUs.global.desc": {
-    en: "We have representation in all 50 states, Europe, Asia, the Middle East, Africa and the Americas. So whether you're in Chicago, New York, LA, Dallas, London, Beijing, Dubai, Cape Town or Mexico City — we are here to help.",
-    es: "Tenemos representación en los 50 estados, Europa, Asia, Medio Oriente, África y las Américas. Ya sea que esté en Chicago, Nueva York, Los Ángeles, Dallas, Londres, Pekín, Dubái, Ciudad del Cabo o Ciudad de México — estamos aquí para ayudarle.",
-  },
+  "whyUs.global.title": { en: "US tax support at home and abroad", es: "Asistencia fiscal de EE. UU. dentro y fuera del país" },
+  "whyUs.global.desc": { en: "TaxCenda is designed for US tax engagements involving residents and people living abroad. Services depend on the case and professional availability.", es: "TaxCenda está diseñado para casos fiscales de EE. UU. de residentes y personas en el extranjero. Los servicios dependen del caso y de la disponibilidad profesional." },
 
   // Process
   "process.label": { en: "How It Works", es: "Cómo Funciona" },
@@ -97,15 +98,12 @@ const translations: Record<string, Record<Language, string>> = {
   "process.s3.title": { en: "Review & E-Sign", es: "Revise y Firme" },
   "process.s3.desc": { en: "Review your prepared return, approve it with an electronic signature.", es: "Revise su declaración preparada, apruébela con una firma electrónica." },
   "process.s4.title": { en: "Filed & Delivered", es: "Presentado y Entregado" },
-  "process.s4.desc": { en: "We e-file with the IRS and deliver your copies — track everything from your dashboard.", es: "Presentamos electrónicamente ante el IRS y entregamos sus copias — siga todo desde su panel." },
+  "process.s4.desc": { en: "Your tax professional will confirm submission and acceptance when verified filing information is available.", es: "Su profesional fiscal confirmará el envío y la aceptación cuando exista información de presentación verificada." },
 
   // CTA
   "cta.title1": { en: "Ready to File with", es: "¿Listo para Declarar con" },
   "cta.title2": { en: "Confidence?", es: "Confianza?" },
-  "cta.subtitle": {
-    en: "Join thousands of clients who trust TaxCenda's IRS Enrolled Agents with their taxes. Get started in minutes.",
-    es: "Únase a miles de clientes que confían en los Agentes Inscritos de TaxCenda para sus impuestos. Comience en minutos.",
-  },
+  "cta.subtitle": { en: "Create an account to organise your source documents and start a reviewable tax-preparation workflow.", es: "Cree una cuenta para organizar sus documentos y comenzar un proceso de preparación fiscal con revisión." },
   "cta.button": { en: "Create Free Account", es: "Crear Cuenta Gratis" },
 
   // Blog
@@ -121,7 +119,7 @@ const translations: Record<string, Record<Language, string>> = {
   // Contact
   "contact.label": { en: "Get In Touch", es: "Contáctenos" },
   "contact.title": { en: "Let's Start a Conversation", es: "Iniciemos una Conversación" },
-  "contact.subtitle": { en: "Have a question about your taxes? Our Enrolled Agents are ready to help. Send us a message and we'll respond within 24 hours.", es: "¿Tiene una pregunta sobre sus impuestos? Nuestros Agentes Inscritos están listos para ayudar. Envíenos un mensaje y responderemos dentro de 24 horas." },
+  "contact.subtitle": { en: "Tell us what you need help with. A team member can review your enquiry and explain the next steps.", es: "Cuéntenos en qué necesita ayuda. Nuestro equipo podrá revisar su consulta y explicarle los siguientes pasos." },
   "contact.name": { en: "Full Name", es: "Nombre Completo" },
   "contact.namePh": { en: "John Doe", es: "Juan Pérez" },
   "contact.email": { en: "Email", es: "Correo Electrónico" },
@@ -135,17 +133,17 @@ const translations: Record<string, Record<Language, string>> = {
   "contact.send": { en: "Send Message", es: "Enviar Mensaje" },
   "contact.sending": { en: "Sending...", es: "Enviando..." },
   "contact.successTitle": { en: "Message Sent!", es: "¡Mensaje Enviado!" },
-  "contact.successDesc": { en: "We'll get back to you within 24 hours.", es: "Le responderemos dentro de 24 horas." },
+  "contact.successDesc": { en: "Your enquiry was received. We will respond when a team member is available.", es: "Hemos recibido su consulta. Responderemos cuando haya un miembro del equipo disponible." },
   "contact.errorTitle": { en: "Missing Fields", es: "Campos Faltantes" },
   "contact.errorDesc": { en: "Please fill in all required fields.", es: "Por favor complete todos los campos requeridos." },
-  "contact.address": { en: "123 Financial District, Miami, FL 33131", es: "123 Distrito Financiero, Miami, FL 33131" },
-  "contact.hours": { en: "Mon-Fri 9AM-6PM EST", es: "Lun-Vie 9AM-6PM EST" },
+  "contact.address": { en: "Remote consultations for US taxpayers", es: "Consultas a distancia para contribuyentes de EE. UU." },
+  "contact.hours": { en: "Enquiries can be sent online at any time", es: "Puede enviar consultas en línea en cualquier momento" },
 
   // WhatsApp
   "whatsapp.label": { en: "Chat with Us", es: "Escríbenos" },
 
   // Footer
-  "footer.copy": { en: "IRS Authorised Enrolled Agents. Filed right. Represented with confidence.", es: "Agentes Inscritos Autorizados por el IRS. Haciendo Impuestos Menos Agotadores." },
+  "footer.copy": { en: "US taxes, clearly handled. Source-backed workspaces and professional review before filing.", es: "Impuestos de EE. UU. con claridad. Documentos vinculados y revisión profesional antes de presentar." },
   "footer.privacy": { en: "Privacy Policy", es: "Política de Privacidad" },
   "footer.terms": { en: "Terms of Service", es: "Términos de Servicio" },
   "footer.sitemap": { en: "Sitemap", es: "Mapa del Sitio" },
@@ -215,34 +213,16 @@ const translations: Record<string, Record<Language, string>> = {
   "pricing.expat.f5": { en: "Foreign Tax Credit optimization", es: "Optimización de Créditos Fiscales Extranjeros" },
   "pricing.expat.f6": { en: "Treaty benefit analysis", es: "Análisis de beneficios de tratados" },
 
-  // Testimonials
-  "testimonials.label": { en: "Client Reviews", es: "Opiniones de Clientes" },
-  "testimonials.title": { en: "What Our Clients Say", es: "Lo Que Dicen Nuestros Clientes" },
-  "testimonials.subtitle": { en: "Trusted by thousands of individuals and businesses across the US and abroad.", es: "La confianza de miles de individuos y empresas en EE.UU. y el extranjero." },
-
-  "testimonial.1.name": { en: "Maria Rodriguez", es: "María Rodríguez" },
-  "testimonial.1.role": { en: "Small Business Owner", es: "Dueña de Pequeña Empresa" },
-  "testimonial.1.text": { en: "TaxCenda made filing my business taxes so easy. Their team handled my Schedule C and 1120-S with precision. I saved over $4,000 this year!", es: "TaxCenda hizo que declarar mis impuestos empresariales fuera muy fácil. Su equipo manejó mi Anexo C y 1120-S con precisión. ¡Ahorré más de $4,000 este año!" },
-
-  "testimonial.2.name": { en: "James Chen", es: "James Chen" },
-  "testimonial.2.role": { en: "US Expat in London", es: "Expatriado en Londres" },
-  "testimonial.2.text": { en: "As a US citizen living abroad, FBAR and FATCA filing was a nightmare until I found TaxCenda. They handle everything seamlessly.", es: "Como ciudadano estadounidense viviendo en el extranjero, la declaración FBAR y FATCA era una pesadilla hasta que encontré TaxCenda. Lo manejan todo sin problemas." },
-
-  "testimonial.3.name": { en: "Sarah Mitchell", es: "Sarah Mitchell" },
-  "testimonial.3.role": { en: "Freelance Designer", es: "Diseñadora Freelance" },
-  "testimonial.3.text": { en: "My first time filing as self-employed and they guided me through every deduction. The portal made uploading documents incredibly simple.", es: "Mi primera vez declarando como independiente y me guiaron en cada deducción. El portal hizo que subir documentos fuera increíblemente simple." },
-
-  "testimonial.4.name": { en: "Robert Williams", es: "Robert Williams" },
-  "testimonial.4.role": { en: "Retired Teacher", es: "Maestro Jubilado" },
-  "testimonial.4.text": { en: "I've been using TaxCenda for 5 years now. Their enrolled agents are always available and my returns are always filed on time.", es: "Llevo 5 años usando TaxCenda. Sus agentes inscritos siempre están disponibles y mis declaraciones siempre se presentan a tiempo." },
-
-  "testimonial.5.name": { en: "Lisa Park", es: "Lisa Park" },
-  "testimonial.5.role": { en: "Real Estate Investor", es: "Inversionista Inmobiliaria" },
-  "testimonial.5.text": { en: "Complex rental income, depreciation schedules — they handle it all. Professional and reliable every tax season.", es: "Ingresos por alquiler complejos, cronogramas de depreciación — lo manejan todo. Profesionales y confiables cada temporada fiscal." },
-
-  "testimonial.6.name": { en: "David Okafor", es: "David Okafor" },
-  "testimonial.6.role": { en: "Tech Startup Founder", es: "Fundador de Startup Tecnológica" },
-  "testimonial.6.text": { en: "TaxCenda helped us set up our S-Corp structure and saved us thousands in self-employment tax. Highly recommend!", es: "TaxCenda nos ayudó a configurar nuestra estructura S-Corp y nos ahorró miles en impuestos de autoempleo. ¡Muy recomendado!" },
+  // Source-backed TaxCenda portal capabilities
+  "capabilities.label": { en: "Inside the client workspace", es: "Dentro del portal del cliente" },
+  "capabilities.title": { en: "Tax records with a clear next step", es: "Documentos fiscales con un siguiente paso claro" },
+  "capabilities.subtitle": { en: "Know what has been uploaded, what still needs an answer and what requires your approval.", es: "Sepa qué ha subido, qué preguntas quedan pendientes y qué necesita su aprobación." },
+  "capabilities.documents.title": { en: "Bring evidence together", es: "Reúna sus documentos" },
+  "capabilities.documents.desc": { en: "Upload original receipts and statements into a tax-year workspace. Review suggested entries before they are saved.", es: "Suba recibos y extractos originales a un espacio por año fiscal. Revise los asientos sugeridos antes de guardarlos." },
+  "capabilities.questions.title": { en: "Resolve questions in context", es: "Resuelva preguntas con contexto" },
+  "capabilities.questions.desc": { en: "Clarify missing information and potential duplicates without losing the link to the source record.", es: "Aclare la información faltante y los posibles duplicados sin perder el vínculo con el documento de origen." },
+  "capabilities.approvals.title": { en: "Approve with confidence", es: "Apruebe con confianza" },
+  "capabilities.approvals.desc": { en: "Track professional review and give explicit approval to the final package before any filing release.", es: "Siga la revisión profesional y apruebe expresamente el paquete final antes de autorizar su presentación." },
 
   // Auth
   "auth.welcomeBack": { en: "Welcome Back", es: "Bienvenido de Nuevo" },
