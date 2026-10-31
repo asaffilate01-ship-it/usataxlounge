@@ -3,7 +3,6 @@ import {
   AlertTriangle,
   ArrowRight,
   Building2,
-  CheckCircle2,
   CircleDollarSign,
   FileCheck2,
   FileQuestion,
