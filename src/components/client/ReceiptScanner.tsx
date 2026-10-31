@@ -12,6 +12,7 @@ import type { NewFinancialEntry } from "@/hooks/useIncomeExpenses";
 import { supabase } from "@/integrations/supabase/client";
 import { taxcenda } from "@/integrations/supabase/taxcenda";
 import { safeStorageFilename, sha256File, validateIntakeFile } from "@/lib/documentIntake";
+import { isValidReceiptDate, normalizeReceiptFields } from "@/lib/receiptExtraction";
 import { getErrorMessage } from "@/lib/errors";
 import { takeNativeDocumentPhoto } from "@/lib/native";
 import { useToast } from "@/hooks/use-toast";
@@ -29,7 +30,7 @@ type ExtractedReceipt = {
   description: string;
   amount: number;
   date: string;
-  businessUsePercentage: number;
+  businessUsePercentage: number | null;
   confidence: number;
   items: Array<{ name: string; amount: number }>;
   needsConfirmation: string[];
@@ -43,8 +44,8 @@ const emptyResult = (): ExtractedReceipt => ({
   vendorName: "",
   description: "",
   amount: 0,
-  date: new Date().toISOString().slice(0, 10),
-  businessUsePercentage: 100,
+  date: "",
+  businessUsePercentage: null,
   confidence: 0,
   items: [],
   needsConfirmation: [],
@@ -60,6 +61,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
   const [result, setResult] = useState<ExtractedReceipt | null>(null);
   const [duplicateTitle, setDuplicateTitle] = useState<string | null>(null);
   const [keepBoth, setKeepBoth] = useState(false);
+  const [fieldsConfirmed, setFieldsConfirmed] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const workspace = useTaxWorkspace();
@@ -77,6 +79,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
     setResult(null);
     setDuplicateTitle(null);
     setKeepBoth(false);
+    setFieldsConfirmed(false);
     setExtracting(false);
     setSaving(false);
   };
@@ -86,6 +89,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
     setResult(null);
     setDuplicateTitle(null);
     setKeepBoth(false);
+    setFieldsConfirmed(false);
 
     try {
       validateIntakeFile(selected);
@@ -120,6 +124,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
       if (data?.error) throw new Error(String(data.error));
 
       const fallback = emptyResult();
+      const safeFields = normalizeReceiptFields(data);
       setResult({
         type: data?.type === "income" ? "income" : "expense",
         documentType: String(data?.documentType || fallback.documentType),
@@ -127,18 +132,23 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
         category: String(data?.category || fallback.category),
         vendorName: String(data?.vendorName || data?.description || ""),
         description: String(data?.description || ""),
-        amount: Math.abs(Number(data?.amount) || 0),
-        date: /^\d{4}-\d{2}-\d{2}$/.test(String(data?.date)) ? String(data.date) : fallback.date,
-        businessUsePercentage: Math.min(100, Math.max(0, Number(data?.businessUsePercentage) || 100)),
-        confidence: Math.min(1, Math.max(0, Number(data?.confidence) || 0)),
+        amount: safeFields.amount,
+        date: safeFields.date,
+        businessUsePercentage: safeFields.businessUsePercentage,
+        confidence: safeFields.confidence,
         items: Array.isArray(data?.items) ? data.items : [],
-        needsConfirmation: Array.isArray(data?.needsConfirmation) ? data.needsConfirmation.map(String) : [],
+        needsConfirmation: safeFields.needsConfirmation,
       });
     } catch (error) {
       toast({ title: "Scan failed", description: getErrorMessage(error), variant: "destructive" });
     } finally {
       setExtracting(false);
     }
+  };
+
+  const updateResult = (changes: Partial<ExtractedReceipt>) => {
+    setResult((previous) => previous ? { ...previous, ...changes } : previous);
+    setFieldsConfirmed(false);
   };
 
   const saveConfirmed = async () => {
@@ -151,8 +161,16 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
       toast({ title: "Confirm the duplicate decision", description: "Choose whether this is a separate transaction before saving.", variant: "destructive" });
       return;
     }
-    if (!result.vendorName.trim() || !result.category.trim() || result.amount <= 0 || !result.date) {
+    if (!result.vendorName.trim() || !result.category.trim() || !Number.isFinite(result.amount) || result.amount <= 0 || !isValidReceiptDate(result.date)) {
       toast({ title: "Check the extracted details", description: "Vendor, category, date and a positive amount are required.", variant: "destructive" });
+      return;
+    }
+    if (result.businessUsePercentage === null || !Number.isFinite(result.businessUsePercentage) || result.businessUsePercentage < 0 || result.businessUsePercentage > 100) {
+      toast({ title: "Enter the business-use percentage", description: "Use the verified figure between 0% and 100%, including 0% if applicable.", variant: "destructive" });
+      return;
+    }
+    if (!fieldsConfirmed) {
+      toast({ title: "Confirm the source document", description: "Review the extracted fields against the original image before saving.", variant: "destructive" });
       return;
     }
 
@@ -276,7 +294,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
           {preview && (
             <div className="relative rounded-xl border border-border bg-muted/20 p-3">
               <img src={preview} alt="Document awaiting confirmation" className="mx-auto max-h-64 rounded-lg object-contain" />
-              {!extracting && !saving && <button type="button" onClick={reset} className="absolute right-4 top-4 rounded-full bg-background/90 p-1.5 shadow"><X className="h-4 w-4" /></button>}
+              {!extracting && !saving && <button type="button" onClick={reset} aria-label="Remove selected document" className="absolute right-4 top-4 rounded-full bg-background/90 p-1.5 shadow"><X className="h-4 w-4" /></button>}
             </div>
           )}
 
@@ -295,21 +313,25 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
             <div className="space-y-4">
               <div className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground"><span>Extraction confidence</span><span>{Math.round(result.confidence * 100)}% — client confirmation required</span></div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div><Label>Record type</Label><Select value={result.type} onValueChange={(value: "income" | "expense") => setResult({ ...result, type: value })}><SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="income">Income</SelectItem><SelectItem value="expense">Expense</SelectItem></SelectContent></Select></div>
-                <div><Label>Accounting treatment</Label><Select value={result.entryKind} onValueChange={(value) => setResult({ ...result, entryKind: value })}><SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="gross_income">Gross income</SelectItem><SelectItem value="sales">Sales revenue</SelectItem><SelectItem value="salary_wages">Salary / wages</SelectItem><SelectItem value="interest_income">Interest income</SelectItem><SelectItem value="rental_income">Rental income</SelectItem><SelectItem value="sundry_income">Sundry income</SelectItem><SelectItem value="operating_expense">Operating expense</SelectItem><SelectItem value="cost_of_goods">Cost of goods</SelectItem><SelectItem value="capital_asset">Capital asset</SelectItem><SelectItem value="owner_contribution">Owner contribution</SelectItem><SelectItem value="owner_draw">Owner draw</SelectItem><SelectItem value="loan_proceeds">Loan proceeds</SelectItem><SelectItem value="loan_repayment">Loan repayment</SelectItem><SelectItem value="other">Other / ask reviewer</SelectItem></SelectContent></Select></div>
+                <div><Label>Record type</Label><Select value={result.type} onValueChange={(value: "income" | "expense") => updateResult({ type: value })}><SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="income">Income</SelectItem><SelectItem value="expense">Expense</SelectItem></SelectContent></Select></div>
+                <div><Label>Accounting treatment</Label><Select value={result.entryKind} onValueChange={(value) => updateResult({ entryKind: value })}><SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="gross_income">Gross income</SelectItem><SelectItem value="sales">Sales revenue</SelectItem><SelectItem value="salary_wages">Salary / wages</SelectItem><SelectItem value="interest_income">Interest income</SelectItem><SelectItem value="rental_income">Rental income</SelectItem><SelectItem value="sundry_income">Sundry income</SelectItem><SelectItem value="operating_expense">Operating expense</SelectItem><SelectItem value="cost_of_goods">Cost of goods</SelectItem><SelectItem value="capital_asset">Capital asset</SelectItem><SelectItem value="owner_contribution">Owner contribution</SelectItem><SelectItem value="owner_draw">Owner draw</SelectItem><SelectItem value="loan_proceeds">Loan proceeds</SelectItem><SelectItem value="loan_repayment">Loan repayment</SelectItem><SelectItem value="other">Other / ask reviewer</SelectItem></SelectContent></Select></div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div><Label htmlFor="scan-vendor">Vendor or payer</Label><Input id="scan-vendor" className="mt-1.5" value={result.vendorName} onChange={(event) => setResult({ ...result, vendorName: event.target.value })} /></div>
-                <div><Label htmlFor="scan-category">Category</Label><Input id="scan-category" className="mt-1.5" value={result.category} onChange={(event) => setResult({ ...result, category: event.target.value })} /></div>
+                <div><Label htmlFor="scan-vendor">Vendor or payer</Label><Input id="scan-vendor" className="mt-1.5" value={result.vendorName} onChange={(event) => updateResult({ vendorName: event.target.value })} /></div>
+                <div><Label htmlFor="scan-category">Category</Label><Input id="scan-category" className="mt-1.5" value={result.category} onChange={(event) => updateResult({ category: event.target.value })} /></div>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
-                <div><Label htmlFor="scan-amount">Amount ($)</Label><Input id="scan-amount" className="mt-1.5" type="number" min="0.01" step="0.01" value={result.amount} onChange={(event) => setResult({ ...result, amount: Number(event.target.value) })} /></div>
-                <div><Label htmlFor="scan-date">Document date</Label><Input id="scan-date" className="mt-1.5" type="date" value={result.date} onChange={(event) => setResult({ ...result, date: event.target.value })} /></div>
-                <div><Label htmlFor="scan-use">Business use (%)</Label><Input id="scan-use" className="mt-1.5" type="number" min="0" max="100" step="0.01" value={result.businessUsePercentage} onChange={(event) => setResult({ ...result, businessUsePercentage: Number(event.target.value) })} /></div>
+                <div><Label htmlFor="scan-amount">Amount ($)</Label><Input id="scan-amount" className="mt-1.5" type="number" min="0.01" step="0.01" value={result.amount} onChange={(event) => updateResult({ amount: Number(event.target.value) })} /></div>
+                <div><Label htmlFor="scan-date">Document date</Label><Input id="scan-date" className="mt-1.5" type="date" value={result.date} onChange={(event) => updateResult({ date: event.target.value })} /></div>
+                <div><Label htmlFor="scan-use">Business use (%)</Label><Input id="scan-use" className="mt-1.5" type="number" min="0" max="100" step="0.01" value={result.businessUsePercentage ?? ""} onChange={(event) => updateResult({ businessUsePercentage: event.target.value === "" ? null : Number(event.target.value) })} /></div>
               </div>
-              <div><Label htmlFor="scan-description">Description</Label><Input id="scan-description" className="mt-1.5" value={result.description} onChange={(event) => setResult({ ...result, description: event.target.value })} /></div>
+              <div><Label htmlFor="scan-description">Description</Label><Input id="scan-description" className="mt-1.5" value={result.description} onChange={(event) => updateResult({ description: event.target.value })} /></div>
               {result.needsConfirmation.length > 0 && <div className="rounded-xl border border-warning/20 bg-warning/5 p-3"><p className="text-xs font-semibold text-foreground">Please check</p><ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-muted-foreground">{result.needsConfirmation.map((item) => <li key={item}>{item}</li>)}</ul></div>}
-              <Button onClick={saveConfirmed} disabled={saving || (Boolean(duplicateTitle) && !keepBoth)} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
+              <label className="flex items-start gap-3 rounded-lg border border-border bg-muted/20 p-3 text-sm text-foreground">
+                <Checkbox checked={fieldsConfirmed} onCheckedChange={(value) => setFieldsConfirmed(value === true)} aria-label="I checked the financial details against the original source document" />
+                <span>I checked the vendor, amount, date, accounting category and business-use percentage against the original document. I understand that AI suggestions can be wrong.</span>
+              </label>
+              <Button onClick={saveConfirmed} disabled={saving || !fieldsConfirmed || (Boolean(duplicateTitle) && !keepBoth) || result.businessUsePercentage === null || !isValidReceiptDate(result.date)} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
                 {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />} Confirm and save evidence
               </Button>
             </div>
