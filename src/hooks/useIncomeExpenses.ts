@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { taxcenda } from "@/integrations/supabase/taxcenda";
+import { canEditEngagementEntries, validateFinancialEntry } from "@/lib/financialEntry";
 
 export interface IncomeExpenseItem {
   id: string;
@@ -27,9 +28,10 @@ export interface NewFinancialEntry {
   description?: string;
   amount: number;
   entryKind?: string;
-  transactionDate?: string;
+  transactionDate: string;
+  engagementId: string;
   vendorName?: string;
-  businessUsePercentage?: number;
+  businessUsePercentage: number;
   sourceDocumentId?: string;
   documentUrl?: string;
   createdSource?: "manual" | "document_ai" | "bank_feed" | "import";
@@ -38,96 +40,144 @@ export interface NewFinancialEntry {
 export const useIncomeExpenses = () => {
   const [items, setItems] = useState<IncomeExpenseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const requestSeq = useRef(0);
   const { user } = useAuth();
   const { toast } = useToast();
 
   const fetchItems = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    const { data, error } = await taxcenda
-      .from("income_expenses")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      toast({ title: "Error loading data", description: error.message, variant: "destructive" });
-    } else {
-      setItems(data as IncomeExpenseItem[]);
+    const seq = ++requestSeq.current;
+    if (!user) {
+      setItems([]);
+      setLoadError(null);
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const { data, error } = await taxcenda
+        .from("income_expenses")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (seq !== requestSeq.current) return;
+      if (error) {
+        setItems([]);
+        setLoadError(error.message);
+        toast({ title: "Unable to load financial records", description: error.message, variant: "destructive" });
+      } else {
+        setItems((data ?? []) as IncomeExpenseItem[]);
+      }
+    } catch (error) {
+      if (seq !== requestSeq.current) return;
+      const message = error instanceof Error ? error.message : "A network error prevented loading the financial records.";
+      setItems([]);
+      setLoadError(message);
+      toast({ title: "Unable to load financial records", description: message, variant: "destructive" });
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
+    }
   }, [user, toast]);
 
   useEffect(() => {
-    fetchItems();
+    const sequence = requestSeq;
+    void fetchItems();
+    return () => { sequence.current++; };
   }, [fetchItems]);
 
   const addItem = async (item: NewFinancialEntry) => {
     if (!user) return false;
-    const { data: engagements } = await taxcenda
+    const validationError = validateFinancialEntry(item);
+    if (validationError) {
+      toast({ title: "Check your financial record", description: validationError, variant: "destructive" });
+      return false;
+    }
+    if (!item.engagementId) {
+      toast({ title: "Start your tax workspace first", description: "Choose a tax-year engagement before adding financial records.", variant: "destructive" });
+      return false;
+    }
+
+    // Re-read the exact selected engagement; never silently attach a record to
+    // the latest or a different taxpayer's entity or a completed filing year.
+    const { data: engagement, error: engagementError } = await taxcenda
       .from("tax_engagements")
-      .select("*")
+      .select("id, entity_id, tax_year, workflow_status")
+      .eq("id", item.engagementId)
       .eq("user_id", user.id)
-      .order("tax_year", { ascending: false })
-      .limit(1);
-    const engagement = engagements?.[0] ?? null;
+      .maybeSingle();
+
+    if (engagementError || !engagement || !canEditEngagementEntries(engagement.workflow_status)) {
+      toast({
+        title: "This tax year cannot accept new entries",
+        description: engagementError?.message ?? "Open your tax workspace and use an engagement that is collecting records or answering client questions.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     const { data: inserted, error } = await taxcenda.from("income_expenses").insert({
       user_id: user.id,
       type: item.type,
-      category: item.category,
-      description: item.description || null,
+      category: item.category.trim(),
+      description: item.description?.trim() || null,
       amount: item.amount,
-      tax_year: engagement?.tax_year ?? new Date().getUTCFullYear() - 1,
-      entity_id: engagement?.entity_id ?? null,
-      engagement_id: engagement?.id ?? null,
+      tax_year: engagement.tax_year,
+      entity_id: engagement.entity_id,
+      engagement_id: engagement.id,
       source_document_id: item.sourceDocumentId ?? null,
       document_url: item.documentUrl ?? null,
-      transaction_date: item.transactionDate || new Date().toISOString().slice(0, 10),
+      transaction_date: item.transactionDate,
       entry_kind: item.entryKind || (item.type === "income" ? "gross_income" : "operating_expense"),
       vendor_name: item.vendorName?.trim() || null,
-      business_use_percentage: item.businessUsePercentage ?? 100,
-      review_status: "confirmed",
+      business_use_percentage: item.businessUsePercentage,
+      // The client confirms the *source facts*. Only staff should approve the
+      // accounting/tax treatment; a user-uploaded entry is not staff-reviewed.
+      review_status: "unreviewed",
       created_source: item.createdSource || "manual",
     }).select("*").single();
 
     if (error) {
       toast({ title: "Error adding entry", description: error.message, variant: "destructive" });
       return false;
-    } else {
-      if (item.entryKind === "capital_asset" && engagement && inserted) {
-        const { error: assetError } = await taxcenda.from("fixed_assets").insert({
-          engagement_id: engagement.id,
-          entity_id: engagement.entity_id,
-          user_id: user.id,
-          source_document_id: item.sourceDocumentId ?? null,
-          source_entry_id: inserted.id,
-          description: item.description?.trim() || item.vendorName?.trim() || item.category,
-          asset_class: item.category.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "other",
-          placed_in_service_date: item.transactionDate || new Date().toISOString().slice(0, 10),
-          cost: item.amount,
-          business_use_percentage: item.businessUsePercentage ?? 100,
-          status: "needs_review",
-        });
-        if (assetError) {
-          toast({ title: "Entry saved; asset needs attention", description: assetError.message, variant: "destructive" });
-        }
-      }
-      toast({ title: "Entry added successfully" });
-      fetchItems();
-      return true;
     }
+    if (item.entryKind === "capital_asset" && inserted) {
+      const { error: assetError } = await taxcenda.from("fixed_assets").insert({
+        engagement_id: engagement.id,
+        entity_id: engagement.entity_id,
+        user_id: user.id,
+        source_document_id: item.sourceDocumentId ?? null,
+        source_entry_id: inserted.id,
+        description: item.description?.trim() || item.vendorName?.trim() || item.category.trim(),
+        asset_class: item.category.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "other",
+        placed_in_service_date: item.transactionDate,
+        cost: item.amount,
+        business_use_percentage: item.businessUsePercentage,
+        status: "needs_review",
+      });
+      if (assetError) {
+        toast({ title: "Entry saved; asset needs attention", description: assetError.message, variant: "destructive" });
+      }
+    }
+    toast({ title: "Entry saved for professional review" });
+    await fetchItems();
+    return true;
   };
 
   const deleteItem = async (id: string) => {
-    const { error } = await taxcenda.from("income_expenses").delete().eq("id", id);
+    if (!user) return;
+    const { data: removed, error } = await taxcenda.from("income_expenses")
+      .delete().eq("id", id).eq("user_id", user.id).select("id").maybeSingle();
     if (error) {
       toast({ title: "Error deleting entry", description: error.message, variant: "destructive" });
+    } else if (!removed) {
+      toast({ title: "Entry could not be removed", description: "The record may be locked for professional review or was already deleted.", variant: "destructive" });
     } else {
       toast({ title: "Entry deleted" });
-      fetchItems();
+      await fetchItems();
     }
   };
 
-  return { items, loading, addItem, deleteItem, refetch: fetchItems };
+  return { items, loading, loadError, addItem, deleteItem, refetch: fetchItems };
 };

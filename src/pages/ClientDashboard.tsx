@@ -28,6 +28,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import SecureAttachment from "@/components/SecureAttachment";
+import { openSigned } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIncomeExpenses } from "@/hooks/useIncomeExpenses";
+import { useTaxWorkspace } from "@/hooks/useTaxWorkspace";
+import { canEditEngagementEntries, validateFinancialEntry } from "@/lib/financialEntry";
 import { useFilings } from "@/hooks/useFilings";
 import { usePresence } from "@/hooks/usePresence";
 import Logo from "@/components/Logo";
@@ -118,8 +121,9 @@ const ClientDashboard = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
-  const { filings, loading: filingsLoading } = useFilings();
+  const { items: incomeExpenses, loading: ieLoading, loadError: financialLoadError, addItem, deleteItem, refetch: refetchIncomeExpenses } = useIncomeExpenses();
+  const taxWorkspace = useTaxWorkspace();
+  const { filings, loading: filingsLoading, loadError: filingsLoadError, refetch: refetchFilings } = useFilings();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
 
   // Onboarding check
@@ -145,7 +149,7 @@ const ClientDashboard = () => {
     vendorName: "",
     description: "",
     amount: "",
-    transactionDate: new Date().toISOString().slice(0, 10),
+    transactionDate: "",
     businessUsePercentage: "100",
   });
 
@@ -179,7 +183,25 @@ const ClientDashboard = () => {
   }, [messages, activeTab]);
 
   const handleAddEntry = async () => {
-    if (!newEntry.category || !newEntry.amount) return;
+    if (taxWorkspace.loading || taxWorkspace.loadError) {
+      toast({ title: "Tax workspace unavailable", description: "Reload the workspace before saving financial records.", variant: "destructive" });
+      return;
+    }
+    if (!taxWorkspace.engagement) {
+      toast({ title: "Create your tax workspace first", description: "Select Tax Workspace to begin your tax year.", variant: "destructive" });
+      return;
+    }
+    const validationError = validateFinancialEntry({
+      type: newEntry.type,
+      category: newEntry.category,
+      amount: Number(newEntry.amount),
+      transactionDate: newEntry.transactionDate,
+      businessUsePercentage: newEntry.businessUsePercentage.trim() === "" ? NaN : Number(newEntry.businessUsePercentage),
+    });
+    if (validationError) {
+      toast({ title: "Check your entry", description: validationError, variant: "destructive" });
+      return;
+    }
     const saved = await addItem({
       type: newEntry.type,
       category: newEntry.category,
@@ -190,6 +212,7 @@ const ClientDashboard = () => {
       vendorName: newEntry.vendorName,
       businessUsePercentage: Number(newEntry.businessUsePercentage),
       createdSource: "manual",
+      engagementId: taxWorkspace.engagement.id,
     });
     if (!saved) return;
     setNewEntry({
@@ -199,7 +222,7 @@ const ClientDashboard = () => {
       vendorName: "",
       description: "",
       amount: "",
-      transactionDate: new Date().toISOString().slice(0, 10),
+      transactionDate: "",
       businessUsePercentage: "100",
     });
     setAddDialogOpen(false);
@@ -252,23 +275,24 @@ const ClientDashboard = () => {
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
-  const totalIncome = incomeExpenses.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
-  const totalExpenses = incomeExpenses.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
+  const selectedYearEntries = taxWorkspace.engagement ? incomeExpenses.filter(i => i.tax_year === taxWorkspace.engagement?.tax_year) : [];
+  const totalIncome = selectedYearEntries.filter(i => i.type === "income").reduce((s, i) => s + Number(i.amount), 0);
+  const totalExpenses = selectedYearEntries.filter(i => i.type === "expense").reduce((s, i) => s + Number(i.amount), 0);
 
   const incomeExpenseColumns = [
     { key: "category", label: "Category" },
     { key: "type", label: "Type" },
     { key: "description", label: "Description" },
     { key: "amount", label: "Amount" },
-    { key: "created_at", label: "Date" },
+    { key: "transaction_date", label: "Transaction date" },
   ];
 
   const filingColumns = [
     { key: "form_type", label: "Form" },
     { key: "tax_year", label: "Year" },
     { key: "status", label: "Status" },
-    { key: "submitted_at", label: "Filed Date" },
-    { key: "irs_confirmation", label: "IRS Confirmation" },
+    { key: "submitted_at", label: "Recorded submission date" },
+    { key: "irs_confirmation", label: "Recorded provider reference" },
   ];
 
   const SidebarContent = () => (
@@ -368,6 +392,12 @@ const ClientDashboard = () => {
           {/* Overview */}
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
+              {(financialLoadError || filingsLoadError) && (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-4 text-sm text-foreground">
+                  Some dashboard records could not be loaded. Financial totals or filing counts may be incomplete.
+                  <Button size="sm" variant="outline" className="ml-3" onClick={() => { void refetchIncomeExpenses(); void refetchFilings(); }}>Retry loading</Button>
+                </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
@@ -376,8 +406,8 @@ const ClientDashboard = () => {
                       <TrendingUp className="h-5 w-5 text-success" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "income").length} entries</p>
+                  <p className="text-2xl font-display font-bold text-foreground">{financialLoadError || ieLoading || taxWorkspace.loadError ? "—" : `$${totalIncome.toLocaleString()}`}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{selectedYearEntries.filter(i => i.type === "income").length} entries</p>
                 </div>
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
@@ -386,18 +416,18 @@ const ClientDashboard = () => {
                       <TrendingDown className="h-5 w-5 text-destructive" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalExpenses.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{incomeExpenses.filter(i => i.type === "expense").length} entries</p>
+                  <p className="text-2xl font-display font-bold text-foreground">{financialLoadError || ieLoading || taxWorkspace.loadError ? "—" : `$${totalExpenses.toLocaleString()}`}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{selectedYearEntries.filter(i => i.type === "expense").length} entries</p>
                 </div>
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-muted-foreground">Net Taxable</p>
+                    <p className="text-sm font-medium text-muted-foreground">Net recorded</p>
                     <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                       <BarChart3 className="h-5 w-5 text-accent" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Current tax year</p>
+                  <p className="text-2xl font-display font-bold text-gradient-accent">{financialLoadError || ieLoading || taxWorkspace.loadError ? "—" : `$${(totalIncome - totalExpenses).toLocaleString()}`}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Before deductions and tax adjustments · {taxWorkspace.engagement ? `tax year ${taxWorkspace.engagement.tax_year}` : "start a tax workspace"}</p>
                 </div>
               </div>
 
@@ -407,6 +437,8 @@ const ClientDashboard = () => {
                   <div className="flex items-center justify-center py-10">
                     <Loader2 className="h-6 w-6 animate-spin text-accent" />
                   </div>
+                ) : filingsLoadError ? (
+                  <p role="alert" className="text-sm text-destructive py-4">Filing records could not be loaded. Please retry from the dashboard.</p>
                 ) : filings.length === 0 ? (
                   <p className="text-sm text-muted-foreground py-4">No filings yet. Your tax filings will appear here.</p>
                 ) : (
@@ -433,12 +465,12 @@ const ClientDashboard = () => {
               </div>
 
               {/* Charts */}
-              <DashboardCharts incomeExpenses={incomeExpenses} filings={filings} />
+              {!financialLoadError && !filingsLoadError && !ieLoading && !taxWorkspace.loadError && <DashboardCharts incomeExpenses={selectedYearEntries} filings={filings} />}
             </div>
           )}
 
           {/* Tax workspace */}
-          {activeTab === "workspace" && <TaxWorkspace />}
+          {activeTab === "workspace" && <TaxWorkspace onNavigate={setActiveTab} />}
 
           {/* Income & Expenses */}
           {activeTab === "income" && (
@@ -450,7 +482,7 @@ const ClientDashboard = () => {
                   <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                      <Button disabled={taxWorkspace.loading || !!taxWorkspace.loadError || !!financialLoadError || !taxWorkspace.engagement || !canEditEngagementEntries(taxWorkspace.engagement.workflow_status)} className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                         <Plus className="h-4 w-4 mr-2" /> Add Entry
                       </Button>
                     </DialogTrigger>
@@ -459,6 +491,11 @@ const ClientDashboard = () => {
                         <DialogTitle>Add a financial record</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4 pt-2">
+                        <p className="rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">
+                          {taxWorkspace.engagement
+                            ? `Recording against ${taxWorkspace.entity?.legal_name ?? "your taxpayer"} · tax year ${taxWorkspace.engagement.tax_year}`
+                            : "Create a Tax Workspace before entering financial transactions."}
+                        </p>
                         <div>
                           <Label>Type</Label>
                           <Select value={newEntry.type} onValueChange={(v) => setNewEntry({ ...newEntry, type: v as "income" | "expense", entryKind: v === "income" ? "gross_income" : "operating_expense" })}>
@@ -494,32 +531,38 @@ const ClientDashboard = () => {
                           </Select>
                         </div>
                         <div>
-                          <Label>Category</Label>
-                          <Input className="mt-1.5" placeholder="e.g. Consulting revenue, Software, Equipment" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
+                          <Label htmlFor="entry-category">Category</Label>
+                          <Input className="mt-1.5" id="entry-category" placeholder="e.g. Consulting revenue, Software, Equipment" value={newEntry.category} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })} />
                         </div>
                         <div>
-                          <Label>Vendor, customer or payer</Label>
-                          <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.vendorName} onChange={(e) => setNewEntry({ ...newEntry, vendorName: e.target.value })} />
+                          <Label htmlFor="entry-vendor">Vendor, customer or payer</Label>
+                          <Input className="mt-1.5" id="entry-vendor" placeholder="e.g. Acme Corp" value={newEntry.vendorName} onChange={(e) => setNewEntry({ ...newEntry, vendorName: e.target.value })} />
                         </div>
                         <div>
-                          <Label>Description (optional)</Label>
-                          <Input className="mt-1.5" placeholder="e.g. Acme Corp" value={newEntry.description} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })} />
+                          <Label htmlFor="entry-description">Description (optional)</Label>
+                          <Input className="mt-1.5" id="entry-description" placeholder="e.g. Acme Corp" value={newEntry.description} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })} />
                         </div>
                         <div>
-                          <Label>Amount ($)</Label>
-                          <Input className="mt-1.5" type="number" min="0" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
+                          <Label htmlFor="entry-amount">Amount ($)</Label>
+                          <Input className="mt-1.5" id="entry-amount" type="number" min="0.01" step="0.01" placeholder="0.00" value={newEntry.amount} onChange={(e) => setNewEntry({ ...newEntry, amount: e.target.value })} />
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <Label>Transaction date</Label>
-                            <Input className="mt-1.5" type="date" value={newEntry.transactionDate} onChange={(e) => setNewEntry({ ...newEntry, transactionDate: e.target.value })} />
+                            <Label htmlFor="entry-date">Transaction date</Label>
+                            <Input className="mt-1.5" id="entry-date" type="date" value={newEntry.transactionDate} onChange={(e) => setNewEntry({ ...newEntry, transactionDate: e.target.value })} />
                           </div>
                           <div>
-                            <Label>Business use (%)</Label>
-                            <Input className="mt-1.5" type="number" min="0" max="100" step="0.01" value={newEntry.businessUsePercentage} onChange={(e) => setNewEntry({ ...newEntry, businessUsePercentage: e.target.value })} />
+                            <Label htmlFor="entry-business-use">Business use (%)</Label>
+                            <Input className="mt-1.5" id="entry-business-use" type="number" min="0" max="100" step="0.01" value={newEntry.businessUsePercentage} onChange={(e) => setNewEntry({ ...newEntry, businessUsePercentage: e.target.value })} />
                           </div>
                         </div>
-                        <Button onClick={handleAddEntry} disabled={!newEntry.category.trim() || Number(newEntry.amount) <= 0 || !newEntry.transactionDate} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                        <Button onClick={handleAddEntry} disabled={!taxWorkspace.engagement || !!validateFinancialEntry({
+                          type: newEntry.type,
+                          category: newEntry.category,
+                          amount: Number(newEntry.amount),
+                          transactionDate: newEntry.transactionDate,
+                          businessUsePercentage: newEntry.businessUsePercentage.trim() === "" ? NaN : Number(newEntry.businessUsePercentage),
+                        })} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark">
                           Add Entry
                         </Button>
                       </div>
@@ -527,10 +570,35 @@ const ClientDashboard = () => {
                   </Dialog>
                 </div>
               </div>
+              {taxWorkspace.loadError && (
+                <div className="rounded-xl border border-destructive/30 bg-card p-4 text-sm">
+                  <p role="alert" className="font-semibold text-foreground">Unable to verify your tax workspace</p>
+                  <p className="mt-1 text-muted-foreground">{taxWorkspace.loadError}</p>
+                  <Button variant="outline" size="sm" className="mt-3" onClick={() => taxWorkspace.refetch()}>Retry loading records</Button>
+                </div>
+              )}
+              {!taxWorkspace.engagement && !taxWorkspace.loading && !taxWorkspace.loadError && (
+                <div className="rounded-xl border border-warning/30 bg-warning/5 p-4 text-sm">
+                  <p className="font-semibold text-foreground">Start a tax-year workspace first</p>
+                  <p className="mt-1 text-muted-foreground">Income and expense entries must be connected to the correct taxpayer and filing year.</p>
+                  <Button variant="outline" size="sm" className="mt-3" onClick={() => setActiveTab("workspace")}>Open Tax Workspace</Button>
+                </div>
+              )}
+              {taxWorkspace.engagement && !canEditEngagementEntries(taxWorkspace.engagement.workflow_status) && (
+                <p className="rounded-lg border border-border p-3 text-sm text-muted-foreground">
+                  Tax year {taxWorkspace.engagement.tax_year} is in {taxWorkspace.engagement.workflow_status.replace(/_/g, " ")}. New client entries are locked pending professional review.
+                </p>
+              )}
 
               {ieLoading ? (
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                </div>
+              ) : financialLoadError ? (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-5 text-sm">
+                  <p className="font-semibold text-foreground">Financial records unavailable</p>
+                  <p className="mt-2 text-muted-foreground">{financialLoadError}</p>
+                  <Button variant="outline" className="mt-3" onClick={() => refetchIncomeExpenses()}>Retry</Button>
                 </div>
               ) : incomeExpenses.length === 0 ? (
                 <div className="text-center py-20 text-muted-foreground">
@@ -614,6 +682,12 @@ const ClientDashboard = () => {
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="h-8 w-8 animate-spin text-accent" />
                 </div>
+              ) : filingsLoadError ? (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-5 text-sm">
+                  <p className="font-semibold text-foreground">Filing records unavailable</p>
+                  <p className="mt-2 text-muted-foreground">{filingsLoadError}</p>
+                  <Button variant="outline" className="mt-3" onClick={() => refetchFilings()}>Retry</Button>
+                </div>
               ) : filings.length === 0 ? (
                 <div className="text-center py-20 text-muted-foreground">
                   <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
@@ -631,8 +705,8 @@ const ClientDashboard = () => {
                         <div>
                           <p className="font-medium text-foreground">{f.form_type} — Tax Year {f.tax_year}</p>
                           <p className="text-sm text-muted-foreground">
-                            {f.submitted_at ? `Filed: ${new Date(f.submitted_at).toLocaleDateString()}` : "Pending"}
-                            {f.irs_confirmation ? ` • IRS: ${f.irs_confirmation}` : ""}
+                            {f.submitted_at ? `Recorded submission: ${new Date(f.submitted_at).toLocaleDateString()}` : "No submission recorded"}
+                            {f.irs_confirmation ? ` • Recorded reference: ${f.irs_confirmation}` : ""}
                           </p>
                         </div>
                       </div>
@@ -646,7 +720,14 @@ const ClientDashboard = () => {
                           <span className="ml-1">{f.status || "draft"}</span>
                         </Badge>
                         {f.file_url && (
-                          <Button variant="outline" size="sm" onClick={() => window.open(f.file_url!, "_blank")}>
+                          <Button variant="outline" size="sm" onClick={async () => {
+                             const opened = await openSigned("documents", f.file_url);
+                             if (!opened) toast({
+                               title: "Unable to open final package",
+                               description: "The private filing document could not be accessed. Contact your tax professional.",
+                               variant: "destructive",
+                             });
+                           }}>
                             <Download className="h-4 w-4 mr-1" /> Download
                           </Button>
                         )}

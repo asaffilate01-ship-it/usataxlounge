@@ -12,12 +12,14 @@ This repository contains:
 
 ## Local setup
 
-Requirements: Node.js 22+, npm, and a Supabase project.
+Requirements: Node.js 22+, Bun 1.2.23+, and a Supabase project.
 
 ```sh
-npm install
-npm run dev
+bun install --frozen-lockfile
+bun run dev
 ```
+
+The current source of dependency versions is `bun.lock`. The historical `package-lock.json` does not match `package.json`; until it is regenerated, `npm ci` will fail. Do not use the stale npm lockfile as a release-quality dependency check.
 
 The web app uses `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Keep service-role, e-file provider, bank-feed, and AI-provider credentials server-side only.
 
@@ -57,10 +59,13 @@ The native camera captures receipt images directly into the same authenticated, 
 ## Quality gates
 
 ```sh
-npx tsc --noEmit
+bun install --frozen-lockfile
+npx tsc -p tsconfig.app.json --noEmit
 npm test
 npm run lint
 npm run build
 ```
+
+The pull-request CI runs these checks in that order. The separate Impeccable source audit is advisory: its green status alone does not indicate that tests, lint and build passed. Before production rollout, also run staging browser and mobile accessibility tests, permission/RLS checks and provider-acknowledgement fixtures.
 
 AI output is treated as a suggestion. It cannot silently create a filing, determine professional tax positions without review, or transmit a return. An engagement cannot move through protected states until its blocking questions, duplicate candidates, final package, signature evidence, and provider transmission facts satisfy the database gates.

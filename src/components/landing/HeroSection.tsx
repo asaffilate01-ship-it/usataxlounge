@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -8,6 +8,7 @@ import heroPortrait from "@/assets/hero-portrait.jpg";
 
 const HeroSection = () => {
   const { t } = useLanguage();
+  const reduceMotion = useReducedMotion();
 
   const highlights = [
     t("hero.highlight1"),
@@ -30,7 +31,7 @@ const HeroSection = () => {
           {/* Left — Text */}
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 mb-6"
@@ -42,7 +43,7 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight mb-6"
@@ -52,7 +53,7 @@ const HeroSection = () => {
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-white/75 mb-8 max-w-xl font-sans leading-relaxed"
@@ -61,7 +62,7 @@ const HeroSection = () => {
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-wrap gap-5 mb-10"
@@ -75,7 +76,7 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-wrap gap-4"
@@ -103,7 +104,7 @@ const HeroSection = () => {
 
           {/* Right — Image */}
           <motion.div
-            initial={{ opacity: 0, x: 40, scale: 0.95 }}
+            initial={reduceMotion ? false : { opacity: 0, x: 40, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="hidden lg:block"
@@ -115,25 +116,15 @@ const HeroSection = () => {
                 alt="Tax consultant meeting with client"
                 className="relative rounded-2xl shadow-2xl border border-white/10 w-full object-cover max-h-[550px]"
               />
-              {/* Floating stat card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="absolute -bottom-6 -left-6 bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-elegant p-4"
-              >
-                <p className="text-2xl font-display font-bold text-accent">5,000+</p>
-                <p className="text-xs text-muted-foreground">{t("whyUs.s1")}</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1 }}
-                className="absolute -top-4 -right-4 bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-elegant p-4"
-              >
-                <p className="text-2xl font-display font-bold text-accent">98%</p>
-                <p className="text-xs text-muted-foreground">{t("whyUs.s2")}</p>
-              </motion.div>
+              {/* Source-backed assurances instead of unverified marketing statistics. */}
+              <div className="absolute -bottom-5 -left-3 rounded-xl border border-border bg-card/95 px-5 py-4 shadow-elegant backdrop-blur-md sm:-left-6">
+                <p className="text-sm font-semibold text-foreground">{t("hero.proof1.title")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("hero.proof1.desc")}</p>
+              </div>
+              <div className="absolute -top-4 -right-2 rounded-xl border border-border bg-card/95 px-5 py-4 shadow-elegant backdrop-blur-md sm:-right-6">
+                <p className="text-sm font-semibold text-foreground">{t("hero.proof2.title")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("hero.proof2.desc")}</p>
+              </div>
             </div>
           </motion.div>
         </div>

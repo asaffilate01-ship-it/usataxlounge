@@ -32,4 +32,12 @@ export default tseslint.config(
       "react-refresh/only-export-components": "off",
     },
   },
+  {
+    // Lovable auto-generates this auth broker; preserve its exact token/timeout
+    // sequencing instead of changing security-sensitive generated code for lint.
+    files: ["src/integrations/supabase/previewAuthStorage.ts"],
+    rules: {
+      "prefer-const": "off",
+    },
+  },
 );

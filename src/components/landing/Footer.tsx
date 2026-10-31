@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Logo from "@/components/Logo";
 import { useLanguage } from "@/contexts/LanguageContext";
 import CookieSettingsLink from "@/components/CookieSettingsLink";
-import { Facebook, Twitter, Youtube, Mail, MapPin } from "lucide-react";
+import { Facebook, Twitter, Youtube, Mail, Globe2 } from "lucide-react";
 
 const Footer = () => {
   const { t, lang } = useLanguage();
@@ -80,7 +80,7 @@ const Footer = () => {
                 <a href="#contact" className="text-sm text-muted-foreground hover:text-accent transition-colors">{t("footer.enquiryLink")}</a>
               </li>
               <li className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                <Globe2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
                 <span className="text-sm text-muted-foreground">{t("contact.address")}</span>
               </li>
             </ul>
