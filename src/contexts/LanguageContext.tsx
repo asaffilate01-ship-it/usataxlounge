@@ -17,6 +17,7 @@ const translations: Record<string, Record<Language, string>> = {
   "nav.process": { en: "Process", es: "Proceso" },
   "nav.contact": { en: "Contact", es: "Contacto" },
   "nav.blog": { en: "Blog", es: "Blog" },
+  "nav.skip": { en: "Skip to main content", es: "Ir al contenido principal" },
   "nav.signIn": { en: "Sign In", es: "Iniciar Sesión" },
   "nav.getStarted": { en: "Get Started", es: "Comenzar" },
 

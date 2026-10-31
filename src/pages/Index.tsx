@@ -11,13 +11,15 @@ import BlogSection from "@/components/landing/BlogSection";
 import ContactSection from "@/components/landing/ContactSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
 import ScreenshotShowcase from "@/components/promo/ScreenshotShowcase";
 import FloatingButtons from "@/components/FloatingButtons";
 
 const Index = () => {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-background">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:text-foreground focus:shadow-elegant">Skip to main content</a>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:text-foreground focus:shadow-elegant">{t("nav.skip")}</a>
       <Navbar />
       <main id="main-content" tabIndex={-1}>
       <HeroSection />

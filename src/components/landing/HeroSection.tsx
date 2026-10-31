@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -8,6 +8,7 @@ import heroPortrait from "@/assets/hero-portrait.jpg";
 
 const HeroSection = () => {
   const { t } = useLanguage();
+  const reduceMotion = useReducedMotion();
 
   const highlights = [
     t("hero.highlight1"),
@@ -30,7 +31,7 @@ const HeroSection = () => {
           {/* Left — Text */}
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 mb-6"
@@ -42,7 +43,7 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight mb-6"
@@ -52,7 +53,7 @@ const HeroSection = () => {
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-white/75 mb-8 max-w-xl font-sans leading-relaxed"
@@ -61,7 +62,7 @@ const HeroSection = () => {
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-wrap gap-5 mb-10"
@@ -75,7 +76,7 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-wrap gap-4"
@@ -103,7 +104,7 @@ const HeroSection = () => {
 
           {/* Right — Image */}
           <motion.div
-            initial={{ opacity: 0, x: 40, scale: 0.95 }}
+            initial={reduceMotion ? false : { opacity: 0, x: 40, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="hidden lg:block"

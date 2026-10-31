@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, MapPin, Clock } from "lucide-react";
+import { Send, Video, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,8 +72,8 @@ const ContactSection = () => {
     }
   };
 
-  const contactInfo: { icon: typeof MapPin; label: string; href?: string }[] = [
-    { icon: MapPin, label: t("contact.address") },
+  const contactInfo: { icon: typeof Video; label: string; href?: string }[] = [
+    { icon: Video, label: t("contact.address") },
     { icon: Clock, label: t("contact.hours") },
   ];
 
@@ -133,27 +133,27 @@ const ContactSection = () => {
           >
             <div className="grid sm:grid-cols-2 gap-5">
               <div>
-                <label className="text-sm font-medium text-foreground block mb-1.5">{t("contact.name")}</label>
-                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("contact.namePh")} required />
+                <label htmlFor="contact-name" className="text-sm font-medium text-foreground block mb-1.5">{t("contact.name")}</label>
+                <Input id="contact-name" autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("contact.namePh")} required />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground block mb-1.5">{t("contact.email")}</label>
-                <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder={t("contact.emailPh")} required />
+                <label htmlFor="contact-email" className="text-sm font-medium text-foreground block mb-1.5">{t("contact.email")}</label>
+                <Input id="contact-email" type="email" autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder={t("contact.emailPh")} required />
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-5">
               <div>
-                <label className="text-sm font-medium text-foreground block mb-1.5">{t("contact.phone")}</label>
-                <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder={t("contact.phonePh")} />
+                <label htmlFor="contact-phone" className="text-sm font-medium text-foreground block mb-1.5">{t("contact.phone")}</label>
+                <Input id="contact-phone" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder={t("contact.phonePh")} />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground block mb-1.5">{t("contact.subject")}</label>
-                <Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder={t("contact.subjectPh")} required />
+                <label htmlFor="contact-subject" className="text-sm font-medium text-foreground block mb-1.5">{t("contact.subject")}</label>
+                <Input id="contact-subject" autoComplete="off" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder={t("contact.subjectPh")} required />
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-foreground block mb-1.5">{t("contact.message")}</label>
-              <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder={t("contact.messagePh")} rows={5} required />
+              <label htmlFor="contact-message" className="text-sm font-medium text-foreground block mb-1.5">{t("contact.message")}</label>
+              <Textarea id="contact-message" autoComplete="off" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder={t("contact.messagePh")} rows={5} required />
             </div>
             <Button type="submit" disabled={loading} className="w-full bg-accent text-accent-foreground hover:bg-brand-green-dark shadow-accent text-base py-6">
               {loading ? t("contact.sending") : t("contact.send")}
