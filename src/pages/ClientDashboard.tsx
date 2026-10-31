@@ -681,6 +681,12 @@ const ClientDashboard = () => {
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="h-8 w-8 animate-spin text-accent" />
                 </div>
+              ) : filingsLoadError ? (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-5 text-sm">
+                  <p className="font-semibold text-foreground">Filing records unavailable</p>
+                  <p className="mt-2 text-muted-foreground">{filingsLoadError}</p>
+                  <Button variant="outline" className="mt-3" onClick={() => refetchFilings()}>Retry</Button>
+                </div>
               ) : filings.length === 0 ? (
                 <div className="text-center py-20 text-muted-foreground">
                   <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
@@ -698,8 +704,8 @@ const ClientDashboard = () => {
                         <div>
                           <p className="font-medium text-foreground">{f.form_type} — Tax Year {f.tax_year}</p>
                           <p className="text-sm text-muted-foreground">
-                            {f.submitted_at ? `Filed: ${new Date(f.submitted_at).toLocaleDateString()}` : "Pending"}
-                            {f.irs_confirmation ? ` • IRS: ${f.irs_confirmation}` : ""}
+                            {f.submitted_at ? `Recorded submission: ${new Date(f.submitted_at).toLocaleDateString()}` : "No submission recorded"}
+                            {f.irs_confirmation ? ` • Recorded reference: ${f.irs_confirmation}` : ""}
                           </p>
                         </div>
                       </div>

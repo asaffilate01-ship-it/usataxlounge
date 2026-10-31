@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { CheckCircle2, ArrowRight, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { isTrustedStripeCheckoutUrl } from "@/lib/paymentCheckout";
 
 const PLAN_KEYS = ["individual", "business", "expat"] as const;
 
@@ -27,11 +27,11 @@ const PricingSection = () => {
         body: { plan },
       });
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (err: any) {
-      toast({ title: "Payment error", description: err.message, variant: "destructive" });
+      if (!isTrustedStripeCheckoutUrl(data?.url))
+        throw new Error("The payment provider returned an unexpected checkout destination.");
+      window.location.assign(data.url);
+    } catch (err: unknown) {
+      toast({ title: "Payment error", description: err instanceof Error ? err.message : "Unable to start checkout.", variant: "destructive" });
     } finally {
       setLoadingPlan(null);
     }
@@ -159,7 +159,7 @@ const PricingSection = () => {
                 {loadingPlan === plan.planKey ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : null}
-                {user ? t("pricing.cta") : t("pricing.cta")}
+                {t("pricing.cta")}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>

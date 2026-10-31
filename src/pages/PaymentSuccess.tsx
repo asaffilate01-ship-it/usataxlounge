@@ -64,7 +64,7 @@ const PaymentSuccess = () => {
             </div>
             <h1 className="text-2xl font-display font-bold text-foreground">Payment Cancelled</h1>
             <p className="text-muted-foreground">
-              No worries — your payment was not processed. You can try again whenever you're ready.
+              Checkout was cancelled. If your payment method was charged, please check its status or contact support before trying again.
             </p>
           </>
         )}
@@ -77,8 +77,7 @@ const PaymentSuccess = () => {
             <h1 className="text-2xl font-display font-bold text-foreground">Payment Successful</h1>
             <p className="text-muted-foreground">
               Thank you{amountLabel ? ` — we've received ${amountLabel}` : ""}
-              {details.plan ? ` for the ${details.plan} plan` : ""}. Your engagement is confirmed and your preparer will be
-              in touch shortly.
+              {details.plan ? ` for the ${details.plan} plan` : ""}. The payment provider confirms your payment. Open your tax workspace to review the remaining preparation steps.
             </p>
           </>
         )}
@@ -90,7 +89,7 @@ const PaymentSuccess = () => {
             </div>
             <h1 className="text-2xl font-display font-bold text-foreground">Payment Processing</h1>
             <p className="text-muted-foreground">
-              Your payment hasn't cleared yet. We'll email you as soon as it settles — no action needed.
+              Your payment has not cleared yet. Check its status again later or contact support for assistance.
             </p>
           </>
         )}
@@ -102,7 +101,7 @@ const PaymentSuccess = () => {
             </div>
             <h1 className="text-2xl font-display font-bold text-foreground">We couldn't confirm this payment</h1>
             <p className="text-muted-foreground">
-              If you were charged, nothing is lost — contact us and we'll reconcile it straight away.
+              If you believe you were charged, please check your payment account and contact support so the transaction can be reviewed.
             </p>
           </>
         )}
