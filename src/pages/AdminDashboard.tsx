@@ -96,7 +96,7 @@ const AdminDashboard = () => {
 
   // Hooks
   const { messages: allMessages, sendMessage, markConversationRead } = useMessages();
-  const { filings, loading: filingsLoading } = useFilings();
+  const { filings, loading: filingsLoading, loadError: filingsLoadError, refetch: refetchFilings } = useFilings();
   const { unreadCount: notifUnreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
   const { logAction } = useAuditLog();
@@ -358,9 +358,9 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {[
                   { label: "Total Clients", value: String(dbClients.length), sub: "Active clients", icon: Users, color: "bg-primary/10 text-primary" },
-                  { label: "Returns Filed", value: String(filings.filter(f => f.status === "filed" || f.status === "accepted").length), sub: "All years", icon: FileText, color: "bg-success/10 text-success" },
+                  { label: "Filed status recorded", value: String(filings.filter(f => f.status === "filed" || f.status === "accepted").length), sub: "Not independently verified", icon: FileText, color: "bg-success/10 text-success" },
                   { label: "Pending Review", value: String(filings.filter(f => f.status === "in_review" || f.status === "submitted" || f.status === "draft").length), sub: "Awaiting action", icon: Clock, color: "bg-warning/10 text-warning" },
-                  { label: "IRS Submitted", value: String(filings.filter(f => f.irs_confirmation).length), sub: `${filings.length > 0 ? Math.round(filings.filter(f => f.status === "accepted").length / filings.length * 100) : 0}% acceptance`, icon: TrendingUp, color: "bg-accent/10 text-accent" },
+                  { label: "IRS references recorded", value: String(filings.filter(f => f.irs_confirmation).length), sub: "Provider evidence still required", icon: TrendingUp, color: "bg-accent/10 text-accent" },
                 ].map((stat) => (
                   <div key={stat.label} className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                     <div className="flex items-center justify-between mb-3">
@@ -503,6 +503,12 @@ const AdminDashboard = () => {
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="h-8 w-8 animate-spin text-accent" />
                 </div>
+              ) : filingsLoadError ? (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-5 text-sm">
+                  <p className="font-semibold text-foreground">Filing records unavailable</p>
+                  <p className="mt-2 text-muted-foreground">{filingsLoadError}</p>
+                  <Button variant="outline" className="mt-3" onClick={() => refetchFilings()}>Retry</Button>
+                </div>
               ) : filings.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
@@ -515,7 +521,7 @@ const AdminDashboard = () => {
                       <tr className="border-b border-border bg-muted/50">
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Form</th>
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Year</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">IRS Confirmation</th>
+                        <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Recorded IRS reference</th>
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Date</th>
                         <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Status</th>
                       </tr>

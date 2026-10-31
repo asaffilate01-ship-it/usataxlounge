@@ -120,9 +120,9 @@ const ClientDashboard = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const { items: incomeExpenses, loading: ieLoading, addItem, deleteItem } = useIncomeExpenses();
+  const { items: incomeExpenses, loading: ieLoading, loadError: financialLoadError, addItem, deleteItem, refetch: refetchIncomeExpenses } = useIncomeExpenses();
   const taxWorkspace = useTaxWorkspace();
-  const { filings, loading: filingsLoading } = useFilings();
+  const { filings, loading: filingsLoading, loadError: filingsLoadError, refetch: refetchFilings } = useFilings();
   const { isOnline: checkOnline, fetchPresence } = usePresence();
 
   // Onboarding check
@@ -391,6 +391,12 @@ const ClientDashboard = () => {
           {/* Overview */}
           {activeTab === "overview" && (
             <div className="space-y-6 animate-fade-in">
+              {(financialLoadError || filingsLoadError) && (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-4 text-sm text-foreground">
+                  Some dashboard records could not be loaded. Financial totals or filing counts may be incomplete.
+                  <Button size="sm" variant="outline" className="ml-3" onClick={() => { void refetchIncomeExpenses(); void refetchFilings(); }}>Retry loading</Button>
+                </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
                   <div className="flex items-center justify-between mb-3">
@@ -430,6 +436,8 @@ const ClientDashboard = () => {
                   <div className="flex items-center justify-center py-10">
                     <Loader2 className="h-6 w-6 animate-spin text-accent" />
                   </div>
+                ) : filingsLoadError ? (
+                  <p role="alert" className="text-sm text-destructive py-4">Filing records could not be loaded. Please retry from the dashboard.</p>
                 ) : filings.length === 0 ? (
                   <p className="text-sm text-muted-foreground py-4">No filings yet. Your tax filings will appear here.</p>
                 ) : (
@@ -473,7 +481,7 @@ const ClientDashboard = () => {
                   <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button disabled={taxWorkspace.loading || !!taxWorkspace.loadError || !taxWorkspace.engagement || !canEditEngagementEntries(taxWorkspace.engagement.workflow_status)} className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                      <Button disabled={taxWorkspace.loading || !!taxWorkspace.loadError || !!financialLoadError || !taxWorkspace.engagement || !canEditEngagementEntries(taxWorkspace.engagement.workflow_status)} className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                         <Plus className="h-4 w-4 mr-2" /> Add Entry
                       </Button>
                     </DialogTrigger>
@@ -584,6 +592,12 @@ const ClientDashboard = () => {
               {ieLoading ? (
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                </div>
+              ) : financialLoadError ? (
+                <div role="alert" className="rounded-xl border border-destructive/30 bg-card p-5 text-sm">
+                  <p className="font-semibold text-foreground">Financial records unavailable</p>
+                  <p className="mt-2 text-muted-foreground">{financialLoadError}</p>
+                  <Button variant="outline" className="mt-3" onClick={() => refetchIncomeExpenses()}>Retry</Button>
                 </div>
               ) : incomeExpenses.length === 0 ? (
                 <div className="text-center py-20 text-muted-foreground">

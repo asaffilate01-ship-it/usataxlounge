@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { taxcenda } from "@/integrations/supabase/taxcenda";
@@ -40,28 +40,50 @@ export interface NewFinancialEntry {
 export const useIncomeExpenses = () => {
   const [items, setItems] = useState<IncomeExpenseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const requestSeq = useRef(0);
   const { user } = useAuth();
   const { toast } = useToast();
 
   const fetchItems = useCallback(async () => {
-    if (!user) { setItems([]); setLoading(false); return; }
-    setLoading(true);
-    const { data, error } = await taxcenda
-      .from("income_expenses")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      toast({ title: "Error loading data", description: error.message, variant: "destructive" });
-    } else {
-      setItems(data as IncomeExpenseItem[]);
+    const seq = ++requestSeq.current;
+    if (!user) {
+      setItems([]);
+      setLoadError(null);
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const { data, error } = await taxcenda
+        .from("income_expenses")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (seq !== requestSeq.current) return;
+      if (error) {
+        setItems([]);
+        setLoadError(error.message);
+        toast({ title: "Unable to load financial records", description: error.message, variant: "destructive" });
+      } else {
+        setItems((data ?? []) as IncomeExpenseItem[]);
+      }
+    } catch (error) {
+      if (seq !== requestSeq.current) return;
+      const message = error instanceof Error ? error.message : "A network error prevented loading the financial records.";
+      setItems([]);
+      setLoadError(message);
+      toast({ title: "Unable to load financial records", description: message, variant: "destructive" });
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
+    }
   }, [user, toast]);
 
   useEffect(() => {
-    fetchItems();
+    void fetchItems();
+    return () => { requestSeq.current++; };
   }, [fetchItems]);
 
   const addItem = async (item: NewFinancialEntry) => {
@@ -144,14 +166,17 @@ export const useIncomeExpenses = () => {
 
   const deleteItem = async (id: string) => {
     if (!user) return;
-    const { error } = await taxcenda.from("income_expenses").delete().eq("id", id).eq("user_id", user.id);
+    const { data: removed, error } = await taxcenda.from("income_expenses")
+      .delete().eq("id", id).eq("user_id", user.id).select("id").maybeSingle();
     if (error) {
       toast({ title: "Error deleting entry", description: error.message, variant: "destructive" });
+    } else if (!removed) {
+      toast({ title: "Entry could not be removed", description: "The record may be locked for professional review or was already deleted.", variant: "destructive" });
     } else {
       toast({ title: "Entry deleted" });
-      fetchItems();
+      await fetchItems();
     }
   };
 
-  return { items, loading, addItem, deleteItem, refetch: fetchItems };
+  return { items, loading, loadError, addItem, deleteItem, refetch: fetchItems };
 };
