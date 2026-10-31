@@ -438,7 +438,7 @@ const ClientDashboard = () => {
           )}
 
           {/* Tax workspace */}
-          {activeTab === "workspace" && <TaxWorkspace />}
+          {activeTab === "workspace" && <TaxWorkspace onNavigate={setActiveTab} />}
 
           {/* Income & Expenses */}
           {activeTab === "income" && (

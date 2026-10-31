@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import {
   AlertTriangle,
+  ArrowRight,
   Building2,
   CheckCircle2,
   CircleDollarSign,
@@ -23,6 +24,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useTaxWorkspace } from "@/hooks/useTaxWorkspace";
+import { clientNextAction } from "@/lib/workspaceNextAction";
 
 const WORKFLOW_LABELS: Record<string, string> = {
   collecting: "Collecting records",
@@ -42,7 +44,7 @@ const WORKFLOW_LABELS: Record<string, string> = {
   amended: "Amendment in progress",
 };
 
-const TaxWorkspace = () => {
+const TaxWorkspace = ({ onNavigate }: { onNavigate: (target: "documents" | "sign" | "filings") => void }) => {
   const workspace = useTaxWorkspace();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [assetOpen, setAssetOpen] = useState(false);
@@ -130,6 +132,20 @@ const TaxWorkspace = () => {
   }
 
   const engagement = workspace.engagement;
+  const nextAction = clientNextAction({
+    status: engagement.workflow_status,
+    documentsCount: workspace.documents.length,
+    openQuestionsCount: openQuestions.length,
+    openDuplicatesCount: openDuplicates.length,
+  });
+
+  const openRecommendedStep = () => {
+    if (nextAction.target === "questions") {
+      document.getElementById("tax-action-centre")?.scrollIntoView({ block: "start" });
+    } else if (nextAction.target) {
+      onNavigate(nextAction.target);
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -149,6 +165,23 @@ const TaxWorkspace = () => {
           <Progress value={engagement.progress} className="h-2" />
         </div>
       </div>
+
+      <Card className="border-accent/25 bg-card">
+        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {nextAction.category === "action" ? "Your next step" : "Current position"}
+            </p>
+            <h3 className="mt-1 font-display text-lg font-semibold text-foreground">{nextAction.title}</h3>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">{nextAction.description}</p>
+          </div>
+          {nextAction.target && (
+            <Button onClick={openRecommendedStep} className="shrink-0 gap-2 bg-accent text-accent-foreground hover:bg-brand-green-dark">
+              {nextAction.buttonLabel}<ArrowRight className="h-4 w-4" />
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
@@ -174,7 +207,7 @@ const TaxWorkspace = () => {
       </div>
 
       {(openQuestions.length > 0 || openDuplicates.length > 0) && (
-        <section className="space-y-4">
+        <section id="tax-action-centre" className="space-y-4">
           <div>
             <h3 className="font-display text-lg font-semibold text-foreground">Action centre</h3>
             <p className="text-sm text-muted-foreground">Your answers are retained with the supporting evidence and sent to your tax reviewer.</p>
@@ -347,12 +380,6 @@ const TaxWorkspace = () => {
         </div>
       </section>
 
-      {openQuestions.length === 0 && openDuplicates.length === 0 && (
-        <div className="flex items-start gap-3 rounded-xl border border-success/20 bg-success/5 p-4">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
-          <div><p className="text-sm font-medium text-foreground">No client actions are outstanding</p><p className="mt-1 text-xs text-muted-foreground">Your preparer may add new questions as evidence is reviewed.</p></div>
-        </div>
-      )}
     </div>
   );
 };
