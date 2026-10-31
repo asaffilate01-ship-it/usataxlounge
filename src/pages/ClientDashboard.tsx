@@ -28,6 +28,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import SecureAttachment from "@/components/SecureAttachment";
+import { openSigned } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -290,8 +291,8 @@ const ClientDashboard = () => {
     { key: "form_type", label: "Form" },
     { key: "tax_year", label: "Year" },
     { key: "status", label: "Status" },
-    { key: "submitted_at", label: "Filed Date" },
-    { key: "irs_confirmation", label: "IRS Confirmation" },
+    { key: "submitted_at", label: "Recorded submission date" },
+    { key: "irs_confirmation", label: "Recorded provider reference" },
   ];
 
   const SidebarContent = () => (
@@ -719,7 +720,14 @@ const ClientDashboard = () => {
                           <span className="ml-1">{f.status || "draft"}</span>
                         </Badge>
                         {f.file_url && (
-                          <Button variant="outline" size="sm" onClick={() => window.open(f.file_url!, "_blank")}>
+                          <Button variant="outline" size="sm" onClick={async () => {
+                             const opened = await openSigned("documents", f.file_url);
+                             if (!opened) toast({
+                               title: "Unable to open final package",
+                               description: "The private filing document could not be accessed. Contact your tax professional.",
+                               variant: "destructive",
+                             });
+                           }}>
                             <Download className="h-4 w-4 mr-1" /> Download
                           </Button>
                         )}

@@ -20,6 +20,7 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
   const [signatures, setSignatures] = useState<Signature[]>([]);
   const [filings, setFilings] = useState<Filing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [signingId, setSigningId] = useState<string | null>(null);
   const [typedName, setTypedName] = useState("");
   const [consented, setConsented] = useState(false);
@@ -32,15 +33,21 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
   const fetchSignatures = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
+    setLoadError(null);
     const [signatureResult, filingResult] = await Promise.all([
       supabase.from("signatures").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("filings").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     ]);
-    if (signatureResult.error || filingResult.error) {
-      toast({ title: "Unable to load filing authorizations", description: (signatureResult.error || filingResult.error)?.message, variant: "destructive" });
+    const error = signatureResult.error || filingResult.error;
+    if (error) {
+      setLoadError(error.message);
+      setSignatures([]);
+      setFilings([]);
+      toast({ title: "Unable to load filing authorizations", description: error.message, variant: "destructive" });
+    } else {
+      setSignatures(signatureResult.data ?? []);
+      setFilings(filingResult.data ?? []);
     }
-    setSignatures(signatureResult.data ?? []);
-    setFilings(filingResult.data ?? []);
     setLoading(false);
   }, [toast, userId]);
 
@@ -88,6 +95,13 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
   const completed = signatures.filter((signature) => signature.signed_at);
 
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-accent" /></div>;
+  if (loadError) return (
+    <div className="rounded-xl border border-destructive/30 bg-card p-6 text-sm">
+      <h2 className="font-semibold text-foreground">Filing authorization unavailable</h2>
+      <p role="alert" className="mt-2 text-muted-foreground">{loadError}. Signing is disabled until the records load.</p>
+      <Button variant="outline" className="mt-3" onClick={() => fetchSignatures()}>Retry</Button>
+    </div>
+  );
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -133,8 +147,8 @@ const ClientESignSection = ({ userId }: ClientESignSectionProps) => {
                             </label>
 
                             <div>
-                              <label className="mb-1.5 block text-sm font-medium text-foreground">Type your full legal name</label>
-                              <Input value={typedName} onChange={(event) => setTypedName(event.target.value)} placeholder="Full legal name" className="font-serif text-lg italic" />
+                              <label htmlFor="authorization-typed-name" className="mb-1.5 block text-sm font-medium text-foreground">Type your full legal name</label>
+                              <Input id="authorization-typed-name" autoComplete="name" value={typedName} onChange={(event) => setTypedName(event.target.value)} placeholder="Full legal name" className="font-serif text-lg italic" />
                             </div>
 
                             <div className="flex flex-wrap gap-3">
