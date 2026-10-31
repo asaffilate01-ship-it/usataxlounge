@@ -122,9 +122,10 @@ export const useTaxWorkspace = () => {
   }, [toast, user]);
 
   useEffect(() => {
+    const sequence = requestSeq;
     void fetchWorkspace();
     // Ignore responses from an earlier user or a component that has unmounted.
-    return () => { requestSeq.current++; };
+    return () => { sequence.current++; };
   }, [fetchWorkspace]);
 
   const initializeWorkspace = async (input?: {

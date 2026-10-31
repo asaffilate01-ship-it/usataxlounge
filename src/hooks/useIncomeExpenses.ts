@@ -82,8 +82,9 @@ export const useIncomeExpenses = () => {
   }, [user, toast]);
 
   useEffect(() => {
+    const sequence = requestSeq;
     void fetchItems();
-    return () => { requestSeq.current++; };
+    return () => { sequence.current++; };
   }, [fetchItems]);
 
   const addItem = async (item: NewFinancialEntry) => {

@@ -284,7 +284,7 @@ const ClientDashboard = () => {
     { key: "type", label: "Type" },
     { key: "description", label: "Description" },
     { key: "amount", label: "Amount" },
-    { key: "created_at", label: "Date" },
+    { key: "transaction_date", label: "Transaction date" },
   ];
 
   const filingColumns = [
@@ -406,7 +406,7 @@ const ClientDashboard = () => {
                       <TrendingUp className="h-5 w-5 text-success" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalIncome.toLocaleString()}</p>
+                  <p className="text-2xl font-display font-bold text-foreground">{financialLoadError || ieLoading || taxWorkspace.loadError ? "—" : `$${totalIncome.toLocaleString()}`}</p>
                   <p className="text-xs text-muted-foreground mt-1">{selectedYearEntries.filter(i => i.type === "income").length} entries</p>
                 </div>
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
@@ -416,7 +416,7 @@ const ClientDashboard = () => {
                       <TrendingDown className="h-5 w-5 text-destructive" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">${totalExpenses.toLocaleString()}</p>
+                  <p className="text-2xl font-display font-bold text-foreground">{financialLoadError || ieLoading || taxWorkspace.loadError ? "—" : `$${totalExpenses.toLocaleString()}`}</p>
                   <p className="text-xs text-muted-foreground mt-1">{selectedYearEntries.filter(i => i.type === "expense").length} entries</p>
                 </div>
                 <div className="p-5 rounded-2xl border border-border bg-card shadow-elegant">
@@ -426,7 +426,7 @@ const ClientDashboard = () => {
                       <BarChart3 className="h-5 w-5 text-accent" />
                     </div>
                   </div>
-                  <p className="text-2xl font-display font-bold text-gradient-accent">${(totalIncome - totalExpenses).toLocaleString()}</p>
+                  <p className="text-2xl font-display font-bold text-gradient-accent">{financialLoadError || ieLoading || taxWorkspace.loadError ? "—" : `$${(totalIncome - totalExpenses).toLocaleString()}`}</p>
                   <p className="text-xs text-muted-foreground mt-1">Before deductions and tax adjustments · {taxWorkspace.engagement ? `tax year ${taxWorkspace.engagement.tax_year}` : "start a tax workspace"}</p>
                 </div>
               </div>
@@ -465,7 +465,7 @@ const ClientDashboard = () => {
               </div>
 
               {/* Charts */}
-              <DashboardCharts incomeExpenses={selectedYearEntries} filings={filings} />
+              {!financialLoadError && !filingsLoadError && !ieLoading && !taxWorkspace.loadError && <DashboardCharts incomeExpenses={selectedYearEntries} filings={filings} />}
             </div>
           )}
 

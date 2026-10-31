@@ -66,8 +66,9 @@ export const useFilings = (userId?: string) => {
   }, [user, userRole, userId]);
 
   useEffect(() => {
+    const sequence = requestSeq;
     void fetchFilings();
-    return () => { requestSeq.current++; };
+    return () => { sequence.current++; };
   }, [fetchFilings]);
 
   return { filings, loading, loadError, refetch: fetchFilings };
