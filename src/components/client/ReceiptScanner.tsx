@@ -231,6 +231,7 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
         sourceDocumentId: document.id,
         documentUrl: storagePath,
         createdSource: "document_ai",
+        engagementId: workspace.engagement.id,
       }));
       if (!entrySaved) throw new Error("The financial entry could not be linked to the uploaded evidence.");
 
