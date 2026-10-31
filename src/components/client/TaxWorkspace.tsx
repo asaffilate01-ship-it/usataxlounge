@@ -86,6 +86,18 @@ const TaxWorkspace = ({ onNavigate }: { onNavigate: (target: "documents" | "sign
     );
   }
 
+  if (workspace.loadError) {
+    return (
+      <div className="mx-auto max-w-3xl rounded-xl border border-destructive/30 bg-card p-6">
+        <h2 className="font-display text-lg font-semibold text-foreground">Tax evidence could not be verified</h2>
+        <p role="alert" className="mt-2 text-sm text-muted-foreground">
+          {workspace.loadError}. No approval or filing-readiness conclusions can be drawn until all records load.
+        </p>
+        <Button variant="outline" className="mt-4" onClick={() => workspace.refetch()}>Try loading again</Button>
+      </div>
+    );
+  }
+
   if (!workspace.engagement) {
     return (
       <div className="mx-auto max-w-3xl py-8 animate-fade-in">

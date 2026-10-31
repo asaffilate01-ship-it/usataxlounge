@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,81 +37,94 @@ export const useTaxWorkspace = () => {
   const [workspace, setWorkspace] = useState<WorkspaceSnapshot>(EMPTY_WORKSPACE);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const requestSeq = useRef(0);
 
-  const fetchWorkspace = useCallback(async () => {
+  const fetchWorkspace = useCallback(async (): Promise<boolean> => {
+    const seq = ++requestSeq.current;
+    const current = () => seq === requestSeq.current;
+    setLoadError(null);
     if (!user) {
       setWorkspace(EMPTY_WORKSPACE);
       setLoading(false);
-      return;
+      return true;
     }
-
     setLoading(true);
-    const { data: entities, error: entityError } = await taxcenda
-      .from("tax_entities")
-      .select("*")
-      .eq("owner_user_id", user.id)
-      .eq("status", "active")
-      .order("created_at", { ascending: true })
-      .limit(1);
 
-    if (entityError) {
-      toast({ title: "Unable to load tax workspace", description: entityError.message, variant: "destructive" });
-      setLoading(false);
-      return;
-    }
-
-    const entity = entities?.[0] ?? null;
-    if (!entity) {
+    const fail = (title: string, message: string) => {
+      if (!current()) return false;
       setWorkspace(EMPTY_WORKSPACE);
+      setLoadError(message);
       setLoading(false);
-      return;
-    }
+      toast({ title, description: message, variant: "destructive" });
+      return false;
+    };
 
-    const { data: engagements, error: engagementError } = await taxcenda
-      .from("tax_engagements")
-      .select("*")
-      .eq("entity_id", entity.id)
-      .order("tax_year", { ascending: false })
-      .limit(1);
+    try {
+      const { data: entities, error: entityError } = await taxcenda
+        .from("tax_entities")
+        .select("*")
+        .eq("owner_user_id", user.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: true })
+        .limit(1);
+      if (!current()) return false;
+      if (entityError) return fail("Unable to load tax workspace", entityError.message);
 
-    if (engagementError) {
-      toast({ title: "Unable to load tax year", description: engagementError.message, variant: "destructive" });
+      const entity = entities?.[0] ?? null;
+      if (!entity) {
+        setWorkspace(EMPTY_WORKSPACE);
+        setLoading(false);
+        return true;
+      }
+
+      const { data: engagements, error: engagementError } = await taxcenda
+        .from("tax_engagements")
+        .select("*")
+        .eq("entity_id", entity.id)
+        .order("tax_year", { ascending: false })
+        .limit(1);
+      if (!current()) return false;
+      if (engagementError) return fail("Unable to load tax year", engagementError.message);
+
+      const engagement = engagements?.[0] ?? null;
+      if (!engagement) {
+        setWorkspace({ ...EMPTY_WORKSPACE, entity });
+        setLoading(false);
+        return true;
+      }
+
+      const [questionsResult, duplicatesResult, assetsResult, documentsResult] = await Promise.all([
+        taxcenda.from("clarification_questions").select("*").eq("engagement_id", engagement.id).order("created_at", { ascending: false }),
+        taxcenda.from("duplicate_candidates").select("*").eq("engagement_id", engagement.id).order("created_at", { ascending: false }),
+        taxcenda.from("fixed_assets").select("*").eq("engagement_id", engagement.id).order("placed_in_service_date", { ascending: false }),
+        taxcenda.from("documents").select("*").eq("engagement_id", engagement.id).order("created_at", { ascending: false }),
+      ]);
+      if (!current()) return false;
+      const firstError = questionsResult.error || duplicatesResult.error || assetsResult.error || documentsResult.error;
+      if (firstError) {
+        return fail("Unable to verify all tax evidence", firstError.message);
+      }
+
+      setWorkspace({
+        entity,
+        engagement,
+        questions: questionsResult.data ?? [],
+        duplicates: duplicatesResult.data ?? [],
+        assets: assetsResult.data ?? [],
+        documents: documentsResult.data ?? [],
+      });
       setLoading(false);
-      return;
+      return true;
+    } catch (error) {
+      return fail("Unable to load tax workspace", getErrorMessage(error));
     }
-
-    const engagement = engagements?.[0] ?? null;
-    if (!engagement) {
-      setWorkspace({ ...EMPTY_WORKSPACE, entity });
-      setLoading(false);
-      return;
-    }
-
-    const [questionsResult, duplicatesResult, assetsResult, documentsResult] = await Promise.all([
-      taxcenda.from("clarification_questions").select("*").eq("engagement_id", engagement.id).order("created_at", { ascending: false }),
-      taxcenda.from("duplicate_candidates").select("*").eq("engagement_id", engagement.id).order("created_at", { ascending: false }),
-      taxcenda.from("fixed_assets").select("*").eq("engagement_id", engagement.id).order("placed_in_service_date", { ascending: false }),
-      taxcenda.from("documents").select("*").eq("engagement_id", engagement.id).order("created_at", { ascending: false }),
-    ]);
-
-    const firstError = questionsResult.error || duplicatesResult.error || assetsResult.error || documentsResult.error;
-    if (firstError) {
-      toast({ title: "Some workspace items could not be loaded", description: firstError.message, variant: "destructive" });
-    }
-
-    setWorkspace({
-      entity,
-      engagement,
-      questions: questionsResult.data ?? [],
-      duplicates: duplicatesResult.data ?? [],
-      assets: assetsResult.data ?? [],
-      documents: documentsResult.data ?? [],
-    });
-    setLoading(false);
   }, [toast, user]);
 
   useEffect(() => {
-    fetchWorkspace();
+    void fetchWorkspace();
+    // Ignore responses from an earlier user or a component that has unmounted.
+    return () => { requestSeq.current++; };
   }, [fetchWorkspace]);
 
   const initializeWorkspace = async (input?: {
@@ -171,8 +184,7 @@ export const useTaxWorkspace = () => {
       }
 
       toast({ title: `Tax year ${taxYear} workspace is ready` });
-      await fetchWorkspace();
-      return true;
+      return await fetchWorkspace();
     } catch (error) {
       toast({ title: "Unable to create tax workspace", description: getErrorMessage(error), variant: "destructive" });
       return false;
@@ -249,6 +261,7 @@ export const useTaxWorkspace = () => {
     ...workspace,
     loading,
     saving,
+    loadError,
     initializeWorkspace,
     answerQuestion,
     resolveDuplicate,

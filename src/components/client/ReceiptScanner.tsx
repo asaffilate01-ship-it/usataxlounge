@@ -153,6 +153,10 @@ const ReceiptScanner = ({ onExtracted }: ReceiptScannerProps) => {
 
   const saveConfirmed = async () => {
     if (!file || !fileHash || !result || !user) return;
+    if (workspace.loading || workspace.loadError) {
+      toast({ title: "Tax evidence is not available", description: "Reload the tax workspace and confirm access before saving.", variant: "destructive" });
+      return;
+    }
     if (!workspace.engagement || !workspace.entity) {
       toast({ title: "Create your tax workspace first", description: "Open Tax Workspace and start the current filing year before saving records.", variant: "destructive" });
       return;

@@ -182,6 +182,10 @@ const ClientDashboard = () => {
   }, [messages, activeTab]);
 
   const handleAddEntry = async () => {
+    if (taxWorkspace.loading || taxWorkspace.loadError) {
+      toast({ title: "Tax workspace unavailable", description: "Reload the workspace before saving financial records.", variant: "destructive" });
+      return;
+    }
     if (!taxWorkspace.engagement) {
       toast({ title: "Create your tax workspace first", description: "Select Tax Workspace to begin your tax year.", variant: "destructive" });
       return;
@@ -469,7 +473,7 @@ const ClientDashboard = () => {
                   <ExportButtons data={incomeExpenses} filename="income-expenses" columns={incomeExpenseColumns} />
                   <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button disabled={taxWorkspace.loading || !taxWorkspace.engagement || !canEditEngagementEntries(taxWorkspace.engagement.workflow_status)} className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
+                      <Button disabled={taxWorkspace.loading || !!taxWorkspace.loadError || !taxWorkspace.engagement || !canEditEngagementEntries(taxWorkspace.engagement.workflow_status)} className="bg-accent text-accent-foreground hover:bg-brand-green-dark">
                         <Plus className="h-4 w-4 mr-2" /> Add Entry
                       </Button>
                     </DialogTrigger>
@@ -557,7 +561,14 @@ const ClientDashboard = () => {
                   </Dialog>
                 </div>
               </div>
-              {!taxWorkspace.engagement && !taxWorkspace.loading && (
+              {taxWorkspace.loadError && (
+                <div className="rounded-xl border border-destructive/30 bg-card p-4 text-sm">
+                  <p role="alert" className="font-semibold text-foreground">Unable to verify your tax workspace</p>
+                  <p className="mt-1 text-muted-foreground">{taxWorkspace.loadError}</p>
+                  <Button variant="outline" size="sm" className="mt-3" onClick={() => taxWorkspace.refetch()}>Retry loading records</Button>
+                </div>
+              )}
+              {!taxWorkspace.engagement && !taxWorkspace.loading && !taxWorkspace.loadError && (
                 <div className="rounded-xl border border-warning/30 bg-warning/5 p-4 text-sm">
                   <p className="font-semibold text-foreground">Start a tax-year workspace first</p>
                   <p className="mt-1 text-muted-foreground">Income and expense entries must be connected to the correct taxpayer and filing year.</p>
