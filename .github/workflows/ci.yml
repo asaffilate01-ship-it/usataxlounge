@@ -23,9 +23,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
-      - name: Install locked dependencies
-        run: npm ci --no-audit --no-fund
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.23"
+      - name: Install dependencies using the current Bun lockfile
+        run: bun install --frozen-lockfile
       - name: Typecheck app
         run: npx tsc -p tsconfig.app.json --noEmit
       - name: Run unit tests
